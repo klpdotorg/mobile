@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,8 @@ import java.util.List;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+
+    private ArrayAdapter<String> mSurveyAdapter;
 
     public MainActivityFragment() {
     }
@@ -32,6 +35,13 @@ public class MainActivityFragment extends Fragment {
         };
 
         List<String> Surveys = new ArrayList<String>(Arrays.asList(data));
+
+        mSurveyAdapter = new ArrayAdapter<String>(
+                        getActivity(),
+                        R.layout.list_item_survey,
+                        R.id.list_item_survey_textview,
+                        Surveys
+                );
 
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
