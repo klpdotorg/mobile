@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="in.org.klp.kontact.MainActivityFragment"
+    tools:context="in.org.klp.kontact.SurveyFragment"
     tools:showIn="@layout/activity_main">
 
     <ListView
