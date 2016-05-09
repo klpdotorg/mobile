@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -47,6 +48,23 @@ public class SurveyFragment extends Fragment {
         inflater.inflate(R.menu.surveyfragment, menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_refresh) {
+            FetchSurveyTask surveyTask = new FetchSurveyTask();
+            surveyTask.execute();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,24 +96,20 @@ public class SurveyFragment extends Fragment {
         return rootView;
     }
 
-    public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
+    public class FetchSurveyTask extends AsyncTask<Void, Void, Void> {
 
-        private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+        private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected Void doInBackground(Void... params) {
 
-
-            if (params.length == 0) {
-                return null;
-            }
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String forecastJsonStr = null;
+            String surveyJsonStr = null;
 
             try {
                 // Construct the URL for the OpenWeatherMap query
@@ -135,8 +149,8 @@ public class SurveyFragment extends Fragment {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                forecastJsonStr = buffer.toString();
-                Log.v(LOG_TAG, "Forecast JSON string: " + forecastJsonStr);
+                surveyJsonStr = buffer.toString();
+                Log.v(LOG_TAG, "Forecast JSON string: " + surveyJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
