@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,6 +34,19 @@ public class SurveyFragment extends Fragment {
 
     public SurveyFragment() {
     }
+
+    @Override
+    public void onCreate(Bundle SavedInstanceState) {
+        super.onCreate(SavedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.surveyfragment, menu);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
