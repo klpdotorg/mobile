@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -96,12 +100,12 @@ public class SurveyFragment extends Fragment {
         return rootView;
     }
 
-    public class FetchSurveyTask extends AsyncTask<Void, Void, Void> {
+    public class FetchSurveyTask extends AsyncTask<Void, Void, String[]> {
 
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected String[] doInBackground(Void... params) {
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -112,9 +116,6 @@ public class SurveyFragment extends Fragment {
             String surveyJsonStr = null;
 
             try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
                 final String SURVEY_BASE_URL = "http://dev.klp.org.in/api/v1/surveys/";
 
                 Uri builtUri = Uri.parse(SURVEY_BASE_URL).buildUpon().build();
@@ -123,7 +124,6 @@ public class SurveyFragment extends Fragment {
 
                 Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
-                // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -132,7 +132,6 @@ public class SurveyFragment extends Fragment {
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
-                    // Nothing to do.
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -150,12 +149,10 @@ public class SurveyFragment extends Fragment {
                     return null;
                 }
                 surveyJsonStr = buffer.toString();
-                Log.v(LOG_TAG, "Forecast JSON string: " + surveyJsonStr);
+                Log.v(LOG_TAG, "Survey JSON string: " + surveyJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -169,8 +166,52 @@ public class SurveyFragment extends Fragment {
                     }
                 }
             }
+            try {
+                return getSurveyDataFromJson(surveyJsonStr);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+
             return null;
         }
+
+        private String[] getSurveyDataFromJson(String surveyJsonStr)
+                throws JSONException {
+
+            final String FEATURES = "features";
+
+            JSONObject surveyJson = new JSONObject(surveyJsonStr);
+            JSONArray surveyArray = surveyJson.getJSONArray(FEATURES);
+
+            String[] resultStrs = new String[17];
+            for (int i = 0; i < surveyArray.length(); i++) {
+
+                String surveyId;
+                String sourceVersion;
+                String sourceName;
+                String startDate;
+                String endDate;
+
+                // Get the JSON object representing the survey
+                JSONObject surveyObject = surveyArray.getJSONObject(i);
+
+                surveyId = surveyObject.getString("id");
+                sourceVersion = surveyObject.getString("version");
+                sourceName = surveyObject.getString("source");
+                startDate = surveyObject.getString("start_date");
+                endDate = surveyObject.getString("end_date");
+
+                resultStrs[i] = sourceVersion + " - " + sourceName;
+            }
+
+            for (String s : resultStrs) {
+                Log.v(LOG_TAG, "Survey: " + s);
+            }
+            return resultStrs;
+
+        }
+
 
     }
 }
