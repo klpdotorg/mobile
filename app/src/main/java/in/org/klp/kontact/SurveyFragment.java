@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class SurveyFragment extends Fragment {
 
     private ArrayAdapter<String> mSurveyAdapter;
@@ -122,8 +119,6 @@ public class SurveyFragment extends Fragment {
 
                 URL url = new URL(builtUri.toString());
 
-                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
-
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -149,7 +144,6 @@ public class SurveyFragment extends Fragment {
                     return null;
                 }
                 surveyJsonStr = buffer.toString();
-                Log.v(LOG_TAG, "Survey JSON string: " + surveyJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -176,7 +170,18 @@ public class SurveyFragment extends Fragment {
             return null;
         }
 
-        private String[] getSurveyDataFromJson(String surveyJsonStr)
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                mSurveyAdapter.clear();
+                for (String surveyStr : result) {
+                    mSurveyAdapter.add(surveyStr);
+                }
+            }
+            super.onPostExecute(result);
+        }
+
+            private String[] getSurveyDataFromJson(String surveyJsonStr)
                 throws JSONException {
 
             final String FEATURES = "features";
@@ -204,14 +209,9 @@ public class SurveyFragment extends Fragment {
 
                 resultStrs[i] = sourceVersion + " - " + sourceName;
             }
-
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Survey: " + s);
-            }
             return resultStrs;
 
         }
-
 
     }
 }
