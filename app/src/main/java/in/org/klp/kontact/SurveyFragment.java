@@ -58,35 +58,33 @@ public class SurveyFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            FetchSurveyTask surveyTask = new FetchSurveyTask();
-            surveyTask.execute();
+            updateSurvey();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void updateSurvey() {
+        FetchSurveyTask surveyTask = new FetchSurveyTask();
+        surveyTask.execute();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateSurvey();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        String[] data = {
-                "Akshara Primary School Survey",
-                "GKA Survey",
-                "Akshaya Patra Survey",
-                "PreSchool Survey",
-                "EkStep Survey",
-                "Notorious Survey",
-                "The Ultimate Survey"
-        };
-
-        List<String> Surveys = new ArrayList<String>(Arrays.asList(data));
 
         mSurveyAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_survey,
                 R.id.list_item_survey_textview,
-                Surveys
+                new ArrayList<String>()
         );
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
