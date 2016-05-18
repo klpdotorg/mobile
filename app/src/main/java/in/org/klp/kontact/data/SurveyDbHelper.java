@@ -3,8 +3,10 @@ package in.org.klp.kontact.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.ContentObservable;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.ListView;
 
 import in.org.klp.kontact.data.SurveyContract.SurveyEntry;
 
@@ -59,5 +61,9 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                         SurveyEntry._ID + " = " +
                         id
         );
+    }
+
+    public void list_surveys(ListView listView) {
+        Cursor curosr = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
     }
 }
