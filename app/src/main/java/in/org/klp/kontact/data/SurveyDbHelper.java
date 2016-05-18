@@ -50,4 +50,14 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
     public void delete_survey(int id) {
         this.getWritableDatabase().delete(SurveyEntry.TABLE_NAME, SurveyEntry._ID + "=" + id, null);
     }
+
+    public void update_survey(int id, int status) {
+        this.getWritableDatabase().execSQL("UPDATE " +
+                        SurveyEntry.TABLE_NAME + " SET " +
+                        SurveyEntry.COLUMN_STATUS + " = " +
+                        status + " WHERE " +
+                        SurveyEntry._ID + " = " +
+                        id
+        );
+    }
 }
