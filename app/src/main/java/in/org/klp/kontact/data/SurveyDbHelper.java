@@ -1,6 +1,8 @@
 package in.org.klp.kontact.data;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.ContentObservable;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -35,4 +37,13 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
+    public void insert_survey(int id, int status, int createdAt, String partner, String name) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SurveyEntry._ID, id);
+        contentValues.put(SurveyEntry.COLUMN_STATUS, status);
+        contentValues.put(SurveyEntry.COLUMN_CREATED_AT, createdAt);
+        contentValues.put(SurveyEntry.COLUMN_PARTNER, partner);
+        contentValues.put(SurveyEntry.COLUMN_NAME, name);
+        this.getWritableDatabase().insertOrThrow(SurveyEntry.TABLE_NAME,"",contentValues);
+    }
 }
