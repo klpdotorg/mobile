@@ -23,9 +23,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_SURVEY_TABLE = "CREATE TABLE " + SurveyEntry.TABLE_NAME + " (" +
                 SurveyEntry._ID + " INTEGER PRIMARY KEY," +
                 SurveyEntry.COLUMN_STATUS + " INTEGER, " +
-                SurveyEntry.COLUMN_CREATED_AT + " TIMESTAMP NOT NULL, " +
-                SurveyEntry.COLUMN_START_DATE + " TIMESTAMP NOT NULL, " +
-                SurveyEntry.COLUMN_END_DATE + " TIMESTAMP NOT NULL, " +
+                SurveyEntry.COLUMN_CREATED_AT + " INTEGER NOT NULL, " +
                 SurveyEntry.COLUMN_PARTNER + " TEXT, " +
                 SurveyEntry.COLUMN_NAME + " TEXT " +
                 " );";
@@ -36,4 +34,5 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         onCreate(sqLiteDatabase);
     }
+
 }
