@@ -1,5 +1,7 @@
 package in.org.klp.kontact;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -87,6 +90,14 @@ public class SurveyFragment extends Fragment {
 
         ListView listview = (ListView) rootView.findViewById(R.id.listview_survey);
         listview.setAdapter(mSurveyAdapter);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String survey_id = mSurveyAdapter.getItem(i);
+                Intent intent = new Intent(getActivity(), QuestionActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, survey_id);
+                startActivity(intent);
+            }});
 
         return rootView;
     }
