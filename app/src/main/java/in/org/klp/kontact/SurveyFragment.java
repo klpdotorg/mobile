@@ -179,7 +179,7 @@ public class SurveyFragment extends Fragment {
             super.onPostExecute(result);
         }
 
-            private String[] getSurveyDataFromJson(String surveyJsonStr)
+        private String[] getSurveyDataFromJson(String surveyJsonStr)
                 throws JSONException {
 
             final String FEATURES = "features";
@@ -187,12 +187,13 @@ public class SurveyFragment extends Fragment {
             JSONObject surveyJson = new JSONObject(surveyJsonStr);
             JSONArray surveyArray = surveyJson.getJSONArray(FEATURES);
 
-            String[] resultStrs = new String[17];
+            String[] resultStrs = new String[surveyArray.length()];
             for (int i = 0; i < surveyArray.length(); i++) {
 
                 String surveyId;
                 String sourceVersion;
                 String sourceName;
+                String surveyName;
                 String startDate;
                 String endDate;
 
@@ -200,12 +201,13 @@ public class SurveyFragment extends Fragment {
                 JSONObject surveyObject = surveyArray.getJSONObject(i);
 
                 surveyId = surveyObject.getString("id");
-                sourceVersion = surveyObject.getString("version");
-                sourceName = surveyObject.getString("source");
-                startDate = surveyObject.getString("start_date");
-                endDate = surveyObject.getString("end_date");
+                surveyName = surveyObject.getString("name");
+                // sourceVersion = surveyObject.getString("version");
+                // sourceName = surveyObject.getString("source");
+                // startDate = surveyObject.getString("start_date");
+                // endDate = surveyObject.getString("end_date");
 
-                resultStrs[i] = sourceVersion + " - " + sourceName;
+                resultStrs[i] = surveyId + " - " + surveyName;
             }
             return resultStrs;
 
