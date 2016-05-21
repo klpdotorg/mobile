@@ -10,9 +10,6 @@ import android.widget.ListView;
 
 import in.org.klp.kontact.data.SurveyContract.SurveyEntry;
 
-/**
- * Created by haris on 5/16/16.
- */
 public class SurveyDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 

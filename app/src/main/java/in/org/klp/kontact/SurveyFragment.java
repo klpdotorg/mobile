@@ -29,6 +29,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import in.org.klp.kontact.data.SurveyDbHelper;
+
 public class SurveyFragment extends Fragment {
 
     private ArrayAdapter<String> mSurveyAdapter;
@@ -105,6 +107,7 @@ public class SurveyFragment extends Fragment {
     public class FetchSurveyTask extends AsyncTask<Void, Void, String[]> {
 
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
+        SurveyDbHelper dbHelper;
 
         @Override
         protected String[] doInBackground(Void... params) {
@@ -189,8 +192,9 @@ public class SurveyFragment extends Fragment {
         private String[] getSurveyDataFromJson(String surveyJsonStr)
                 throws JSONException {
 
-            final String FEATURES = "features";
+            dbHelper = new SurveyDbHelper(getActivity());
 
+            final String FEATURES = "features";
             JSONObject surveyJson = new JSONObject(surveyJsonStr);
             JSONArray surveyArray = surveyJson.getJSONArray(FEATURES);
 
