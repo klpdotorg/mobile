@@ -88,12 +88,18 @@
     </ScrollView>
 
     <TextView
-        android:layout_width="77dp"
+        android:layout_width="165dp"
         android:layout_height="wrap_content"
-        android:text="Register"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Haven&apos;t registered yet? "
         android:id="@+id/textView"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.26"
-        android:autoLink="web"
-        android:clickable="true"/>
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign Up"
+        android:id="@+id/sign_up_button"
+        android:layout_gravity="center_horizontal"/>
+
 </LinearLayout>
