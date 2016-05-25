@@ -47,7 +47,8 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
     }
 
 
-    public void list_surveys(ListView listView) {
-        Cursor curosr = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
+    public Cursor list_surveys() {
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
+        return cursor;
     }
 }
