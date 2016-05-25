@@ -202,21 +202,20 @@ public class SurveyFragment extends Fragment {
             for (int i = 0; i < surveyArray.length(); i++) {
 
                 String surveyId;
-                String sourceVersion;
-                String sourceName;
                 String surveyName;
-                String startDate;
-                String endDate;
+                String surveyPartner;
 
                 // Get the JSON object representing the survey
                 JSONObject surveyObject = surveyArray.getJSONObject(i);
 
+                // Get the JSON object representing the partner
+                JSONObject partnerObject = surveyObject.getJSONObject("partner");
+
                 surveyId = surveyObject.getString("id");
                 surveyName = surveyObject.getString("name");
-                // sourceVersion = surveyObject.getString("version");
-                // sourceName = surveyObject.getString("source");
-                // startDate = surveyObject.getString("start_date");
-                // endDate = surveyObject.getString("end_date");
+                surveyPartner = partnerObject.getString("name");
+
+
 
                 resultStrs[i] = surveyId + " - " + surveyName;
             }
