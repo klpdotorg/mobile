@@ -2,6 +2,7 @@ package in.org.klp.kontact;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -215,10 +217,15 @@ public class SurveyFragment extends Fragment {
                 surveyName = surveyObject.getString("name");
                 surveyPartner = partnerObject.getString("name");
 
-
+                try {
+                    dbHelper.insert_survey(Integer.parseInt(surveyId), surveyPartner, surveyName);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Survey Insert Error: " + e.toString());
+                }
 
                 resultStrs[i] = surveyId + " - " + surveyName;
             }
+
             return resultStrs;
 
         }
