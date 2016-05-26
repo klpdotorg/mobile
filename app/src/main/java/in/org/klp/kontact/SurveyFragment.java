@@ -106,8 +106,10 @@ public class SurveyFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String survey_id = getSurveyId(mSurveyAdapter.getItem(i));
+                String survey_name = mSurveyAdapter.getItem(i);
                 Intent intent = new Intent(getActivity(), SurveyDetails.class);
                 intent.putExtra("survey_id", survey_id);
+                intent.putExtra("survey_name", survey_name);
                 startActivity(intent);
             }});
 
