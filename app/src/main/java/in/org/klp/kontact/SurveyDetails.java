@@ -12,8 +12,9 @@ public class SurveyDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_survey_details);
-        String survey = getIntent().getStringExtra("survey_id");
+        String surveyId = getIntent().getStringExtra("surveyId");
+        String surveyName = getIntent().getStringExtra("surveyName");
         TextView textView=(TextView) findViewById(R.id.survey_details);
-        textView.setText(survey);
+        textView.setText(surveyName);
     }
 }
