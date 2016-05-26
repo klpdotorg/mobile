@@ -26,6 +26,7 @@
     </string>
 
     <string name="title_activity_question">Questions</string>
+    <string name="title_activity_boundary_selection">Choose your Boundary</string>
 
     <!-- survey activity strings -->
     <string name="new_response">New Response</string>
