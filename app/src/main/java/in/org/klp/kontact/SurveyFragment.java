@@ -80,6 +80,13 @@ public class SurveyFragment extends Fragment {
         updateSurvey();
     }
 
+    // FIXME: String parsing to get the survey_id.
+    // Should replace with proper cursor adapter implementation.
+    public String getSurveyId(String str) {
+        String[] tokens = str.split(":");
+        return tokens[0];
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -98,7 +105,7 @@ public class SurveyFragment extends Fragment {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String survey_id = mSurveyAdapter.getItem(i);
+                String survey_id = getSurveyId(mSurveyAdapter.getItem(i));
                 Intent intent = new Intent(getActivity(), SurveyDetails.class);
                 intent.putExtra("survey_id", survey_id);
                 startActivity(intent);
