@@ -4,6 +4,7 @@
     <string name="action_refresh">Refresh</string>
     <string name="title_activity_survey">Surveys</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="questions">Take me to the questions!</string>
 
     <!-- Strings related to Boundary selection -->
     <string name="district">District</string>
