@@ -28,6 +28,7 @@ public class SurveyDetails extends AppCompatActivity {
             {
                 Intent intent = new Intent(SurveyDetails.this, SurveyActivity.class);
                 intent.putExtra("surveyId", surveyId);
+                intent.putExtra("surveyName", surveyName);
                 startActivity(intent);
             }
         });
