@@ -179,7 +179,7 @@ public class SurveyFragment extends Fragment {
                 }
             }
             try {
-                return getSurveyDataFromJson(surveyJsonStr);
+                saveSurveyDataFromJson(surveyJsonStr);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -199,7 +199,7 @@ public class SurveyFragment extends Fragment {
             super.onPostExecute(result);
         }
 
-        private String[] getSurveyDataFromJson(String surveyJsonStr)
+        private void saveSurveyDataFromJson(String surveyJsonStr)
                 throws JSONException {
 
             dbHelper = new SurveyDbHelper(getActivity());
@@ -208,7 +208,6 @@ public class SurveyFragment extends Fragment {
             JSONObject surveyJson = new JSONObject(surveyJsonStr);
             JSONArray surveyArray = surveyJson.getJSONArray(FEATURES);
 
-            String[] resultStrs = new String[surveyArray.length()];
             for (int i = 0; i < surveyArray.length(); i++) {
 
                 String surveyId;
@@ -230,11 +229,7 @@ public class SurveyFragment extends Fragment {
                 } catch (SQLiteException e) {
                     Log.v(LOG_TAG, "Survey Insert Error: " + e.toString());
                 }
-
-                resultStrs[i] = surveyId + " - " + surveyName;
             }
-
-            return resultStrs;
 
         }
 
