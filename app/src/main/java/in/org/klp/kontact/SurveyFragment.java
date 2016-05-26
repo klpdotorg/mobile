@@ -126,8 +126,26 @@ public class SurveyFragment extends Fragment {
             dbHelper = new SurveyDbHelper(getActivity());
 
             Cursor cursor = dbHelper.list_surveys();
-            while(cursor.moveToNext()) {
-                Log.v(LOG_TAG, "Survey Insert Error: " + cursor.getColumnName(1).toString());
+            if (cursor.getCount() >= 1) {
+                String surveyId;
+                String surveyName;
+                String surveyPartner;
+                String surveyString;
+
+                int count = 0;
+                String[] resultStrs = new String[cursor.getCount()];
+                while(cursor.moveToNext()) {
+                    surveyId = cursor.getString(0);
+                    surveyPartner = cursor.getString(1);
+                    surveyName = cursor.getString(2);
+
+                    surveyString = surveyId + ": " + surveyName + " by " + surveyPartner;
+                    resultStrs[count] = surveyString;
+                    count++;
+                    Log.v(LOG_TAG, "Survey: " + surveyString);
+                }
+
+                return resultStrs;
             }
 
             try {
