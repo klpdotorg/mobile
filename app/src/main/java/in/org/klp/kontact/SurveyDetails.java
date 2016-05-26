@@ -26,7 +26,7 @@ public class SurveyDetails extends AppCompatActivity {
             @Override
             public void onClick(View view)
             {
-                Intent intent = new Intent(SurveyDetails.this, SurveyActivity.class);
+                Intent intent = new Intent(SurveyDetails.this, BoundarySelectionActivity.class);
                 intent.putExtra("surveyId", surveyId);
                 intent.putExtra("surveyName", surveyName);
                 startActivity(intent);
