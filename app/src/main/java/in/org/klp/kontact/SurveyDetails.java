@@ -9,13 +9,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class SurveyDetails extends AppCompatActivity {
+    String surveyId;
+    String surveyName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_survey_details);
-        String surveyId = getIntent().getStringExtra("surveyId");
-        String surveyName = getIntent().getStringExtra("surveyName");
+        surveyId = getIntent().getStringExtra("surveyId");
+        surveyName = getIntent().getStringExtra("surveyName");
         TextView textView = (TextView) findViewById(R.id.survey_details);
         textView.setText(surveyName);
 
@@ -24,8 +26,9 @@ public class SurveyDetails extends AppCompatActivity {
             @Override
             public void onClick(View view)
             {
-                Intent myIntent = new Intent(SurveyDetails.this, SurveyActivity.class);
-                startActivity(myIntent);
+                Intent intent = new Intent(SurveyDetails.this, SurveyActivity.class);
+                intent.putExtra("surveyId", surveyId);
+                startActivity(intent);
             }
         });
     }
