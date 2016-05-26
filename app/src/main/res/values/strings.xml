@@ -15,11 +15,14 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
+    completions."
     </string>
 
     <string name="title_activity_question">Questions</string>
 
+    <!-- survey activity strings -->
+    <string name="new_response">New Response</string>
+    <string name="generate_report">Generate Report</string>
 
 
 </resources>
