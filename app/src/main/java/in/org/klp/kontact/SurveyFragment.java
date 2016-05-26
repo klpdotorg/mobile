@@ -2,6 +2,8 @@ package in.org.klp.kontact;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -120,6 +123,13 @@ public class SurveyFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String surveyJsonStr = null;
 
+            dbHelper = new SurveyDbHelper(getActivity());
+
+            Cursor cursor = dbHelper.list_surveys();
+            while(cursor.moveToNext()) {
+                Log.v(LOG_TAG, "Survey Insert Error: " + cursor.getColumnName(1).toString());
+            }
+
             try {
                 final String SURVEY_BASE_URL = "http://dev.klp.org.in/api/v1/surveys/";
 
@@ -202,24 +212,28 @@ public class SurveyFragment extends Fragment {
             for (int i = 0; i < surveyArray.length(); i++) {
 
                 String surveyId;
-                String sourceVersion;
-                String sourceName;
                 String surveyName;
-                String startDate;
-                String endDate;
+                String surveyPartner;
 
                 // Get the JSON object representing the survey
                 JSONObject surveyObject = surveyArray.getJSONObject(i);
 
+                // Get the JSON object representing the partner
+                JSONObject partnerObject = surveyObject.getJSONObject("partner");
+
                 surveyId = surveyObject.getString("id");
                 surveyName = surveyObject.getString("name");
-                // sourceVersion = surveyObject.getString("version");
-                // sourceName = surveyObject.getString("source");
-                // startDate = surveyObject.getString("start_date");
-                // endDate = surveyObject.getString("end_date");
+                surveyPartner = partnerObject.getString("name");
+
+                try {
+                    dbHelper.insert_survey(Integer.parseInt(surveyId), surveyPartner, surveyName);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Survey Insert Error: " + e.toString());
+                }
 
                 resultStrs[i] = surveyId + " - " + surveyName;
             }
+
             return resultStrs;
 
         }
