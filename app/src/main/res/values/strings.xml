@@ -10,7 +10,7 @@
     <string name="block">Block</string>
     <string name="cluster">Cluster</string>
     <string name="school">School</string>
-    
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email (Hint: mobile@klp.org.in)</string>
     <string name="prompt_password">Password (Hint: mobile)</string>
