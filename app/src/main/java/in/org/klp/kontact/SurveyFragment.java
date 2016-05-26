@@ -105,11 +105,11 @@ public class SurveyFragment extends Fragment {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String survey_id = getSurveyId(mSurveyAdapter.getItem(i));
-                String survey_name = mSurveyAdapter.getItem(i);
+                String surveyId = getSurveyId(mSurveyAdapter.getItem(i));
+                String surveyName = mSurveyAdapter.getItem(i);
                 Intent intent = new Intent(getActivity(), SurveyDetails.class);
-                intent.putExtra("survey_id", survey_id);
-                intent.putExtra("survey_name", survey_name);
+                intent.putExtra("surveyId", surveyId);
+                intent.putExtra("surveyName", surveyName);
                 startActivity(intent);
             }});
 
