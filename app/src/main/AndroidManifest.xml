@@ -59,12 +59,7 @@
         <activity
             android:name=".BoundarySelectionActivity"
             android:label="@string/title_activity_boundary_selection"
-            android:parentActivityName=".SurveyDetails"
-            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SurveyDetails" />
         </activity>
         <activity
             android:name=".SurveyDetails"
