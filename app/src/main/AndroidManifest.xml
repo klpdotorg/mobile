@@ -18,7 +18,8 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +30,8 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:parentActivityName=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="LoginActivity" />
@@ -38,7 +40,8 @@
             android:name=".SurveyActivity"
             android:label="@string/title_activity_survey"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MainActivity" />
@@ -47,7 +50,8 @@
             android:name=".QuestionActivity"
             android:label="@string/title_activity_question"
             android:parentActivityName=".SurveyActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SurveyActivity" />
@@ -56,13 +60,15 @@
             android:name=".BoundarySelectionActivity"
             android:label="@string/title_activity_boundary_selection"
             android:parentActivityName=".SurveyDetails"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SurveyDetails" />
         </activity>
         <activity
-            android:name=".SurveyDetails">
+            android:name=".SurveyDetails"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
