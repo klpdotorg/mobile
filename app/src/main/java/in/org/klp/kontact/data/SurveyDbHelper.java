@@ -9,6 +9,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.ListView;
 
 import in.org.klp.kontact.data.SurveyContract.SurveyEntry;
+import in.org.klp.kontact.data.SurveyContract.QuestionEntry;
+import in.org.klp.kontact.data.SurveyContract.QuestiongroupEntry;
+import in.org.klp.kontact.data.SurveyContract.QuestiongroupQuestionEntry;
+
 
 public class SurveyDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
@@ -31,6 +35,8 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SurveyEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + QuestionEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 
