@@ -29,4 +29,11 @@ public class SurveyContract {
         public static final String COLUMN_SOURCE = "source";
         public static final String COLUMN_SURVEY = "survey_id";
     }
+
+    public static final class QuestiongroupQuestionEntry implements BaseColumns {
+        public static final String TABLE_NAME = "questiongroupquestion";
+        public static final String COLUMN_QUESTIONGROUP = "questiongroup_id";
+        public static final String COLUMN_QUESTION = "question_id";
+        public static final String COLUMN_SEQUENCE = "sequence";
+    }
 }
