@@ -59,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(myIntent);
             }
         });
+
+        Button sync_button = (Button) findViewById(R.id.sync_button);
+        sync_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                updateSurvey();
+            }
+        });
     }
 
     private void createNotification() {
