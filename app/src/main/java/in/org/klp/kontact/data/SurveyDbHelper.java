@@ -43,7 +43,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                 " FOREIGN KEY (" + QuestionEntry.COLUMN_SCHOOL_TYPE + ") REFERENCES " +
                 SchoolEntry.TABLE_NAME + " (" + SchoolEntry._ID + "));";
 
-        final String SQL_CREATE_QUESTIONGROUP_TABLE = "CREATE_TABLE " + QuestiongroupEntry.TABLE_NAME + " (" +
+        final String SQL_CREATE_QUESTIONGROUP_TABLE = "CREATE TABLE " + QuestiongroupEntry.TABLE_NAME + " (" +
                 QuestiongroupEntry._ID + " INTEGER PRIMARY KEY," +
                 QuestiongroupEntry.COLUMN_STATUS + " INTEGER, " +
                 QuestiongroupEntry.COLUMN_START_DATE + " INTEGER, " +
@@ -54,13 +54,13 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                 " FOREIGN KEY (" + QuestiongroupEntry.COLUMN_SURVEY + ") REFERENCES " +
                 SurveyEntry.TABLE_NAME + " (" + SurveyEntry._ID + "));";
 
-        final String SQL_CREATE_QUESTIONGROUPQUESTION_TABLE = "CREATE_TABLE " + QuestiongroupQuestionEntry.TABLE_NAME + " (" +
+        final String SQL_CREATE_QUESTIONGROUPQUESTION_TABLE = "CREATE TABLE " + QuestiongroupQuestionEntry.TABLE_NAME + " (" +
                 QuestiongroupQuestionEntry._ID + " INTEGER PRIMARY KEY," +
                 QuestiongroupQuestionEntry.COLUMN_SEQUENCE + " INTEGER, " +
                 QuestiongroupQuestionEntry.COLUMN_QUESTION + " INTEGER, " +
+                QuestiongroupQuestionEntry.COLUMN_QUESTIONGROUP + " INTEGER, " +
                 " FOREIGN KEY (" + QuestiongroupQuestionEntry.COLUMN_QUESTION + ") REFERENCES " +
                 QuestionEntry.TABLE_NAME + " (" + QuestionEntry._ID + "), " +
-                QuestiongroupQuestionEntry.COLUMN_QUESTIONGROUP + " INTEGER, " +
                 " FOREIGN KEY (" + QuestiongroupQuestionEntry.COLUMN_QUESTIONGROUP + ") REFERENCES " +
                 QuestiongroupEntry.TABLE_NAME + " (" + QuestiongroupEntry._ID + "));";
 
