@@ -62,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createNotification() {
-        new DownloadTask(getApplicationContext()).execute(0);
+        // Placeholder to create notification about sync.
+        // new DownloadTask(getApplicationContext()).execute(0);
     }
 
     private void updateSurvey() {
@@ -146,12 +147,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[] result) {
-            if (result != null) {
-                mSurveyAdapter.clear();
-                for (String surveyStr : result) {
-                    mSurveyAdapter.add(surveyStr);
-                }
-            }
+//            if (result != null) {
+//                mSurveyAdapter.clear();
+//                for (String surveyStr : result) {
+//                    mSurveyAdapter.add(surveyStr);
+//                }
+//            }
             super.onPostExecute(result);
         }
 
