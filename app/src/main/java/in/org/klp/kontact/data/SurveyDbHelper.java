@@ -10,9 +10,6 @@ import android.widget.ListView;
 
 import in.org.klp.kontact.data.SurveyContract.SurveyEntry;
 
-/**
- * Created by haris on 5/16/16.
- */
 public class SurveyDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
@@ -26,8 +23,6 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String SQL_CREATE_SURVEY_TABLE = "CREATE TABLE " + SurveyEntry.TABLE_NAME + " (" +
                 SurveyEntry._ID + " INTEGER PRIMARY KEY," +
-                SurveyEntry.COLUMN_STATUS + " INTEGER, " +
-                SurveyEntry.COLUMN_CREATED_AT + " INTEGER NOT NULL, " +
                 SurveyEntry.COLUMN_PARTNER + " TEXT, " +
                 SurveyEntry.COLUMN_NAME + " TEXT " +
                 " );";
@@ -39,11 +34,9 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public void insert_survey(int id, int status, int createdAt, String partner, String name) {
+    public void insert_survey(int id, String partner, String name) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SurveyEntry._ID, id);
-        contentValues.put(SurveyEntry.COLUMN_STATUS, status);
-        contentValues.put(SurveyEntry.COLUMN_CREATED_AT, createdAt);
         contentValues.put(SurveyEntry.COLUMN_PARTNER, partner);
         contentValues.put(SurveyEntry.COLUMN_NAME, name);
         this.getWritableDatabase().insertOrThrow(SurveyEntry.TABLE_NAME,"",contentValues);
@@ -53,17 +46,9 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         this.getWritableDatabase().delete(SurveyEntry.TABLE_NAME, SurveyEntry._ID + "=" + id, null);
     }
 
-    public void update_survey(int id, int status) {
-        this.getWritableDatabase().execSQL("UPDATE " +
-                        SurveyEntry.TABLE_NAME + " SET " +
-                        SurveyEntry.COLUMN_STATUS + " = " +
-                        status + " WHERE " +
-                        SurveyEntry._ID + " = " +
-                        id
-        );
-    }
 
-    public void list_surveys(ListView listView) {
-        Cursor curosr = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
+    public Cursor list_surveys() {
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
+        return cursor;
     }
 }

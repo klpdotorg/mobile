@@ -2,6 +2,8 @@ package in.org.klp.kontact;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +31,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+
+import in.org.klp.kontact.data.SurveyDbHelper;
 
 public class SurveyFragment extends Fragment {
 
@@ -75,6 +80,13 @@ public class SurveyFragment extends Fragment {
         updateSurvey();
     }
 
+    // FIXME: String parsing to get the survey_id.
+    // Should replace with proper cursor adapter implementation.
+    public String getSurveyId(String str) {
+        String[] tokens = str.split(":");
+        return tokens[0];
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -93,9 +105,11 @@ public class SurveyFragment extends Fragment {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String survey_id = mSurveyAdapter.getItem(i);
-                Intent intent = new Intent(getActivity(), QuestionActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, survey_id);
+                String surveyId = getSurveyId(mSurveyAdapter.getItem(i));
+                String surveyName = mSurveyAdapter.getItem(i);
+                Intent intent = new Intent(getActivity(), SurveyDetails.class);
+                intent.putExtra("surveyId", surveyId);
+                intent.putExtra("surveyName", surveyName);
                 startActivity(intent);
             }});
 
@@ -105,6 +119,7 @@ public class SurveyFragment extends Fragment {
     public class FetchSurveyTask extends AsyncTask<Void, Void, String[]> {
 
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
+        SurveyDbHelper dbHelper;
 
         @Override
         protected String[] doInBackground(Void... params) {
@@ -116,6 +131,31 @@ public class SurveyFragment extends Fragment {
 
             // Will contain the raw JSON response as a string.
             String surveyJsonStr = null;
+
+            dbHelper = new SurveyDbHelper(getActivity());
+
+            Cursor cursor = dbHelper.list_surveys();
+            if (cursor.getCount() >= 1) {
+                String surveyId;
+                String surveyName;
+                String surveyPartner;
+                String surveyString;
+
+                int count = 0;
+                String[] resultStrs = new String[cursor.getCount()];
+                while(cursor.moveToNext()) {
+                    surveyId = cursor.getString(0);
+                    surveyPartner = cursor.getString(1);
+                    surveyName = cursor.getString(2);
+
+                    surveyString = surveyId + ": " + surveyName + " by " + surveyPartner;
+                    resultStrs[count] = surveyString;
+                    count++;
+                    Log.v(LOG_TAG, "Survey: " + surveyString);
+                }
+
+                return resultStrs;
+            }
 
             try {
                 final String SURVEY_BASE_URL = "http://dev.klp.org.in/api/v1/surveys/";
@@ -166,7 +206,7 @@ public class SurveyFragment extends Fragment {
                 }
             }
             try {
-                return getSurveyDataFromJson(surveyJsonStr);
+                saveSurveyDataFromJson(surveyJsonStr);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -186,37 +226,37 @@ public class SurveyFragment extends Fragment {
             super.onPostExecute(result);
         }
 
-        private String[] getSurveyDataFromJson(String surveyJsonStr)
+        private void saveSurveyDataFromJson(String surveyJsonStr)
                 throws JSONException {
 
-            final String FEATURES = "features";
+            dbHelper = new SurveyDbHelper(getActivity());
 
+            final String FEATURES = "features";
             JSONObject surveyJson = new JSONObject(surveyJsonStr);
             JSONArray surveyArray = surveyJson.getJSONArray(FEATURES);
 
-            String[] resultStrs = new String[surveyArray.length()];
             for (int i = 0; i < surveyArray.length(); i++) {
 
                 String surveyId;
-                String sourceVersion;
-                String sourceName;
                 String surveyName;
-                String startDate;
-                String endDate;
+                String surveyPartner;
 
                 // Get the JSON object representing the survey
                 JSONObject surveyObject = surveyArray.getJSONObject(i);
 
+                // Get the JSON object representing the partner
+                JSONObject partnerObject = surveyObject.getJSONObject("partner");
+
                 surveyId = surveyObject.getString("id");
                 surveyName = surveyObject.getString("name");
-                // sourceVersion = surveyObject.getString("version");
-                // sourceName = surveyObject.getString("source");
-                // startDate = surveyObject.getString("start_date");
-                // endDate = surveyObject.getString("end_date");
+                surveyPartner = partnerObject.getString("name");
 
-                resultStrs[i] = surveyId + " - " + surveyName;
+                try {
+                    dbHelper.insert_survey(Integer.parseInt(surveyId), surveyPartner, surveyName);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Survey Insert Error: " + e.toString());
+                }
             }
-            return resultStrs;
 
         }
 

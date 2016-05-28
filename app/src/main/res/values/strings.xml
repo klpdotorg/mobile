@@ -4,6 +4,13 @@
     <string name="action_refresh">Refresh</string>
     <string name="title_activity_survey">Surveys</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="questions">Take me to the questions!</string>
+
+    <!-- Strings related to Boundary selection -->
+    <string name="district">District</string>
+    <string name="block">Block</string>
+    <string name="cluster">Cluster</string>
+    <string name="school">School</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email (Hint: mobile@klp.org.in)</string>
@@ -15,13 +22,23 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
+    completions."
     </string>
 
     <string name="title_activity_question">Questions</string>
+
     <string name="title_activity_user_registration">UserRegistrationActivity</string>
     <string name="prompt_enter_email">Enter Email address</string>
     <string name="prompt_enter_password">Enter password</string>
     <string name="prompt_verify_password">Re-enter password</string>
     <string name="action_register">Register</string>
+
+    <string name="title_activity_boundary_selection">Choose your Boundary</string>
+
+    <!-- survey activity strings -->
+    <string name="new_response">New Response</string>
+    <string name="generate_report">Generate Report</string>
+
+
+
 </resources>
