@@ -43,7 +43,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MainActivity"/>
         </activity>
-
         <activity
             android:name=".QuestionActivity"
             android:label="@string/title_activity_question"
@@ -51,9 +50,17 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SurveyActivity" />
+                android:value=".SurveyActivity"/>
         </activity>
-
+        <activity
+            android:name=".data.UserRegistrationActivity"
+            android:label="@string/title_activity_user_registration"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.org.klp.kontact.LoginActivity"/>
+        </activity>
     </application>
 
 </manifest>

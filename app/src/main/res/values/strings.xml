@@ -19,7 +19,9 @@
     </string>
 
     <string name="title_activity_question">Questions</string>
-
-
-
+    <string name="title_activity_user_registration">UserRegistrationActivity</string>
+    <string name="prompt_enter_email">Enter Email address</string>
+    <string name="prompt_enter_password">Enter password</string>
+    <string name="prompt_verify_password">Re-enter password</string>
+    <string name="action_register">Register</string>
 </resources>
