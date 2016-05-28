@@ -33,7 +33,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                 SurveyEntry.COLUMN_NAME + " TEXT " +
                 " );";
 
-        final String SQL_CREATE_QUESTION_TABLE = "CREATE TABLE" + QuestionEntry.TABLE_NAME + " (" +
+        final String SQL_CREATE_QUESTION_TABLE = "CREATE TABLE " + QuestionEntry.TABLE_NAME + " (" +
                 QuestionEntry._ID + " INTEGER PRIMARY KEY," +
                 QuestionEntry.COLUMN_TEXT + " TEXT, " +
                 QuestionEntry.COLUMN_KEY + " TEXT, " +
@@ -43,7 +43,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                 " FOREIGN KEY (" + QuestionEntry.COLUMN_SCHOOL_TYPE + ") REFERENCES " +
                 SchoolEntry.TABLE_NAME + " (" + SchoolEntry._ID + "));";
 
-        final String SQL_CREATE_QUESTIONGROUP_TABLE = "CREATE_TABLE" + QuestiongroupEntry.TABLE_NAME + " (" +
+        final String SQL_CREATE_QUESTIONGROUP_TABLE = "CREATE_TABLE " + QuestiongroupEntry.TABLE_NAME + " (" +
                 QuestiongroupEntry._ID + " INTEGER PRIMARY KEY," +
                 QuestiongroupEntry.COLUMN_STATUS + " INTEGER, " +
                 QuestiongroupEntry.COLUMN_START_DATE + " INTEGER, " +
@@ -54,7 +54,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                 " FOREIGN KEY (" + QuestiongroupEntry.COLUMN_SURVEY + ") REFERENCES " +
                 SurveyEntry.TABLE_NAME + " (" + SurveyEntry._ID + "));";
 
-        final String SQL_CREATE_QUESTIONGROUPQUESTION_TABLE = "CREATE_TABLE" + QuestiongroupQuestionEntry.TABLE_NAME + " (" +
+        final String SQL_CREATE_QUESTIONGROUPQUESTION_TABLE = "CREATE_TABLE " + QuestiongroupQuestionEntry.TABLE_NAME + " (" +
                 QuestiongroupQuestionEntry._ID + " INTEGER PRIMARY KEY," +
                 QuestiongroupQuestionEntry.COLUMN_SEQUENCE + " INTEGER, " +
                 QuestiongroupQuestionEntry.COLUMN_QUESTION + " INTEGER, " +
