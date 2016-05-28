@@ -40,9 +40,19 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                 QuestionEntry.COLUMN_OPTIONS + " TEXT, " +
                 QuestionEntry.COLUMN_TYPE + " TEXT, " +
                 QuestionEntry.COLUMN_SCHOOL_TYPE + " INTEGER, " +
-
                 " FOREIGN KEY (" + QuestionEntry.COLUMN_SCHOOL_TYPE + ") REFERENCES " +
                 SchoolEntry.TABLE_NAME + " (" + SchoolEntry._ID + "));";
+
+        final String SQL_CREATE_QUESTIONGROUP_TABLE = "CREATE_TABLE" + QuestiongroupEntry.TABLE_NAME + " (" +
+                QuestiongroupEntry._ID + " INTEGER PRIMARY KEY," +
+                QuestiongroupEntry.COLUMN_STATUS + " INTEGER, " +
+                QuestiongroupEntry.COLUMN_START_DATE + " INTEGER, " +
+                QuestiongroupEntry.COLUMN_END_DATE + " INTEGER, " +
+                QuestiongroupEntry.COLUMN_VERSION + " INTEGER, " +
+                QuestiongroupEntry.COLUMN_SOURCE + " TEXT, " +
+                QuestiongroupEntry.COLUMN_SURVEY + " INTEGER, " +
+                " FOREIGN KEY (" + QuestiongroupEntry.COLUMN_SURVEY + ") REFERENCES " +
+                SurveyEntry.TABLE_NAME + " (" + SurveyEntry._ID + "));";
 
         sqLiteDatabase.execSQL(SQL_CREATE_SURVEY_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_QUESTION_TABLE);
