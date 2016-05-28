@@ -56,6 +56,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(SQL_CREATE_SURVEY_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_QUESTION_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_QUESTIONGROUP_TABLE);
     }
 
     @Override
