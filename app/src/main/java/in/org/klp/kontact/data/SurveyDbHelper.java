@@ -13,6 +13,8 @@ import in.org.klp.kontact.data.SurveyContract.QuestionEntry;
 import in.org.klp.kontact.data.SurveyContract.QuestiongroupEntry;
 import in.org.klp.kontact.data.SurveyContract.QuestiongroupQuestionEntry;
 
+import in.org.klp.kontact.data.SchoolContract.SchoolEntry;
+
 
 public class SurveyDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
