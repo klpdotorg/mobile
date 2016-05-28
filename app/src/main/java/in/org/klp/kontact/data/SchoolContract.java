@@ -17,5 +17,11 @@ public class SchoolContract {
         public static final String COLUMN_TYPE = "type";
     }
 
-    
+    public static final class SchoolEntry implements BaseColumns {
+        public static final String TABLE_NAME = "school";
+        public static final String COLUMN_BOUNDARY = "boundary_id";
+        public static final String COLUMN_DISE = "dise_code";
+        public static final String COLUMN_NAME = "name";
+
+    }
 }
