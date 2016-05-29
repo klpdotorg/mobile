@@ -115,7 +115,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
     }
 
     public Cursor list_questiongroups() {
-        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + QuestiongroupEntry.TABLE_NAME, null);
         return cursor;
     }
 }
