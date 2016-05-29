@@ -141,4 +141,16 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    //Questiongroupquestion table helper functions.
+    public void insert_questiongroupquestion(int id, int question_id, int questiongroup_id, int sequence) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(QuestiongroupQuestionEntry._ID, id);
+        contentValues.put(QuestiongroupQuestionEntry.COLUMN_QUESTION, question_id);
+        contentValues.put(QuestiongroupQuestionEntry.COLUMN_QUESTIONGROUP, questiongroup_id);
+        contentValues.put(QuestiongroupQuestionEntry.COLUMN_SEQUENCE, sequence);
+
+        this.getWritableDatabase().insertOrThrow(QuestiongroupQuestionEntry.TABLE_NAME,"",contentValues);
+    }
+
+
 }
