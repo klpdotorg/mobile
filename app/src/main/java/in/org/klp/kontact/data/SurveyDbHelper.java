@@ -79,6 +79,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
+    // Survey table helper functions.
     public void insert_survey(int id, String partner, String name) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SurveyEntry._ID, id);
@@ -93,6 +94,28 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
 
 
     public Cursor list_surveys() {
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
+        return cursor;
+    }
+
+    public void insert_questiongroup(int id, int status, int start_date, int end_date, int version, String source, int survey_id) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(QuestiongroupEntry._ID, id);
+        contentValues.put(QuestiongroupEntry.COLUMN_STATUS, status);
+        contentValues.put(QuestiongroupEntry.COLUMN_START_DATE, start_date);
+        contentValues.put(QuestiongroupEntry.COLUMN_END_DATE, end_date);
+        contentValues.put(QuestiongroupEntry.COLUMN_VERSION, version);
+        contentValues.put(QuestiongroupEntry.COLUMN_SOURCE, source);
+        contentValues.put(QuestiongroupEntry.COLUMN_SURVEY, survey_id);
+        this.getWritableDatabase().insertOrThrow(QuestiongroupEntry.TABLE_NAME,"",contentValues);
+    }
+
+    public void delelte_questiongroup(int id) {
+        this.getWritableDatabase().delete(SurveyEntry.TABLE_NAME, SurveyEntry._ID + "=" + id, null);
+    }
+
+
+    public Cursor list_questiongroups() {
         Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
         return cursor;
     }
