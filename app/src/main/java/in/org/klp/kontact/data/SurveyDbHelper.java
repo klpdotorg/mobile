@@ -132,6 +132,13 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         this.getWritableDatabase().insertOrThrow(QuestionEntry.TABLE_NAME,"",contentValues);
     }
 
+    public void delete_question(int id) {
+        this.getWritableDatabase().delete(QuestionEntry.TABLE_NAME, QuestionEntry._ID + "=" + id, null);
+    }
 
+    public Cursor list_questions() {
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + QuestionEntry.TABLE_NAME, null);
+        return cursor;
+    }
 
 }
