@@ -72,6 +72,8 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        // FIXME: Should handle graceful versioning process instead of, duh, blindly
+        // dropping the tables.
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SurveyEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + QuestionEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
