@@ -39,9 +39,8 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                 QuestionEntry.COLUMN_KEY + " TEXT, " +
                 QuestionEntry.COLUMN_OPTIONS + " TEXT, " +
                 QuestionEntry.COLUMN_TYPE + " TEXT, " +
-                QuestionEntry.COLUMN_SCHOOL_TYPE + " INTEGER, " +
-                " FOREIGN KEY (" + QuestionEntry.COLUMN_SCHOOL_TYPE + ") REFERENCES " +
-                SchoolEntry.TABLE_NAME + " (" + SchoolEntry._ID + "));";
+                QuestionEntry.COLUMN_SCHOOL_TYPE + " TEXT, " +
+                " );";
 
         final String SQL_CREATE_QUESTIONGROUP_TABLE = "CREATE TABLE " + QuestiongroupEntry.TABLE_NAME + " (" +
                 QuestiongroupEntry._ID + " INTEGER PRIMARY KEY," +
