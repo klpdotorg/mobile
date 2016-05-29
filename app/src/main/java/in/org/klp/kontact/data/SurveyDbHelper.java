@@ -110,7 +110,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         this.getWritableDatabase().insertOrThrow(QuestiongroupEntry.TABLE_NAME,"",contentValues);
     }
 
-    public void delelte_questiongroup(int id) {
+    public void delete_questiongroup(int id) {
         this.getWritableDatabase().delete(QuestiongroupEntry.TABLE_NAME, QuestiongroupEntry._ID + "=" + id, null);
     }
 
