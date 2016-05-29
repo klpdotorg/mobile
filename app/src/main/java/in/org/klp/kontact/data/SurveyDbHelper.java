@@ -92,12 +92,12 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         this.getWritableDatabase().delete(SurveyEntry.TABLE_NAME, SurveyEntry._ID + "=" + id, null);
     }
 
-
     public Cursor list_surveys() {
         Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
         return cursor;
     }
 
+    // Questiongroup table helper functions.
     public void insert_questiongroup(int id, int status, int start_date, int end_date, int version, String source, int survey_id) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(QuestiongroupEntry._ID, id);
@@ -111,9 +111,8 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
     }
 
     public void delelte_questiongroup(int id) {
-        this.getWritableDatabase().delete(SurveyEntry.TABLE_NAME, SurveyEntry._ID + "=" + id, null);
+        this.getWritableDatabase().delete(QuestiongroupEntry.TABLE_NAME, QuestiongroupEntry._ID + "=" + id, null);
     }
-
 
     public Cursor list_questiongroups() {
         Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SurveyEntry.TABLE_NAME, null);
