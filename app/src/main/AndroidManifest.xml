@@ -57,7 +57,7 @@
                 android:value=".SurveyActivity"/>
         </activity>
         <activity
-            android:name=".data.UserRegistrationActivity"
+            android:name=".UserRegistrationActivity"
             android:label="@string/title_activity_user_registration"
             android:parentActivityName=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">

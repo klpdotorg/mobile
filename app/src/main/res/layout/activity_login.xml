@@ -44,80 +44,82 @@
         android:layout_height="match_parent"
         android:id="@+id/login_form">
 
-            <TableLayout
+            <LinearLayout
                 android:id="@+id/email_login_form"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
-                android:weightSum="1">
+                >
 
-                <TableRow android:layout_width="fill_parent"
+                <LinearLayout android:layout_width="fill_parent"
                           android:layout_height="fill_parent"
-                          android:gravity="left|center_vertical">
+                          android:orientation="horizontal">
                     <TextView
                         android:text="Username:"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_column="0"
                         android:layout_span="0"
-                        />
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:minWidth="500px"
-                   >
-
-                    <AutoCompleteTextView
-                        android:id="@+id/email"
+                        android:layout_gravity="center"/>
+                    <android.support.design.widget.TextInputLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/prompt_email"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        android:layout_weight="10"
-                        android:singleLine="true"
-                        android:gravity="left|center_vertical"
-                        android:elegantTextHeight="true"
-                        android:editable="true"
-                        android:textStyle="normal"
-                        android:typeface="sans"
-                        />
+                        android:minWidth="500px"
+                       >
 
-                </android.support.design.widget.TextInputLayout>
-                </TableRow>
-                <!--Being second TableRow -->
-                <TableRow android:layout_width="fill_parent"
+                        <AutoCompleteTextView
+                            android:id="@+id/email"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/prompt_email"
+                            android:inputType="textEmailAddress"
+                            android:maxLines="1"
+                            android:layout_weight="10"
+                            android:singleLine="true"
+                            android:gravity="left|center_vertical"
+                            android:elegantTextHeight="true"
+                            android:editable="true"
+                            android:textStyle="normal"
+                            android:typeface="sans"
+                            />
+
+                     </android.support.design.widget.TextInputLayout>
+                </LinearLayout>
+
+                <!--Begin second TableRow -->
+                <LinearLayout android:layout_width="fill_parent"
                           android:layout_height="wrap_content"
-                          android:gravity="left|center_vertical">
+                          android:orientation="horizontal">
                     <TextView
                         android:text="Password:"
-                        android:layout_column="0"
-                        android:layout_span="0"
-                        />
-                <android.support.design.widget.TextInputLayout
-
-                    android:layout_column="1">
-
-                    <EditText
-                        android:id="@+id/password"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="10"
-                        android:hint="@string/prompt_password"
-                        android:imeActionId="@+id/login"
-                        android:imeActionLabel="@string/action_sign_in_short"
-                        android:imeOptions="actionUnspecified"
-                        android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:gravity="center_vertical|center"
-                        android:textStyle="normal"
-                        android:typeface="serif"
-                        android:minWidth="500px"
-                        />
+                        android:layout_gravity="center"/>
 
-                </android.support.design.widget.TextInputLayout>
-                </TableRow>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="321dp"
+                        android:layout_height="wrap_content"
+                        android:minWidth="500dp"
+                        >
+
+                        <EditText
+                            android:id="@+id/password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/prompt_password"
+                            android:imeActionId="@+id/login"
+                            android:imeActionLabel="@string/action_sign_in_short"
+                            android:imeOptions="actionUnspecified"
+                            android:inputType="textPassword"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textStyle="normal"
+                            android:typeface="serif"/>
+
+                    </android.support.design.widget.TextInputLayout>
+                </LinearLayout>
+
+
                 <Button
                     android:id="@+id/email_sign_in_button"
                     style="?android:textAppearanceSmall"
@@ -132,23 +134,27 @@
                     android:textColor="@color/bright_foreground_material_dark"
                     android:layout_gravity="center_horizontal"/>
 
-            </TableLayout>
+                <TextView
+                    android:layout_width="165dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Haven&apos;t registered yet? "
+                    android:id="@+id/textView"
+                    android:layout_gravity="center"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sign Up"
+                    android:id="@+id/email_sign_up_button"
+                    android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
+
+
+
     </ScrollView>
 
 
-    <TextView
-        android:layout_width="165dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Haven&apos;t registered yet? "
-        android:id="@+id/textView"
-        />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign Up"
-        android:id="@+id/email_sign_up_button"
-        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

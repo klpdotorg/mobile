@@ -32,8 +32,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import in.org.klp.kontact.data.UserRegistrationActivity;
-
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
