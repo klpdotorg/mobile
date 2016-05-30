@@ -3,9 +3,12 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center_horizontal"
-              android:orientation="vertical"
+
+             
+
               tools:context="in.org.klp.kontact.LoginActivity"
-              android:weightSum="1">
+              android:weightSum="1"
+    android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -34,8 +37,10 @@
         android:layout_height="192dp"
         android:id="@+id/imageView"
         android:contentDescription="KLP logo"
-        android:src="@mipmap/ic_launcher"
-        android:layout_gravity="center_horizontal"/>
+        android:src="@drawable/ic_klp_logo"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp" />
 
 
 
