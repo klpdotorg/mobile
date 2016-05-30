@@ -65,8 +65,8 @@ public class UserRegistrationActivity extends AppCompatActivity {
         //{"id": 165, "email": "abc@www.com", "mobile_no": "5632145236", "first_name": "First Name", "last_name": "Last Name", "opted_email": false, "token": "6c222fbbc0af067baad708e8918fa589f8a7efa3", "volunteer_activities": [], "image": "", "organizations": [], "about": "", "twitter_handle": "", "fb_url": "", "website": "", "photos_url": "", "youtube_url": ""}
 
         Log.v(LOG_TAG, userInfo);
-        //Add code to check return values etc...
-        Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+        //Add code to check return values etc...Show dialog appropriately for failure or success. On failure case, show sign up dialog again?
+        Intent intent = new Intent(this.getApplicationContext(), LoginActivity.class);
         startActivity(intent);
     }
 

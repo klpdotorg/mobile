@@ -11,14 +11,18 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.ContactsContract.Contacts.Data;
+import android.provider.ContactsContract.Profile;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +32,23 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +81,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +98,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPasswordView.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
@@ -102,6 +127,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void populateAutoComplete() {
@@ -113,7 +141,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (VERSION.SDK_INT < VERSION_CODES.M) {
             return true;
         }
         if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
@@ -121,9 +149,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
             Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
+                    .setAction(android.R.string.ok, new OnClickListener() {
                         @Override
-                        @TargetApi(Build.VERSION_CODES.M)
+                        @TargetApi(VERSION_CODES.M)
                         public void onClick(View v) {
                             requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
                         }
@@ -196,7 +224,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            mAuthTask.execute(new String[]{});
         }
     }
 
@@ -207,18 +235,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return true;
     }
 
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    @TargetApi(VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+        if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
@@ -250,17 +278,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
+                Uri.withAppendedPath(Profile.CONTENT_URI,
+                        Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
 
                 // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
+                Data.MIMETYPE +
+                        " = ?", new String[]{Email
                 .CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
+                Data.IS_PRIMARY + " DESC");
     }
 
     @Override
@@ -289,32 +317,83 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Login Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://in.org.klp.kontact/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Login Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://in.org.klp.kontact/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
+
 
     private interface ProfileQuery {
         String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
+                Email.ADDRESS,
+                Email.IS_PRIMARY,
         };
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
     }
 
-    protected void finishLogin(boolean loginSuccess)
-    {
-        if(loginSuccess)
-        {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
+    protected void finishLogin(String userInfo) {
+        //parse the userInfo String
+        try {
+            JSONObject userLoginInfo = new JSONObject(userInfo);
+            if(userLoginInfo.has("token"))
+            {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+            else {
+                //Show login dialog again. Clear out fields. Show a message. Ask to login again
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
+
     }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<String, Void, String> {
 
+        protected String LOG_TAG = UserLoginTask.class.getSimpleName();
         private final String mEmail;
         private final String mPassword;
 
@@ -324,36 +403,99 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected String doInBackground(String... params) {
             // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
 
-            boolean success = false;
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+
+
+            // These two need to be declared outside the try/catch
+            // so that they can be closed in the finally block.
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            // Will contain the raw JSON response as a string.
+            String userInfo = null;
+
+            try {
+                final String USER_BASE_URL = "http://dev.klp.org.in/api/v1/users/login";
+
+                Uri builtUri = Uri.parse(USER_BASE_URL).buildUpon().build();
+
+                URL url = new URL(builtUri.toString());
+                String requestParams = "email=" + URLEncoder.encode(mEmail, "UTF-8") + "&password=" + URLEncoder.encode(mPassword, "UTF-8");
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                urlConnection.setFixedLengthStreamingMode(requestParams.getBytes().length);
+                urlConnection.setDoOutput(true);
+
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(urlConnection.getOutputStream());
+                outputStreamWriter.write(requestParams);
+                outputStreamWriter.flush();
+                outputStreamWriter.close();
+
+                int responseCode = urlConnection.getResponseCode();
+                String responseMsg = urlConnection.getResponseMessage();
+                Log.v(LOG_TAG, "Response code is: " + responseCode);
+                Log.v(LOG_TAG, "response message is: " + responseMsg);
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    Log.v(LOG_TAG, "Response code is: " + responseCode);
+                }
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                userInfo = buffer.toString();
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
                 }
             }
+            try {
+                Log.v(LOG_TAG, userInfo);
+            } catch (Exception e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
 
-            // TODO: register the new account here.
-            return success;
+            return userInfo;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final String userInfo) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                finishLogin(success);
+            if (userInfo != null) {
+                finishLogin(userInfo);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
