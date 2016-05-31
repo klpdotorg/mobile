@@ -32,5 +32,17 @@ public class SurveyDetails extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button bt_report = (Button) findViewById(R.id.bt_report);
+        bt_report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent = new Intent(SurveyDetails.this, Reports.class);
+                intent.putExtra("surveyId", surveyId);
+                intent.putExtra("surveyName", surveyName);
+                startActivity(intent);
+            }
+        });
     }
 }
