@@ -26,15 +26,21 @@
     </string>
 
     <string name="title_activity_question">Questions</string>
-    <string name="title_activity_boundary_selection">Choose your Boundary</string>
-    <string name="title_activity_reports">Report</string>
 
-    <string name="prompt_district">Select District</string>
-    <string name="prompt_block">Select Block</string>
-    <string name="prompt_cluster">Select Cluster</string>
+    <string name="title_activity_user_registration">UserRegistrationActivity</string>
+    <string name="prompt_enter_email">Enter Email address</string>
+    <string name="prompt_enter_password">Enter password</string>
+    <string name="prompt_verify_password">Re-enter password</string>
+    <string name="action_register">Register</string>
+
+    <string name="title_activity_boundary_selection">Choose your Boundary</string>
 
     <!-- survey activity strings -->
     <string name="new_response">New Response</string>
     <string name="generate_report">Generate Report</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>
