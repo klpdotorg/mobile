@@ -29,6 +29,7 @@ public class SurveyDetails extends AppCompatActivity {
                 Intent intent = new Intent(SurveyDetails.this, BoundarySelectionActivity.class);
                 intent.putExtra("surveyId", surveyId);
                 intent.putExtra("surveyName", surveyName);
+                intent.putExtra("next", "new_response");
                 startActivity(intent);
             }
         });

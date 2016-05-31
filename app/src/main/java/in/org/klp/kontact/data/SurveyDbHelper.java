@@ -21,7 +21,8 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
 
     static final String DATABASE_NAME = "kontact.db";
 
-    public SurveyDbHelper(Context context) {
+    public SurveyDbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
+                          int version) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
