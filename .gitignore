@@ -2,7 +2,7 @@
 .DS_Store
 
 # built application files
-*.ap_
+*.ap[_k]
 
 # files for the dex VM
 *.dex
@@ -25,6 +25,7 @@ build.xml
 ant.properties
 local.properties
 project.properties
+release.properties
 
 # Eclipse project files
 .classpath
