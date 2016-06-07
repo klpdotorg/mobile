@@ -1,11 +1,13 @@
 package in.org.klp.kontact;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -43,6 +45,18 @@ public class UserRegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_registration);
+
+        TextView loginLink = (TextView)findViewById(R.id.backtologin);
+
+        Linkify.addLinks(loginLink, Linkify.ALL);
+
+        loginLink.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserRegistrationActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //
