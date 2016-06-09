@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
                 JSONObject questionObject = questionArray.getJSONObject(i);
                 JSONObject schoolObject = questionObject.getJSONObject("school_type");
-                JSONArray questiongroupSetObject = questionObject.getJSONArray("questiongroup_set");
+                JSONArray questiongroupSetArray = questionObject.getJSONArray("questiongroup_set");
 
                 questionId = questionObject.getInt("id");
                 text = questionObject.getString("text");
@@ -220,6 +220,25 @@ public class MainActivity extends AppCompatActivity {
                     Log.v(LOG_TAG, "Questiongroup Insert Error: " + e.toString());
                 }
 
+                for (int j = 0; j < questiongroupSetArray.length(); j++) {
+                    Integer throughId;
+                    Integer questiongroupId;
+                    Integer sequence;
+
+                    Integer status;
+                    String source;
+
+                    JSONObject questiongroupObject = questiongroupSetArray.getJSONObject(j);
+
+                    throughId = questiongroupObject.getInt("through_id");
+                    questiongroupId = questiongroupObject.getInt("questiongroup");
+                    sequence = questiongroupObject.getInt("sequence");
+                    status = questiongroupObject.getInt("status");
+                    source = questiongroupObject.getString("source");
+
+
+
+                }
             }
         }
 
