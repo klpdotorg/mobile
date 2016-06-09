@@ -83,15 +83,7 @@ public class MainActivity extends AppCompatActivity {
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
         SurveyDbHelper dbHelper;
 
-        @Override
-        protected String[] doInBackground(Void... params) {
-
-
-            String[] data = {
-                    "http://dev.klp.org.in/api/v1/surveys/",
-                    "http://dev.klp.org.in/api/v1/questiongroups/?source=sms",
-                    "http://dev.klp.org.in/api/v1/questions/?source=sms",
-            };
+        private String processURL(String apiURL, String type) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -101,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             String surveyJsonStr = null;
 
             try {
-                final String SURVEY_BASE_URL = "http://dev.klp.org.in/api/v1/surveys/";
+                final String SURVEY_BASE_URL = apiURL;
 
                 Uri builtUri = Uri.parse(SURVEY_BASE_URL).buildUpon().build();
 
@@ -155,6 +147,21 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            return null;
+        }
+
+        @Override
+        protected String[] doInBackground(Void... params) {
+
+            // Populate surveys
+
+
+
+            String[] data = {
+                    "http://dev.klp.org.in/api/v1/surveys/",
+                    "http://dev.klp.org.in/api/v1/questiongroups/?source=sms",
+                    "http://dev.klp.org.in/api/v1/questions/?source=sms",
+            };
             return null;
         }
 
