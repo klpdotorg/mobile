@@ -191,35 +191,31 @@ public class MainActivity extends AppCompatActivity {
             dbHelper = new SurveyDbHelper(MainActivity.this);
 
             final String FEATURES = "features";
-            JSONObject questiongroupJson = new JSONObject(questionJsonStr);
-            JSONArray questiongroupArray = questiongroupJson.getJSONArray(FEATURES);
+            JSONObject questionJson = new JSONObject(questionJsonStr);
+            JSONArray questionArray = questionJson.getJSONArray(FEATURES);
 
-            for (int i = 0; i < questiongroupArray.length(); i++) {
+            for (int i = 0; i < questionArray.length(); i++) {
 
-                Integer groupId;
-                Integer status;
-                Integer start_date;
-                Integer end_date;
-                Integer version;
-                Integer surveyId;
-                String source;
+                Integer questionId;
+                String text;
+                String key;
+                String options;
+                String type;
+                String school_type;
 
-                // Get the JSON object representing the survey
-                JSONObject questiongroupObject = questiongroupArray.getJSONObject(i);
+                JSONObject questionObject = questionArray.getJSONObject(i);
+                JSONObject schoolObject = questionObject.getJSONObject("school_type");
+                JSONArray questiongroupSetObject = questionObject.getJSONArray("questiongroup_set");
 
-                // Get the JSON object representing the partner
-                JSONObject surveyObject = questiongroupObject.getJSONObject("survey");
-
-                groupId = questiongroupObject.getInt("id");
-                status = questiongroupObject.getInt("status");
-                start_date = questiongroupObject.getInt("start_date");
-                end_date = questiongroupObject.getInt("end_date");
-                version = questiongroupObject.getInt("version");
-                source = questiongroupObject.getString("source");
-                surveyId = surveyObject.getInt("id");
+                questionId = questionObject.getInt("id");
+                text = questionObject.getString("text");
+                key = questionObject.getString("key");
+                options = questionObject.getString("options");
+                type = questionObject.getString("question_type");
+                school_type = schoolObject.getString("name");
 
                 try {
-                    dbHelper.insert_questiongroup(groupId, status, start_date, end_date, version, source, surveyId);
+                    dbHelper.insert_question(questionId, text, key, options, type, school_type);
                 } catch (SQLiteException e) {
                     Log.v(LOG_TAG, "Questiongroup Insert Error: " + e.toString());
                 }
