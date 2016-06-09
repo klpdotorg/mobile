@@ -185,6 +185,49 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
         }
 
+
+        private void saveQuestionDataFromJson(String questionJsonStr)
+                throws JSONException {
+            dbHelper = new SurveyDbHelper(MainActivity.this);
+
+            final String FEATURES = "features";
+            JSONObject questiongroupJson = new JSONObject(questionJsonStr);
+            JSONArray questiongroupArray = questiongroupJson.getJSONArray(FEATURES);
+
+            for (int i = 0; i < questiongroupArray.length(); i++) {
+
+                Integer groupId;
+                Integer status;
+                Integer start_date;
+                Integer end_date;
+                Integer version;
+                Integer surveyId;
+                String source;
+
+                // Get the JSON object representing the survey
+                JSONObject questiongroupObject = questiongroupArray.getJSONObject(i);
+
+                // Get the JSON object representing the partner
+                JSONObject surveyObject = questiongroupObject.getJSONObject("survey");
+
+                groupId = questiongroupObject.getInt("id");
+                status = questiongroupObject.getInt("status");
+                start_date = questiongroupObject.getInt("start_date");
+                end_date = questiongroupObject.getInt("end_date");
+                version = questiongroupObject.getInt("version");
+                source = questiongroupObject.getString("source");
+                surveyId = surveyObject.getInt("id");
+
+                try {
+                    dbHelper.insert_questiongroup(groupId, status, start_date, end_date, version, source, surveyId);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Questiongroup Insert Error: " + e.toString());
+                }
+
+            }
+        }
+
+
         private void saveQuestiongroupDataFromJson(String questiongroupJsonStr)
                 throws JSONException {
             dbHelper = new SurveyDbHelper(MainActivity.this);
