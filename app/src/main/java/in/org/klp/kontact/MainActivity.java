@@ -236,7 +236,15 @@ public class MainActivity extends AppCompatActivity {
                     status = questiongroupObject.getInt("status");
                     source = questiongroupObject.getString("source");
 
-
+                    if (source == "sms") {
+                        if (status == 1) {
+                            try {
+                                dbHelper.insert_questiongroupquestion(throughId, questionId, questiongroupId, sequence);
+                            } catch (SQLiteException e) {
+                                Log.v(LOG_TAG, "QuestiongroupQuestion Insert Error: " + e.toString());
+                            }
+                        }
+                    }
 
                 }
             }
