@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String surveyJsonStr = null;
+            String JsonStr = null;
 
             try {
                 final String SURVEY_BASE_URL = apiURL;
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                surveyJsonStr = buffer.toString();
+                JsonStr = buffer.toString();
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -142,13 +142,13 @@ public class MainActivity extends AppCompatActivity {
             }
             try {
                 if (type == "survey") {
-                    saveSurveyDataFromJson(surveyJsonStr);
+                    saveSurveyDataFromJson(JsonStr);
                 }
                 else if (type == "questiongroup") {
-                    saveQuestiongroupDataFromJson(surveyJsonStr);
+                    saveQuestiongroupDataFromJson(JsonStr);
                 }
                 else {
-                    saveQuestionDataFromJson(surveyJsonStr);
+                    saveQuestionDataFromJson(JsonStr);
                 }
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
