@@ -141,7 +141,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             try {
-                saveSurveyDataFromJson(surveyJsonStr);
+                if (type == "survey") {
+                    saveSurveyDataFromJson(surveyJsonStr);
+                }
+                else if (type == "questiongroup") {
+                    saveQuestiongroupDataFromJson(surveyJsonStr);
+                }
+                else {
+                    saveQuestionDataFromJson(surveyJsonStr);
+                }
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
