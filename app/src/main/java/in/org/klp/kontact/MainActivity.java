@@ -86,6 +86,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String[] doInBackground(Void... params) {
 
+
+            String[] data = {
+                    "http://dev.klp.org.in/api/v1/surveys/",
+                    "http://dev.klp.org.in/api/v1/questiongroups/?source=sms",
+                    "http://dev.klp.org.in/api/v1/questions/?source=sms",
+            };
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
