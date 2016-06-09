@@ -141,10 +141,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             try {
-                if (type == "survey") {
+                if (type.equals("survey")) {
                     saveSurveyDataFromJson(JsonStr);
                 }
-                else if (type == "questiongroup") {
+                else if (type.equals("questiongroup")) {
                     saveQuestiongroupDataFromJson(JsonStr);
                 }
                 else {
@@ -236,8 +236,8 @@ public class MainActivity extends AppCompatActivity {
                     status = questiongroupObject.getInt("status");
                     source = questiongroupObject.getString("source");
 
-                    if (source == "sms") {
-                        if (status == 1) {
+                    if (source.equals("sms")) {
+                        if (status.equals(1)) {
                             try {
                                 dbHelper.insert_questiongroupquestion(throughId, questionId, questiongroupId, sequence);
                             } catch (SQLiteException e) {
