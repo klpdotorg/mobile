@@ -83,19 +83,17 @@ public class MainActivity extends AppCompatActivity {
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
         SurveyDbHelper dbHelper;
 
-        @Override
-        protected String[] doInBackground(Void... params) {
-
+        private String processURL(String apiURL, String type) {
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String surveyJsonStr = null;
+            String JsonStr = null;
 
             try {
-                final String SURVEY_BASE_URL = "http://dev.klp.org.in/api/v1/surveys/";
+                final String SURVEY_BASE_URL = apiURL;
 
                 Uri builtUri = Uri.parse(SURVEY_BASE_URL).buildUpon().build();
 
@@ -125,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                surveyJsonStr = buffer.toString();
+                JsonStr = buffer.toString();
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -143,13 +141,37 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             try {
-                saveSurveyDataFromJson(surveyJsonStr);
+                if (type.equals("survey")) {
+                    saveSurveyDataFromJson(JsonStr);
+                }
+                else if (type.equals("questiongroup")) {
+                    saveQuestiongroupDataFromJson(JsonStr);
+                }
+                else {
+                    saveQuestionDataFromJson(JsonStr);
+                }
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
 
             return null;
+        }
+
+        @Override
+        protected String[] doInBackground(Void... params) {
+
+            // Populate surveys
+            processURL("http://dev.klp.org.in/api/v1/surveys/", "survey");
+
+            // Populate questiongroups
+            processURL("http://dev.klp.org.in/api/v1/questiongroups/?source=sms", "questiongroup");
+
+            // Populate questions
+            processURL("http://dev.klp.org.in/api/v1/questions/?source=sms", "question");
+
+            return null;
+
         }
 
         @Override
@@ -161,6 +183,113 @@ public class MainActivity extends AppCompatActivity {
 //                }
 //            }
             super.onPostExecute(result);
+        }
+
+
+        private void saveQuestionDataFromJson(String questionJsonStr)
+                throws JSONException {
+            dbHelper = new SurveyDbHelper(MainActivity.this);
+
+            final String FEATURES = "features";
+            JSONObject questionJson = new JSONObject(questionJsonStr);
+            JSONArray questionArray = questionJson.getJSONArray(FEATURES);
+
+            for (int i = 0; i < questionArray.length(); i++) {
+
+                Integer questionId;
+                String text;
+                String key;
+                String options;
+                String type;
+                String school_type;
+
+                JSONObject questionObject = questionArray.getJSONObject(i);
+                JSONObject schoolObject = questionObject.getJSONObject("school_type");
+                JSONArray questiongroupSetArray = questionObject.getJSONArray("questiongroup_set");
+
+                questionId = questionObject.getInt("id");
+                text = questionObject.getString("text");
+                key = questionObject.getString("key");
+                options = questionObject.getString("options");
+                type = questionObject.getString("question_type");
+                school_type = schoolObject.getString("name");
+
+                try {
+                    dbHelper.insert_question(questionId, text, key, options, type, school_type);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Questiongroup Insert Error: " + e.toString());
+                }
+
+                for (int j = 0; j < questiongroupSetArray.length(); j++) {
+                    Integer throughId;
+                    Integer questiongroupId;
+                    Integer sequence;
+
+                    Integer status;
+                    String source;
+
+                    JSONObject questiongroupObject = questiongroupSetArray.getJSONObject(j);
+
+                    throughId = questiongroupObject.getInt("through_id");
+                    questiongroupId = questiongroupObject.getInt("questiongroup");
+                    sequence = questiongroupObject.getInt("sequence");
+                    status = questiongroupObject.getInt("status");
+                    source = questiongroupObject.getString("source");
+
+                    if (source.equals("sms")) {
+                        if (status.equals(1)) {
+                            try {
+                                dbHelper.insert_questiongroupquestion(throughId, questionId, questiongroupId, sequence);
+                            } catch (SQLiteException e) {
+                                Log.v(LOG_TAG, "QuestiongroupQuestion Insert Error: " + e.toString());
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+
+        private void saveQuestiongroupDataFromJson(String questiongroupJsonStr)
+                throws JSONException {
+            dbHelper = new SurveyDbHelper(MainActivity.this);
+
+            final String FEATURES = "features";
+            JSONObject questiongroupJson = new JSONObject(questiongroupJsonStr);
+            JSONArray questiongroupArray = questiongroupJson.getJSONArray(FEATURES);
+
+            for (int i = 0; i < questiongroupArray.length(); i++) {
+
+                Integer groupId;
+                Integer status;
+                Integer start_date;
+                Integer end_date;
+                Integer version;
+                Integer surveyId;
+                String source;
+
+                // Get the JSON object representing the survey
+                JSONObject questiongroupObject = questiongroupArray.getJSONObject(i);
+
+                // Get the JSON object representing the partner
+                JSONObject surveyObject = questiongroupObject.getJSONObject("survey");
+
+                groupId = questiongroupObject.getInt("id");
+                status = questiongroupObject.getInt("status");
+                start_date = questiongroupObject.getInt("start_date");
+                end_date = questiongroupObject.getInt("end_date");
+                version = questiongroupObject.getInt("version");
+                source = questiongroupObject.getString("source");
+                surveyId = surveyObject.getInt("id");
+
+                try {
+                    dbHelper.insert_questiongroup(groupId, status, start_date, end_date, version, source, surveyId);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Questiongroup Insert Error: " + e.toString());
+                }
+
+            }
         }
 
         private void saveSurveyDataFromJson(String surveyJsonStr)
