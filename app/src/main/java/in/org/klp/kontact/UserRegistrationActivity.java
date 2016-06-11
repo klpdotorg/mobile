@@ -63,7 +63,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
 //
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Button mEmailSignUpButton = (Button) findViewById(R.id.register_button);
+        Button mEmailSignUpButton = (Button) findViewById(R.id.email_sign_up_button);
         emailWidget = (AutoCompleteTextView)findViewById(R.id.user_email);
         passwordWidget = (TextView)findViewById(R.id.password);
         verifyPasswordWidget = (TextView)findViewById(R.id.verify_password);

@@ -10,19 +10,6 @@
               android:weightSum="1"
     android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"/>
-
-    </android.support.design.widget.AppBarLayout>
-
     <!-- Login progress -->
     <ProgressBar
         android:id="@+id/login_progress"
@@ -32,22 +19,60 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone"/>
 
+    <!-- Header bar -->
+        <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:divider="?android:dividerHorizontal"
+        android:showDividers="middle"
+        >
+
+        <ImageView android:layout_width="40dp"
+                   android:layout_height="40dp"
+                   android:background="@drawable/klp_banner_text"
+                   android:layout_marginLeft="10dp"
+                   android:layout_gravity="left|center_vertical"/>
+
+
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/action_sign_in_short"
+                  android:textColor="@color/colorBrandGreen"
+                  android:textSize="18sp"
+                  android:textStyle="bold"
+                  android:layout_gravity="center_vertical|right"
+                  android:textAlignment="textEnd"
+                  android:layout_marginRight="10dp"/>
+
+
+        </LinearLayout>
+
+    <!-- Add a divider. Probably better way of doing this is there. Check it out later -->
+    <View android:layout_width="fill_parent"
+          android:layout_height="5dp"
+          android:background="@color/colorBrandRed"/>
+
     <ImageView
-        android:layout_width="192dp"
-        android:layout_height="192dp"
+        android:layout_width="250dp"
+        android:layout_height="145dp"
         android:id="@+id/imageView"
         android:contentDescription="KLP logo"
-        android:src="@drawable/ic_klp_logo"
+        android:src="@drawable/banner_kontact"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="30dp"
-        android:layout_marginTop="30dp" />
+        />
 
 
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/login_form">
+        android:id="@+id/login_form"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_gravity="center">
 
             <LinearLayout
                 android:id="@+id/email_login_form"
@@ -59,17 +84,18 @@
                 <LinearLayout android:layout_width="fill_parent"
                           android:layout_height="fill_parent"
                           android:orientation="horizontal">
-                    <TextView
+                   <!-- <TextView
                         android:text="Username:"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_column="0"
                         android:layout_span="0"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"/> -->
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:minWidth="500px"
+
                        >
 
                         <AutoCompleteTextView
@@ -95,11 +121,11 @@
                 <LinearLayout android:layout_width="fill_parent"
                           android:layout_height="wrap_content"
                           android:orientation="horizontal">
-                    <TextView
+                    <!--<TextView
                         android:text="Password:"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"/> -->
 
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="321dp"
@@ -119,7 +145,8 @@
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textStyle="normal"
-                            android:typeface="serif"/>
+                            android:typeface="serif"
+                            android:drawableBottom="@color/colorBrandRed"/>
 
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
@@ -135,24 +162,30 @@
                     android:textStyle="bold"
                     android:layout_column="1"
                     android:layout_span="0"
-                    android:background="@android:color/holo_red_dark"
-                    android:textColor="@color/bright_foreground_material_dark"
+                    android:background="@color/colorBrandGreen"
+                    android:textColor="@color/colorWhite"
                     android:layout_gravity="center_horizontal"/>
 
                 <TextView
                     android:layout_width="165dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Haven&apos;t registered yet? "
+                    android:text="@string/prompt_register"
                     android:id="@+id/textView"
-                    android:layout_gravity="center"/>
+                    android:textColor="@color/colorGreyGravel"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:paddingBottom="10dp"/>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sign Up"
+                    android:text="@string/register"
+                    android:background="@color/colorBrandTurquoise"
                     android:id="@+id/email_sign_up_button"
-                    android:layout_gravity="center_horizontal"/>
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/colorWhite"/>
 
             </LinearLayout>
 

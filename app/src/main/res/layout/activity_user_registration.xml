@@ -195,13 +195,6 @@
 
     </ScrollView>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/action_register"
-        android:id="@+id/register_button"
-        android:layout_gravity="center_horizontal"
-        android:background="@android:color/holo_green_dark"/>
 
     <TextView
         android:layout_width="wrap_content"
