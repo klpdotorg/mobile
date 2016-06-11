@@ -15,8 +15,6 @@
     <!-- Strings related to login -->
     <string name="prompt_register">Not a user yet?</string>
     <string name="register">REGISTER</string>
-    <string name="prompt_email">Email/ಇಮೇಲ್ ವಿಳಾಸ</string>
-    <string name="prompt_password">Password/ ಗುಪ್ತಪದ</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">LOGIN</string>
     <string name="error_invalid_email">This email address is invalid</string>
