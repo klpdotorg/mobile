@@ -30,7 +30,7 @@
         android:showDividers="middle"
         >
 
-        <ImageView android:layout_width="40dp"
+        <ImageView android:layout_width="70dp"
                    android:layout_height="40dp"
                    android:background="@drawable/klp_banner_text"
                    android:layout_marginLeft="10dp"
