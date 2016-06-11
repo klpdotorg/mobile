@@ -17,7 +17,7 @@ public class SurveyContract {
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_OPTIONS = "options";
         public static final String COLUMN_KEY = "key";
-        public static final String COLUMN_SCHOOL_TYPE = "school_type_id";
+        public static final String COLUMN_SCHOOL_TYPE = "school_type";
     }
 
     public static final class QuestiongroupEntry implements BaseColumns {
