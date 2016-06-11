@@ -2,5 +2,31 @@
 <resources>
     <color name="colorPrimary">#3f43b5</color>
     <color name="colorPrimaryDark">#303f9f</color>
-    <color name="colorAccent">#FF4081</color>
+   <!-- <color name="colorAccent">#FF4081</color>-->
+    <color name="colorAccent">#cb0012</color>
+    <!-- KLP brand colors off dubdubdub -->
+    <color name="colorBrandGreen">#26b262</color>
+    <color name="colorBrandTurquoise">#24b2b6</color>
+    <color name="colorBrandOrange">#ec6608</color>
+    <color name="colorBrandBlue">#3891e3</color>
+    <color name="colorBrandRed">#cb0012</color>
+    <color name="colorBrandPurple">#7575bc</color>
+
+
+    <!-- Common colors
+    $black: #000;
+    $white: #fff;
+    $grey-mist: #f6f6f6;
+    $grey-cloud: #d8d8d8;
+    $grey-silver: #bbb;
+    $grey-steel: #898989;
+    $grey-gravel: #4d4d4d;-->
+    <color name="colorWhite">#fff</color>
+    <color name="colorBlack">#000</color>
+    <color name="colorGreyMist">#f6f6f6</color>
+    <color name="colorGreyCloud">#d8d8d8</color>
+    <color name="colorGreySilver">#bbb</color>
+    <color name="colorGreySteel">#898989</color>
+    <color name="colorGreyGravel">#4d4d4d</color>
+
 </resources>
