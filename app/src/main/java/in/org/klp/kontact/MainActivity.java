@@ -261,7 +261,35 @@ public class MainActivity extends AppCompatActivity {
 
         private String saveSchoolDataFromJson(String schoolJsonStr)
                 throws JSONException {
-            return "null";
+            dbHelper = new SurveyDbHelper(MainActivity.this);
+
+            final String FEATURES = "features";
+            JSONObject schoolJson = new JSONObject(schoolJsonStr);
+            String next = schoolJson.getString("next");
+            JSONArray schoolArray = schoolJson.getJSONArray(FEATURES);
+
+            for (int i = 0; i < schoolArray.length(); i++) {
+
+                Integer schoolId;
+                Integer boundaryId;
+                Integer diseCode;
+                String name;
+
+                JSONObject schoolObject = schoolArray.getJSONObject(i);
+                JSONObject boundaryObject = schoolObject.getJSONObject("boundary");
+
+                schoolId = schoolObject.getInt("id");
+                boundaryId = boundaryObject.getInt("id");
+                diseCode = schoolObject.getInt("dise_info");
+                name = schoolObject.getString("name");
+
+                try {
+                    dbHelper.insert_school(schoolId, boundaryId, diseCode, name);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "School Insert Error: " + e.toString());
+                }
+            }
+            return next;
         }
 
 
