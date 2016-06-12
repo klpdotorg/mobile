@@ -76,7 +76,6 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_SCHOOL_TABLE = "CREATE TABLE " + SchoolEntry.TABLE_NAME + " (" +
                 SchoolEntry._ID + " INTEGER PRIMARY KEY," +
                 SchoolEntry.COLUMN_BOUNDARY + " INTEGER, " +
-                SchoolEntry.COLUMN_DISE + " INTEGER, " +
                 SchoolEntry.COLUMN_NAME + " TEXT, " +
                 " FOREIGN KEY (" + SchoolEntry.COLUMN_BOUNDARY + ") REFERENCES " +
                 BoundaryEntry.TABLE_NAME + " (" + BoundaryEntry._ID + "));";
