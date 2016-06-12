@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         SurveyDbHelper dbHelper;
 
         private String processSchoolsUrl(String apiURL) {
+            int count = 0;
             while(!apiURL.equals("null")) {
                 HttpURLConnection urlConnection = null;
                 BufferedReader reader = null;
@@ -145,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
                     Log.e(LOG_TAG, e.getMessage(), e);
                     e.printStackTrace();
                 }
+                count++;
+                Log.v(LOG_TAG, "Page count is: " + Integer.toString(count));
             }
 
             return null;
