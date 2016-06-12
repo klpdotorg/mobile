@@ -193,4 +193,24 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + QuestiongroupQuestionEntry.TABLE_NAME, null);
         return cursor;
     }
+
+    // School table helper functions
+    public void insert_school(int id, int bounday_id, int dise_code, String name) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SchoolEntry._ID, id);
+        contentValues.put(SchoolEntry.COLUMN_BOUNDARY, bounday_id);
+        contentValues.put(SchoolEntry.COLUMN_DISE, dise_code);
+        contentValues.put(SchoolEntry.COLUMN_NAME, name);
+        this.getWritableDatabase().insertOrThrow(SchoolEntry.TABLE_NAME,"",contentValues);
+    }
+
+    public void delete_school(int id) {
+        this.getWritableDatabase().delete(SchoolEntry.TABLE_NAME, SchoolEntry._ID + "=" + id, null);
+    }
+
+    public Cursor list_schools() {
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SchoolEntry.TABLE_NAME, null);
+        return cursor;
+    }
+
 }
