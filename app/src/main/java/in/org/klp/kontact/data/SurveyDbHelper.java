@@ -195,11 +195,10 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
     }
 
     // School table helper functions
-    public void insert_school(int id, int bounday_id, int dise_code, String name) {
+    public void insert_school(int id, int bounday_id, String name) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SchoolEntry._ID, id);
         contentValues.put(SchoolEntry.COLUMN_BOUNDARY, bounday_id);
-        contentValues.put(SchoolEntry.COLUMN_DISE, dise_code);
         contentValues.put(SchoolEntry.COLUMN_NAME, name);
         this.getWritableDatabase().insertOrThrow(SchoolEntry.TABLE_NAME,"",contentValues);
     }

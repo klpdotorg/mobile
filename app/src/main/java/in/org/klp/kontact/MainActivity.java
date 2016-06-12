@@ -275,7 +275,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Integer schoolId;
                 Integer boundaryId;
-                Integer diseCode;
                 String name;
 
                 JSONObject schoolObject = schoolArray.getJSONObject(i);
@@ -283,11 +282,10 @@ public class MainActivity extends AppCompatActivity {
 
                 schoolId = schoolObject.getInt("id");
                 boundaryId = boundaryObject.getInt("id");
-                diseCode = schoolObject.getInt("dise_info");
                 name = schoolObject.getString("name");
 
                 try {
-                    dbHelper.insert_school(schoolId, boundaryId, diseCode, name);
+                    dbHelper.insert_school(schoolId, boundaryId, name);
                 } catch (SQLiteException e) {
                     Log.v(LOG_TAG, "School Insert Error: " + e.toString());
                 }
