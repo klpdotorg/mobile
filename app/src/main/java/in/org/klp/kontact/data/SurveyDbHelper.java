@@ -140,8 +140,16 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         this.getWritableDatabase().delete(QuestionEntry.TABLE_NAME, QuestionEntry._ID + "=" + id, null);
     }
 
-    public Cursor list_questions() {
-        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + QuestionEntry.TABLE_NAME, null);
+    public Cursor list_questions(String questiongroup_id) {
+        Cursor cursor = this.getReadableDatabase().rawQuery(
+                "SELECT * FROM " + QuestionEntry.TABLE_NAME + " q " +
+                        " LEFT JOIN " + QuestiongroupQuestionEntry.TABLE_NAME + " qgq " +
+                        " ON qgq."+ QuestiongroupQuestionEntry.COLUMN_QUESTION + "=q.id " +
+                        " WHERE qgq." + QuestiongroupQuestionEntry.COLUMN_QUESTIONGROUP + "=" +
+                        questiongroup_id
+                ,
+                null
+        );
         return cursor;
     }
 
