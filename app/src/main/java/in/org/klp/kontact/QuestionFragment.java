@@ -71,14 +71,6 @@ public class QuestionFragment extends Fragment {
         @Override
         protected String[] doInBackground(Void... params) {
 
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String surveyJsonStr = null;
-
             dbHelper = new SurveyDbHelper(getActivity());
 
             Intent intent = getActivity().getIntent();
