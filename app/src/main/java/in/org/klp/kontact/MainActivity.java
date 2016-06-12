@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                     parentId = parentObject.getInt("id");
                 }
                 else {
-                    parentId = null;
+                    parentId = -1;
                 }
 
                 boundaryId = boundaryObject.getInt("id");

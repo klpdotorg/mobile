@@ -216,7 +216,12 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
     public void insert_boundary(int id, int parent_id, String name, String hierarchy, String type) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(BoundaryEntry._ID, id);
-        contentValues.put(BoundaryEntry.COLUMN_PARENT, parent_id);
+        if (parent_id == -1){
+            contentValues.putNull(BoundaryEntry.COLUMN_PARENT);
+        }
+        else {
+            contentValues.put(BoundaryEntry.COLUMN_PARENT, parent_id);
+        }
         contentValues.put(BoundaryEntry.COLUMN_NAME, name);
         contentValues.put(BoundaryEntry.COLUMN_HIERARCHY, hierarchy);
         contentValues.put(BoundaryEntry.COLUMN_TYPE, type);
