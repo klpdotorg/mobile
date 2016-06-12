@@ -73,11 +73,21 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                 " FOREIGN KEY (" + BoundaryEntry.COLUMN_PARENT + ") REFERENCES " +
                 BoundaryEntry.TABLE_NAME + " (" + BoundaryEntry._ID + "));";
 
+        final String SQL_CREATE_SCHOOL_TABLE = "CREATE TABLE " + SchoolEntry.TABLE_NAME + " (" +
+                SchoolEntry._ID + " INTEGER PRIMARY KEY," +
+                SchoolEntry.COLUMN_BOUNDARY + " INTEGER, " +
+                SchoolEntry.COLUMN_DISE + " INTEGER, " +
+                SchoolEntry.COLUMN_NAME + " TEXT, " +
+                " FOREIGN KEY (" + SchoolEntry.COLUMN_BOUNDARY + ") REFERENCES " +
+                BoundaryEntry.TABLE_NAME + " (" + BoundaryEntry._ID + "));";
+
+
         sqLiteDatabase.execSQL(SQL_CREATE_SURVEY_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_QUESTION_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_QUESTIONGROUP_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_QUESTIONGROUPQUESTION_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_BOUNDARY_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_SCHOOL_TABLE);
     }
 
     @Override
