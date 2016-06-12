@@ -144,7 +144,7 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
         Cursor cursor = this.getReadableDatabase().rawQuery(
                 "SELECT * FROM " + QuestionEntry.TABLE_NAME + " q " +
                         " LEFT JOIN " + QuestiongroupQuestionEntry.TABLE_NAME + " qgq " +
-                        " ON qgq."+ QuestiongroupQuestionEntry.COLUMN_QUESTION + "=q.id " +
+                        " ON qgq."+ QuestiongroupQuestionEntry.COLUMN_QUESTION + "=q._id " +
                         " WHERE qgq." + QuestiongroupQuestionEntry.COLUMN_QUESTIONGROUP + "=" +
                         questiongroup_id
                 ,
