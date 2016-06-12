@@ -14,6 +14,7 @@ import in.org.klp.kontact.data.SurveyContract.QuestiongroupEntry;
 import in.org.klp.kontact.data.SurveyContract.QuestiongroupQuestionEntry;
 
 import in.org.klp.kontact.data.SchoolContract.SchoolEntry;
+import in.org.klp.kontact.data.SchoolContract.BoundaryEntry;
 
 
 public class SurveyDbHelper extends SQLiteOpenHelper {
@@ -63,10 +64,20 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
                 " FOREIGN KEY (" + QuestiongroupQuestionEntry.COLUMN_QUESTIONGROUP + ") REFERENCES " +
                 QuestiongroupEntry.TABLE_NAME + " (" + QuestiongroupEntry._ID + "));";
 
+        final String SQL_CREATE_BOUNDARY_TABLE = "CREATE TABLE " + BoundaryEntry.TABLE_NAME + " (" +
+                BoundaryEntry._ID + " INTEGER PRIMARY KEY," +
+                BoundaryEntry.COLUMN_PARENT + " INTEGER, " +
+                BoundaryEntry.COLUMN_NAME + " TEXT, " +
+                BoundaryEntry.COLUMN_HIERARCHY + " TEXT, " +
+                BoundaryEntry.COLUMN_TYPE + " TEXT, " +
+                " FOREIGN KEY (" + BoundaryEntry.COLUMN_PARENT + ") REFERENCES " +
+                BoundaryEntry.TABLE_NAME + " (" + BoundaryEntry._ID + "));";
+
         sqLiteDatabase.execSQL(SQL_CREATE_SURVEY_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_QUESTION_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_QUESTIONGROUP_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_QUESTIONGROUPQUESTION_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_BOUNDARY_TABLE);
     }
 
     @Override
