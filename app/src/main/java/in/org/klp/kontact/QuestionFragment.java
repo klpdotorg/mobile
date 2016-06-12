@@ -76,24 +76,26 @@ public class QuestionFragment extends Fragment {
             Intent intent = getActivity().getIntent();
             surveyId = intent.getStringExtra("surveyId");
 
-            Cursor cursor = dbHelper.list_questiongroups(surveyId);
-            if (cursor.getCount() >= 1) {
+            Cursor qg_cursor = dbHelper.list_questiongroups(surveyId);
+            if (qg_cursor.getCount() >= 1) {
+
+                String questionText;
                 String questiongroupId;
-                String version;
-                String source;
-                String questiongroupString;
+
+                qg_cursor.moveToNext();
+                questiongroupId = qg_cursor.getString(0);
+                qg_cursor.close();
+
+                Cursor question_cursor = dbHelper.list_questions(questiongroupId);
 
                 int count = 0;
-                String[] resultStrs = new String[cursor.getCount()];
-                while(cursor.moveToNext()) {
-                    questiongroupId = cursor.getString(0);
-                    version = cursor.getString(4);
-                    source = cursor.getString(5);
+                String[] resultStrs = new String[question_cursor.getCount()];
+                while(question_cursor.moveToNext()) {
+                    questionText = question_cursor.getString(1);
 
-                    questiongroupString = questiongroupId + ": Version no." + version + " by " + source;
-                    resultStrs[count] = questiongroupString;
+                    resultStrs[count] = questionText;
                     count++;
-                    Log.v(LOG_TAG, "Survey: " + questiongroupString);
+                    Log.v(LOG_TAG, "Survey: " + questionText);
                 }
 
                 return resultStrs;
