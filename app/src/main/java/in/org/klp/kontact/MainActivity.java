@@ -162,13 +162,16 @@ public class MainActivity extends AppCompatActivity {
         protected String[] doInBackground(Void... params) {
 
             // Populate surveys
-            processURL("http://dev.klp.org.in/api/v1/surveys/", "survey");
+            processURL("https://dev.klp.org.in/api/v1/surveys/", "survey");
 
             // Populate questiongroups
-            processURL("http://dev.klp.org.in/api/v1/questiongroups/?source=sms", "questiongroup");
+            processURL("https://dev.klp.org.in/api/v1/questiongroups/?source=sms", "questiongroup");
 
             // Populate questions
-            processURL("http://dev.klp.org.in/api/v1/questions/?source=sms", "question");
+            processURL("https://dev.klp.org.in/api/v1/questions/?source=sms", "question");
+
+            // Populate schools
+            processURL("https://dev.klp.org.in/api/v1/schools/list/", "school");
 
             return null;
 
