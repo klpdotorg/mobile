@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,11 +81,43 @@ public class QuestionFragment extends Fragment {
 
             dbHelper = new SurveyDbHelper(getActivity());
 
-            Cursor cursor = dbHelper.list_surveys();
+            Intent intent = getActivity().getIntent();
+            surveyId = intent.getStringExtra("surveyId");
+
+            Cursor cursor = dbHelper.list_questiongroups(surveyId);
             if (cursor.getCount() >= 1) {
-                String surveyId;
+                String questiongroupId;
+                String version;
+                String source;
+                String questiongroupString;
+
+                int count = 0;
+                String[] resultStrs = new String[cursor.getCount()];
+                while(cursor.moveToNext()) {
+                    questiongroupId = cursor.getString(0);
+                    version = cursor.getString(4);
+                    source = cursor.getString(5);
+
+                    questiongroupString = questiongroupId + ": Version no." + version + " by " + source;
+                    resultStrs[count] = questiongroupString;
+                    count++;
+                    Log.v(LOG_TAG, "Survey: " + questiongroupString);
+                }
+
+                return resultStrs;
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                mQuestionsAdapter.clear();
+                for (String surveyStr : result) {
+                    mQuestionsAdapter.add(surveyStr);
+                }
+            }
+            super.onPostExecute(result);
         }
     }
 }
