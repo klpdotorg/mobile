@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
         SurveyDbHelper dbHelper;
 
-        private String processSchoolsUrl(String apiURL) {
+        private String processPaginatedURL(String apiURL, String type) {
             int count = 0;
             while(!apiURL.equals("null")) {
                 HttpURLConnection urlConnection = null;
@@ -141,7 +141,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 try {
-                    apiURL = saveSchoolDataFromJson(JsonStr);
+                    if (type.equals("school")) {
+                        apiURL = saveSchoolDataFromJson(JsonStr);
+                    }
+                    else {
+                        apiURL = saveBoundaryDataFromJson(JsonStr);
+                    }
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
                     e.printStackTrace();
@@ -155,8 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
         private String processURL(String apiURL, String type) {
 
-            if (type.equals("school")) {
-                return processSchoolsUrl(apiURL);
+            if (type.equals("school") || type.equals("boundary")) {
+                return processPaginatedURL(apiURL, type);
             }
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -247,6 +252,11 @@ public class MainActivity extends AppCompatActivity {
             // Populate schools
             processURL("https://dev.klp.org.in/api/v1/schools/list/", "school");
 
+            // Populate boundaries
+            processURL("https://dev.klp.org.in/api/v1/boundary/admin3s", "boundary");
+            processURL("https://dev.klp.org.in/api/v1/boundary/admin2s", "boundary");
+            processURL("https://dev.klp.org.in/api/v1/boundary/admin1s", "boundary");
+
             return null;
 
         }
@@ -261,6 +271,47 @@ public class MainActivity extends AppCompatActivity {
 //            }
             super.onPostExecute(result);
         }
+
+        private String saveBoundaryDataFromJson(String boundaryJsonStr)
+                throws JSONException {
+            dbHelper = new SurveyDbHelper(MainActivity.this);
+
+            final String FEATURES = "features";
+            JSONObject boundaryJson = new JSONObject(boundaryJsonStr);
+            String next = boundaryJson.getString("next");
+            JSONArray boundaryArray = boundaryJson.getJSONArray(FEATURES);
+
+            for (int i = 0; i < boundaryArray.length(); i++) {
+
+                Integer boundaryId;
+                Integer parentId;
+                String name;
+                String hierarchy;
+                String school_type;
+
+                JSONObject boundaryObject = boundaryArray.getJSONObject(i);
+                if (boundaryObject.has("parent")) {
+                    JSONObject parentObject = boundaryObject.getJSONObject("parent");
+                    parentId = parentObject.getInt("id");
+                }
+                else {
+                    parentId = null;
+                }
+
+                boundaryId = boundaryObject.getInt("id");
+                name = boundaryObject.getString("name");
+                hierarchy = boundaryObject.getString("type");
+                school_type = boundaryObject.getString("school_type");
+
+                try {
+                    dbHelper.insert_boundary(boundaryId, parentId, name, hierarchy, school_type);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Boundary Insert Error: " + e.toString());
+                }
+            }
+            return next;
+        }
+
 
         private String saveSchoolDataFromJson(String schoolJsonStr)
                 throws JSONException {
