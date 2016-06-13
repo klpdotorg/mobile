@@ -45,6 +45,31 @@
                 android:id="@+id/select_cluster_report"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></Spinner>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/report_start_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/prompt_start_date"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="none"/>
+                <EditText
+                    android:id="@+id/report_end_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/prompt_end_date"
+                    android:cursorVisible="false"
+                    android:focusableInTouchMode="false"
+                    android:inputType="date"
+                    android:clickable="false"/>
+            </LinearLayout>
             <Button
                 android:id="@+id/bt_display_report"
                 android:layout_width="match_parent"

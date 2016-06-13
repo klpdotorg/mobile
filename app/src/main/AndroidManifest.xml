@@ -69,6 +69,12 @@
         <activity
             android:name=".SurveyDetails"
             android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".Reports"
+        android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".display_reports"
+            android:screenOrientation="portrait">
         </activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data

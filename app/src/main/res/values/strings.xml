@@ -39,6 +39,12 @@
     <string name="new_response">New Response</string>
     <string name="generate_report">Generate Report</string>
 
+    <string name="prompt_district">Select District</string>
+    <string name="prompt_block">Select Block</string>
+    <string name="prompt_cluster">Select Cluster</string>
+    <string name="prompt_start_date">Start Date</string>
+    <string name="prompt_end_date">End Date</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
