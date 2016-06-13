@@ -102,7 +102,7 @@
                             android:id="@+id/email"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/prompt_email"
+                            android:hint="@string/prompt_enter_email"
                             android:inputType="textEmailAddress"
                             android:maxLines="1"
                             android:layout_weight="10"
@@ -112,7 +112,7 @@
                             android:editable="true"
                             android:textStyle="normal"
                             android:typeface="sans"
-                            />
+                            android:textAlignment="textStart"/>
 
                      </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
@@ -137,7 +137,7 @@
                             android:id="@+id/password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/prompt_password"
+                            android:hint="@string/prompt_enter_password"
                             android:imeActionId="@+id/login"
                             android:imeActionLabel="@string/action_sign_in_short"
                             android:imeOptions="actionUnspecified"
@@ -146,7 +146,8 @@
                             android:singleLine="true"
                             android:textStyle="normal"
                             android:typeface="serif"
-                            android:drawableBottom="@color/colorBrandRed"/>
+                            android:drawableBottom="@color/colorBrandRed"
+                            android:textAlignment="textStart"/>
 
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
