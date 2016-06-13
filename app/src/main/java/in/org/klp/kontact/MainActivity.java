@@ -83,19 +83,96 @@ public class MainActivity extends AppCompatActivity {
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
         SurveyDbHelper dbHelper;
 
-        @Override
-        protected String[] doInBackground(Void... params) {
+        private String processPaginatedURL(String apiURL, String type) {
+            int count = 0;
+            while(!apiURL.equals("null")) {
+                HttpURLConnection urlConnection = null;
+                BufferedReader reader = null;
 
+                // Will contain the raw JSON response as a string.
+                String JsonStr = null;
+
+                try {
+                    final String SURVEY_BASE_URL = apiURL;
+
+                    Uri builtUri = Uri.parse(SURVEY_BASE_URL).buildUpon().build();
+
+                    URL url = new URL(builtUri.toString());
+
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+
+                    // Read the input stream into a String
+                    InputStream inputStream = urlConnection.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    if (inputStream == null) {
+                        return null;
+                    }
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                        // But it does make debugging a *lot* easier if you print out the completed
+                        // buffer for debugging.
+                        buffer.append(line + "\n");
+                    }
+
+                    if (buffer.length() == 0) {
+                        // Stream was empty.  No point in parsing.
+                        return null;
+                    }
+                    JsonStr = buffer.toString();
+
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Error ", e);
+                    return null;
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (final IOException e) {
+                            Log.e(LOG_TAG, "Error closing stream", e);
+                        }
+                    }
+                }
+                try {
+                    if (type.equals("school")) {
+                        apiURL = saveSchoolDataFromJson(JsonStr);
+                    }
+                    else {
+                        apiURL = saveBoundaryDataFromJson(JsonStr);
+                    }
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
+                }
+                count++;
+                Log.v(LOG_TAG, "Page count is: " + Integer.toString(count));
+            }
+
+            return null;
+        }
+
+        private String processURL(String apiURL, String type) {
+
+            if (type.equals("school") || type.equals("boundary")) {
+                return processPaginatedURL(apiURL, type);
+            }
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String surveyJsonStr = null;
+            String JsonStr = null;
 
             try {
-                final String SURVEY_BASE_URL = "http://dev.klp.org.in/api/v1/surveys/";
+                final String SURVEY_BASE_URL = apiURL;
 
                 Uri builtUri = Uri.parse(SURVEY_BASE_URL).buildUpon().build();
 
@@ -125,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                surveyJsonStr = buffer.toString();
+                JsonStr = buffer.toString();
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -143,13 +220,45 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             try {
-                saveSurveyDataFromJson(surveyJsonStr);
+                if (type.equals("survey")) {
+                    saveSurveyDataFromJson(JsonStr);
+                }
+                else if (type.equals("questiongroup")) {
+                    saveQuestiongroupDataFromJson(JsonStr);
+                }
+                else {
+                    saveQuestionDataFromJson(JsonStr);
+                }
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
 
             return null;
+        }
+
+        @Override
+        protected String[] doInBackground(Void... params) {
+
+            // Populate surveys
+            processURL("https://dev.klp.org.in/api/v1/surveys/", "survey");
+
+            // Populate questiongroups
+            processURL("https://dev.klp.org.in/api/v1/questiongroups/?source=sms", "questiongroup");
+
+            // Populate questions
+            processURL("https://dev.klp.org.in/api/v1/questions/?source=sms", "question");
+
+            // Populate schools
+            processURL("https://dev.klp.org.in/api/v1/schools/list/", "school");
+
+            // Populate boundaries
+            processURL("https://dev.klp.org.in/api/v1/boundary/admin3s", "boundary");
+            processURL("https://dev.klp.org.in/api/v1/boundary/admin2s", "boundary");
+            processURL("https://dev.klp.org.in/api/v1/boundary/admin1s", "boundary");
+
+            return null;
+
         }
 
         @Override
@@ -161,6 +270,185 @@ public class MainActivity extends AppCompatActivity {
 //                }
 //            }
             super.onPostExecute(result);
+        }
+
+        private String saveBoundaryDataFromJson(String boundaryJsonStr)
+                throws JSONException {
+            dbHelper = new SurveyDbHelper(MainActivity.this);
+
+            final String FEATURES = "features";
+            JSONObject boundaryJson = new JSONObject(boundaryJsonStr);
+            String next = boundaryJson.getString("next");
+            JSONArray boundaryArray = boundaryJson.getJSONArray(FEATURES);
+
+            for (int i = 0; i < boundaryArray.length(); i++) {
+
+                Integer boundaryId;
+                Integer parentId;
+                String name;
+                String hierarchy;
+                String school_type;
+
+                JSONObject boundaryObject = boundaryArray.getJSONObject(i);
+                if (boundaryObject.has("parent")) {
+                    JSONObject parentObject = boundaryObject.getJSONObject("parent");
+                    parentId = parentObject.getInt("id");
+                }
+                else {
+                    parentId = -1;
+                }
+
+                boundaryId = boundaryObject.getInt("id");
+                name = boundaryObject.getString("name");
+                hierarchy = boundaryObject.getString("type");
+                school_type = boundaryObject.getString("school_type");
+
+                try {
+                    dbHelper.insert_boundary(boundaryId, parentId, name, hierarchy, school_type);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Boundary Insert Error: " + e.toString());
+                }
+            }
+            return next;
+        }
+
+
+        private String saveSchoolDataFromJson(String schoolJsonStr)
+                throws JSONException {
+            dbHelper = new SurveyDbHelper(MainActivity.this);
+
+            final String FEATURES = "features";
+            JSONObject schoolJson = new JSONObject(schoolJsonStr);
+            String next = schoolJson.getString("next");
+            JSONArray schoolArray = schoolJson.getJSONArray(FEATURES);
+
+            for (int i = 0; i < schoolArray.length(); i++) {
+
+                Integer schoolId;
+                Integer boundaryId;
+                String name;
+
+                JSONObject schoolObject = schoolArray.getJSONObject(i);
+                JSONObject boundaryObject = schoolObject.getJSONObject("boundary");
+
+                schoolId = schoolObject.getInt("id");
+                boundaryId = boundaryObject.getInt("id");
+                name = schoolObject.getString("name");
+
+                try {
+                    dbHelper.insert_school(schoolId, boundaryId, name);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "School Insert Error: " + e.toString());
+                }
+            }
+            return next;
+        }
+
+
+        private void saveQuestionDataFromJson(String questionJsonStr)
+                throws JSONException {
+            dbHelper = new SurveyDbHelper(MainActivity.this);
+
+            final String FEATURES = "features";
+            JSONObject questionJson = new JSONObject(questionJsonStr);
+            JSONArray questionArray = questionJson.getJSONArray(FEATURES);
+
+            for (int i = 0; i < questionArray.length(); i++) {
+
+                Integer questionId;
+                String text;
+                String key;
+                String options;
+                String type;
+                String school_type;
+
+                JSONObject questionObject = questionArray.getJSONObject(i);
+                JSONObject schoolObject = questionObject.getJSONObject("school_type");
+                JSONArray questiongroupSetArray = questionObject.getJSONArray("questiongroup_set");
+
+                questionId = questionObject.getInt("id");
+                text = questionObject.getString("text");
+                key = questionObject.getString("key");
+                options = questionObject.getString("options");
+                type = questionObject.getString("question_type");
+                school_type = schoolObject.getString("name");
+
+                try {
+                    dbHelper.insert_question(questionId, text, key, options, type, school_type);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Questiongroup Insert Error: " + e.toString());
+                }
+
+                for (int j = 0; j < questiongroupSetArray.length(); j++) {
+                    Integer throughId;
+                    Integer questiongroupId;
+                    Integer sequence;
+
+                    Integer status;
+                    String source;
+
+                    JSONObject questiongroupObject = questiongroupSetArray.getJSONObject(j);
+
+                    throughId = questiongroupObject.getInt("through_id");
+                    questiongroupId = questiongroupObject.getInt("questiongroup");
+                    sequence = questiongroupObject.getInt("sequence");
+                    status = questiongroupObject.getInt("status");
+                    source = questiongroupObject.getString("source");
+
+                    if (source.equals("sms")) {
+                        if (status.equals(1)) {
+                            try {
+                                dbHelper.insert_questiongroupquestion(throughId, questionId, questiongroupId, sequence);
+                            } catch (SQLiteException e) {
+                                Log.v(LOG_TAG, "QuestiongroupQuestion Insert Error: " + e.toString());
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+
+        private void saveQuestiongroupDataFromJson(String questiongroupJsonStr)
+                throws JSONException {
+            dbHelper = new SurveyDbHelper(MainActivity.this);
+
+            final String FEATURES = "features";
+            JSONObject questiongroupJson = new JSONObject(questiongroupJsonStr);
+            JSONArray questiongroupArray = questiongroupJson.getJSONArray(FEATURES);
+
+            for (int i = 0; i < questiongroupArray.length(); i++) {
+
+                Integer groupId;
+                Integer status;
+                Integer start_date;
+                Integer end_date;
+                Integer version;
+                Integer surveyId;
+                String source;
+
+                // Get the JSON object representing the survey
+                JSONObject questiongroupObject = questiongroupArray.getJSONObject(i);
+
+                // Get the JSON object representing the partner
+                JSONObject surveyObject = questiongroupObject.getJSONObject("survey");
+
+                groupId = questiongroupObject.getInt("id");
+                status = questiongroupObject.getInt("status");
+                start_date = questiongroupObject.getInt("start_date");
+                end_date = questiongroupObject.getInt("end_date");
+                version = questiongroupObject.getInt("version");
+                source = questiongroupObject.getString("source");
+                surveyId = surveyObject.getInt("id");
+
+                try {
+                    dbHelper.insert_questiongroup(groupId, status, start_date, end_date, version, source, surveyId);
+                } catch (SQLiteException e) {
+                    Log.v(LOG_TAG, "Questiongroup Insert Error: " + e.toString());
+                }
+
+            }
         }
 
         private void saveSurveyDataFromJson(String surveyJsonStr)
