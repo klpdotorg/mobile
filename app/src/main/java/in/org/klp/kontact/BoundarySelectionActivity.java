@@ -29,6 +29,10 @@ public class BoundarySelectionActivity extends AppCompatActivity {
                 Intent intent = new Intent(BoundarySelectionActivity.this, QuestionActivity.class);
                 intent.putExtra("surveyId", surveyId);
                 intent.putExtra("surveyName", surveyName);
+
+                // after filtering by location and finding schools, put the school KLP id here
+                intent.putExtra("schoolId", 33313);
+
                 startActivity(intent);
             }
         });
