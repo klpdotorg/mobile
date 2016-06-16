@@ -25,6 +25,7 @@ build.xml
 ant.properties
 local.properties
 project.properties
+release.properties
 
 # Eclipse project files
 .classpath
@@ -40,3 +41,7 @@ project.properties
 ##Gradle-based build
 .gradle
 build/
+
+# Publishing API settings
+app/*.json
+app/*.apk
