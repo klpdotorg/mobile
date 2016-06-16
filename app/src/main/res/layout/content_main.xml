@@ -21,13 +21,20 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bring on the Surveys!"
+            android:text="Go to the Surveys"
             android:id="@+id/survey_button" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Get data from server"
             android:id="@+id/sync_button" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:id="@+id/btnLogout"
+            android:onClick="logoutUser" />
     </LinearLayout>
 
 </RelativeLayout>

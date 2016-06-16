@@ -79,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
         // new DownloadTask(getApplicationContext()).execute(0);
     }
 
+    public void logoutUser(View view) {
+        mSession.logoutUser();
+    }
+
     private void updateSurvey() {
         FetchSurveyTask surveyTask = new FetchSurveyTask();
         surveyTask.execute();
