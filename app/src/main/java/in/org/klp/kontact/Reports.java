@@ -2,6 +2,7 @@ package in.org.klp.kontact;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,12 +18,15 @@ import android.widget.Spinner;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import in.org.klp.kontact.data.SurveyDbHelper;
 
 public class Reports extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    test_db db = new test_db(this);
     String district, block, cluster = null, ret_str=null;
     int cyear,cdate,cmonth,chour,cminute;
     EditText editText;
@@ -33,6 +37,8 @@ public class Reports extends AppCompatActivity implements AdapterView.OnItemSele
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
 
+        final String surveyId = getIntent().getStringExtra("surveyId");
+
         Button bt=(Button) findViewById(R.id.bt_display_report);
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,6 +46,7 @@ public class Reports extends AppCompatActivity implements AdapterView.OnItemSele
             {
                 Intent myIntent = new Intent(Reports.this, display_reports.class);
                 myIntent.putExtra("boundary",district+", "+block+", "+cluster);
+                myIntent.putExtra("surveyId", surveyId);
                 startActivity(myIntent);
             }
         });
@@ -67,18 +74,7 @@ public class Reports extends AppCompatActivity implements AdapterView.OnItemSele
         });
 
 
-
-        /*
-        db.add_school(new School(1, "School1", 1237));
-        db.add_school(new School(2, "School2", 1237));
-        db.add_school(new School(3, "School3", 1238));
-        db.add_school(new School(4, "School4", 1238));
-        db.add_school(new School(5, "School5", 1239));
-        db.add_school(new School(6, "School6", 1239));
-        db.add_school(new School(7, "School7", 8773));
-        db.add_school(new School(8, "School8", 8773));*/
-
-        fill_dropdown(R.id.select_district_report, 1);
+        fill_dropdown(R.id.select_district_report, -1);
 
     }
 
@@ -126,19 +122,47 @@ public class Reports extends AppCompatActivity implements AdapterView.OnItemSele
     }
 
     private void fill_dropdown(int id, int parent){
+        List<StringWithTags> stringWithTags = get_boundary_data(parent);
         Spinner spinner=(Spinner) findViewById(id);
         spinner.setOnItemSelectedListener(this);
-        ArrayAdapter<StringWithTags> boundaryArrayAdapter=new ArrayAdapter<StringWithTags>(this, android.R.layout.simple_spinner_item, db.get_all_boundaries(parent));
+        ArrayAdapter<StringWithTags> boundaryArrayAdapter=new ArrayAdapter<StringWithTags>(this, android.R.layout.simple_spinner_item, stringWithTags);
         spinner.setAdapter(boundaryArrayAdapter);
         boundaryArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
 
+    private List<StringWithTags> get_boundary_data(int parent) {
+        SurveyDbHelper dbHelper = new SurveyDbHelper(this);
+        Cursor cursor = dbHelper.list_child_boundaries(parent);
+        List<StringWithTags> boundaryList = new ArrayList<StringWithTags>();
+        if (cursor.moveToFirst()) {
+            do {
+                StringWithTags school = new StringWithTags(cursor.getString(2), Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)));
+                boundaryList.add(school);
+            } while (cursor.moveToNext());
+        }
+        return  boundaryList;
+    }
+
+    private List<StringWithTags> get_school_data(int boundary){
+        SurveyDbHelper dbHelper = new SurveyDbHelper(this);
+        Cursor cursor = dbHelper.list_schools_for_boundary(boundary);
+        List<StringWithTags> schoolList = new ArrayList<StringWithTags>();
+        if (cursor.moveToFirst()) {
+            do {
+                StringWithTags school = new StringWithTags(cursor.getString(2), Integer.parseInt(cursor.getString(0)),1/* Integer.parseInt(cursor.getString(1))*/);
+                schoolList.add(school);
+            } while (cursor.moveToNext());
+        }
+        return  schoolList;
+    }
+
     private void select_schools(int boundary){
         ListView listView=(ListView) findViewById(R.id.school_list); //nothing
-        ArrayAdapter<StringWithTags> schoolArrayAdapter=new ArrayAdapter<StringWithTags>(this, android.R.layout.simple_list_item_1, db.get_all_schools(boundary));
+        List<StringWithTags> schoolList=get_school_data(boundary);
+        ArrayAdapter<StringWithTags> schoolArrayAdapter=new ArrayAdapter<StringWithTags>(this, android.R.layout.simple_list_item_1, schoolList);
         listView.setAdapter(schoolArrayAdapter);
         ViewGroup.LayoutParams listViewParams = (ViewGroup.LayoutParams)listView.getLayoutParams();
-        listViewParams.height = 300;
+        listViewParams.height = 400;
         listView.requestLayout();
     }
 }

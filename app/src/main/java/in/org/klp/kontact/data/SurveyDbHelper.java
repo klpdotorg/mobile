@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.BadParcelableException;
+import android.util.Log;
 import android.widget.ListView;
 
 import in.org.klp.kontact.data.SurveyContract.SurveyEntry;
@@ -234,6 +235,21 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
 
     public Cursor list_boundaries() {
         Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + BoundaryEntry.TABLE_NAME, null);
+        return cursor;
+    }
+
+    public Cursor list_child_boundaries(int parent){
+        String query="";
+        if (parent==-1)
+            query="SELECT " + BoundaryEntry._ID + ", '1' as bpundary_id, name   FROM " + BoundaryEntry.TABLE_NAME + " WHERE " + BoundaryEntry.COLUMN_PARENT + " is null and " + BoundaryEntry.COLUMN_TYPE + "='primaryschool' order by name";
+        else
+            query="SELECT * FROM " + BoundaryEntry.TABLE_NAME + " WHERE " + BoundaryEntry.COLUMN_PARENT + "=" + parent + " and " + BoundaryEntry.COLUMN_TYPE + "='primaryschool' order by name";
+        Cursor cursor = this.getReadableDatabase().rawQuery(query, null);
+        return cursor;
+    }
+
+    public Cursor list_schools_for_boundary(int boundary){
+        Cursor cursor = this.getReadableDatabase().rawQuery("SELECT * FROM " + SchoolEntry.TABLE_NAME + " WHERE " + SchoolEntry.COLUMN_BOUNDARY + "=" + boundary, null);
         return cursor;
     }
 

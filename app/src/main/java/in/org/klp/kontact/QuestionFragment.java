@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.net.HttpURLConnection;
@@ -22,8 +23,8 @@ import in.org.klp.kontact.data.SurveyDbHelper;
 public class QuestionFragment extends Fragment {
 
     private ArrayAdapter<String> mQuestionsAdapter;
-    String surveyId;
-    String surveyName;
+    String surveyId, schoolId;
+    String surveyName, boundary;
 
     public QuestionFragment() {
     }
@@ -54,9 +55,12 @@ public class QuestionFragment extends Fragment {
 
         surveyId = intent.getStringExtra("surveyId");
         surveyName = intent.getStringExtra("surveyName");
+        boundary = intent.getStringExtra("boundary");
+
 
         View rootView = inflater.inflate(R.layout.fragment_question, container, false);
-
+        TextView textView=(TextView) rootView.findViewById(R.id.display_boundary);
+        textView.setText(boundary);
         ListView listview = (ListView) rootView.findViewById(R.id.listview_question);
         listview.setAdapter(mQuestionsAdapter);
 

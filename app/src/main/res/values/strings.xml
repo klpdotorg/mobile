@@ -48,6 +48,7 @@
     <string name="prompt_district">Select District</string>
     <string name="prompt_block">Select Block</string>
     <string name="prompt_cluster">Select Cluster</string>
+    <string name="prompt_school">Select School</string>
     <string name="prompt_start_date">Start Date</string>
     <string name="prompt_end_date">End Date</string>
 
