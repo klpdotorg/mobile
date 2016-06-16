@@ -52,6 +52,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.org.klp.kontact.utils.SessionManager;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
@@ -81,6 +83,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private SessionManager mSession;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -91,6 +94,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        mSession = new SessionManager(getApplicationContext());
+
+        if (mSession.isLoggedIn()) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Set up the login form.
@@ -374,6 +385,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             JSONObject userLoginInfo = new JSONObject(userInfo);
             if(userLoginInfo.has("token"))
             {
+                // create session
+                mSession.createLoginSession(
+                        userLoginInfo.getString("first_name"),
+                        userLoginInfo.getString("id"),
+                        userLoginInfo.getString("token")
+                );
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             }
@@ -405,9 +423,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected String doInBackground(String... params) {
             // TODO: attempt authentication against a network service.
-
-
-
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.

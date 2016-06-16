@@ -30,13 +30,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import in.org.klp.kontact.data.SurveyDbHelper;
+import in.org.klp.kontact.utils.SessionManager;
 
 public class MainActivity extends AppCompatActivity {
+    private SessionManager mSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mSession = new SessionManager(getApplicationContext());
+        mSession.checkLogin();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
