@@ -2,24 +2,20 @@ package in.org.klp.kontact.data;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.ContentObservable;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.BadParcelableException;
-import android.widget.ListView;
 
-import in.org.klp.kontact.data.SurveyContract.SurveyEntry;
+import in.org.klp.kontact.data.SchoolContract.BoundaryEntry;
+import in.org.klp.kontact.data.SchoolContract.SchoolEntry;
 import in.org.klp.kontact.data.SurveyContract.QuestionEntry;
 import in.org.klp.kontact.data.SurveyContract.QuestiongroupEntry;
 import in.org.klp.kontact.data.SurveyContract.QuestiongroupQuestionEntry;
-
-import in.org.klp.kontact.data.SchoolContract.SchoolEntry;
-import in.org.klp.kontact.data.SchoolContract.BoundaryEntry;
+import in.org.klp.kontact.data.SurveyContract.SurveyEntry;
 
 
 public class SurveyDbHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     static final String DATABASE_NAME = "kontact.db";
 
@@ -94,9 +90,9 @@ public class SurveyDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         // FIXME: Should handle graceful versioning process instead of, duh, blindly
         // dropping the tables.
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SurveyEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + QuestionEntry.TABLE_NAME);
-        onCreate(sqLiteDatabase);
+//        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SurveyEntry.TABLE_NAME);
+//        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + QuestionEntry.TABLE_NAME);
+//        onCreate(sqLiteDatabase);
     }
 
     // Survey table helper functions.
