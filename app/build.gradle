@@ -27,6 +27,12 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+}
+
+apply plugin: 'com.neenbedankt.android-apt'
+
 play {
     jsonFile = file('Google Play Android Developer-0b17472fdb08.json')
     track = 'alpha'
@@ -39,6 +45,9 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'com.yahoo.squidb:squidb:2.0.2'
+    compile 'com.yahoo.squidb:squidb-annotations:2.0.2'
+    apt 'com.yahoo.squidb:squidb-processor:2.0.2'
 }
 
 def Properties props = new Properties()

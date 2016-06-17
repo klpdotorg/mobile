@@ -22,13 +22,18 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 
+import com.yahoo.squidb.data.SquidCursor;
+import com.yahoo.squidb.sql.Query;
+
 import java.io.BufferedReader;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import in.org.klp.kontact.data.SurveyContract;
-import in.org.klp.kontact.data.SurveyDbHelper;
+import in.org.klp.kontact.db.KontactDatabase;
+import in.org.klp.kontact.db.Question;
+import in.org.klp.kontact.db.QuestionGroup;
+import in.org.klp.kontact.db.QuestionGroupQuestion;
 
 public class QuestionFragment extends Fragment {
 
@@ -37,6 +42,7 @@ public class QuestionFragment extends Fragment {
     private String surveyName;
     private String schoolId;
     private LinearLayout linearLayoutQuestions;
+    private KontactDatabase db;
 
     public QuestionFragment() {
     }
@@ -76,63 +82,67 @@ public class QuestionFragment extends Fragment {
         return rootView;
     }
 
-    public class FetchQuestionsTask extends AsyncTask<Void, Void, ArrayList<HashMap>> {
+    public class FetchQuestionsTask extends AsyncTask<Void, Void, ArrayList<Question>> {
 
         private final String LOG_TAG = FetchQuestionsTask.class.getSimpleName();
-        SurveyDbHelper dbHelper;
 
         @Override
-        protected ArrayList<HashMap> doInBackground(Void... params) {
-
-            dbHelper = new SurveyDbHelper(getActivity());
-
+        protected ArrayList<Question> doInBackground(Void... params) {
             Intent intent = getActivity().getIntent();
             surveyId = intent.getStringExtra("surveyId");
 
-            Cursor qg_cursor = dbHelper.list_questiongroups(surveyId);
-            if (qg_cursor.getCount() >= 1) {
+            db = new KontactDatabase(getActivity());
+            SquidCursor<QuestionGroup> qgCursor = null;
+            SquidCursor<QuestionGroupQuestion> qgqCursor = null;
 
-                String questiongroupId;
+            Query listQGquery = Query.select().from(QuestionGroup.TABLE)
+                    .where(QuestionGroup.SURVEY_ID.eq(Long.valueOf(surveyId))).limit(1);
+            qgCursor = db.query(QuestionGroup.class, listQGquery);
 
-                qg_cursor.moveToNext();
-                questiongroupId = qg_cursor.getString(0);
-                qg_cursor.close();
+            try {
+                while (qgCursor.moveToFirst()) {
+                    Long qgID = qgCursor.get(QuestionGroup.ID);
+                    Query listQGQquery = Query.select().from(QuestionGroupQuestion.TABLE)
+                            .where(QuestionGroupQuestion.QUESTIONGROUP_ID.eq(qgID));
+                    qgqCursor = db.query(QuestionGroupQuestion.class, listQGQquery);
+                    ArrayList<Question> resultQuestions = new ArrayList<Question>();
 
-                Cursor question_cursor = dbHelper.list_questions(questiongroupId);
+                    while (qgqCursor.moveToNext()) {
+                        Long qID = qgqCursor.get(QuestionGroupQuestion.QUESTION_ID);
+                        Question question = db.fetch(Question.class, qID);
+                        resultQuestions.add(question);
+                    }
 
-                int count = 0;
-                ArrayList<HashMap> resultQuestions = new ArrayList<HashMap>();
-                while(question_cursor.moveToNext()) {
-                    String questionId = question_cursor.getString(question_cursor.getColumnIndex(SurveyContract.QuestionEntry._ID));
-                    String questionText = question_cursor.getString(1);
-
-                    HashMap map = new HashMap();
-                    map.put("id", questionId);
-                    map.put("text", questionText);
-
-                    resultQuestions.add(map);
-                    Log.v(LOG_TAG, "Question: " + questionText);
+                    return resultQuestions;
                 }
-
-                return resultQuestions;
+            } finally {
+                if (qgCursor != null) {
+                    qgCursor.close();
+                }
+                if (qgqCursor != null) {
+                    qgqCursor.close();
+                }
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<HashMap> result) {
+        protected void onPostExecute(ArrayList<Question> result) {
             if (result != null) {
                 linearLayoutQuestions.removeAllViews();
-                for (HashMap question : result) {
+                for (Question question : result) {
+                    // TODO: get question type and generate widgets according to it.
                     Switch mSwitch = new Switch(getActivity());
-                    mSwitch.setText(question.get("text").toString());
-                    mSwitch.setTag(Integer.parseInt(question.get("id").toString()));
+                    mSwitch.setText(question.getText());
+                    mSwitch.setTag(question.getId());
+
                     mSwitch.setTextOn("YES");
                     mSwitch.setTextOff("NO");
                     mSwitch.setChecked(false);
                     mSwitch.setPadding(0, 0, 0, 40);
                     mSwitch.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                     mSwitch.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+
                     linearLayoutQuestions.addView(mSwitch);
                 }
 
@@ -147,7 +157,7 @@ public class QuestionFragment extends Fragment {
                             View child = linearLayoutQuestions.getChildAt(i);
                             if (child.getClass() == Switch.class) {
                                 Switch cSwitch = (Switch) child;
-                                Integer questionId = (Integer) child.getTag();
+                                Long questionId = (Long) child.getTag();
                                 String answer = String.valueOf(cSwitch.isChecked());
                             }
                         }
