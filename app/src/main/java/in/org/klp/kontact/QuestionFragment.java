@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -27,13 +28,19 @@ import com.yahoo.squidb.sql.Query;
 
 import java.io.BufferedReader;
 import java.net.HttpURLConnection;
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
+import in.org.klp.kontact.db.Answer;
 import in.org.klp.kontact.db.KontactDatabase;
 import in.org.klp.kontact.db.Question;
 import in.org.klp.kontact.db.QuestionGroup;
 import in.org.klp.kontact.db.QuestionGroupQuestion;
+import in.org.klp.kontact.db.Story;
+import in.org.klp.kontact.utils.SessionManager;
 
 public class QuestionFragment extends Fragment {
 
@@ -41,8 +48,10 @@ public class QuestionFragment extends Fragment {
     private String surveyId;
     private String surveyName;
     private String schoolId;
+    private Long questionGroupId;
     private LinearLayout linearLayoutQuestions;
     private KontactDatabase db;
+    SessionManager session;
 
     public QuestionFragment() {
     }
@@ -68,6 +77,10 @@ public class QuestionFragment extends Fragment {
                 R.id.list_item_question_textview,
                 new ArrayList<String>()
         );
+
+        // check if user is logged in
+        session = new SessionManager(getActivity());
+        session.checkLogin();
 
         Intent intent = getActivity().getIntent();
 
@@ -101,9 +114,9 @@ public class QuestionFragment extends Fragment {
 
             try {
                 while (qgCursor.moveToFirst()) {
-                    Long qgID = qgCursor.get(QuestionGroup.ID);
+                    questionGroupId = qgCursor.get(QuestionGroup.ID);
                     Query listQGQquery = Query.select().from(QuestionGroupQuestion.TABLE)
-                            .where(QuestionGroupQuestion.QUESTIONGROUP_ID.eq(qgID));
+                            .where(QuestionGroupQuestion.QUESTIONGROUP_ID.eq(questionGroupId));
                     qgqCursor = db.query(QuestionGroupQuestion.class, listQGQquery);
                     ArrayList<Question> resultQuestions = new ArrayList<Question>();
 
@@ -151,19 +164,39 @@ public class QuestionFragment extends Fragment {
                 mSubmitButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         // Get answers from the current form
-                        ArrayList answerArray = new ArrayList();
+                        Map<Long, String> answers = new HashMap<Long, String>();
 
                         for (int i = 0; i < linearLayoutQuestions.getChildCount(); i++) {
                             View child = linearLayoutQuestions.getChildAt(i);
                             if (child.getClass() == Switch.class) {
                                 Switch cSwitch = (Switch) child;
-                                Long questionId = (Long) child.getTag();
+                                Long questionId = Long.parseLong(child.getTag().toString());
                                 String answer = String.valueOf(cSwitch.isChecked());
+                                answers.put(questionId, answer);
                             }
                         }
 
                         // Now answerArray is filled with question ids and their answers
                         // TODO: Save answers in DB
+                        HashMap<String, String> user = session.getUserDetails();
+                        Long currentTS = System.currentTimeMillis();
+
+                        Story story = new Story()
+                                .setSchoolId(Long.parseLong(schoolId))
+                                .setUserId(Long.parseLong(user.get(session.KEY_ID)))
+                                .setGroupId(questionGroupId)
+                                .setCreatedAt(currentTS);
+                        db.persist(story);
+
+                        for (Map.Entry<Long, String> entry : answers.entrySet()) {
+                            Log.d("entry", entry.getValue());
+                            Answer answer = new Answer()
+                                    .setStoryId(story.getId())
+                                    .setQuestionId(entry.getKey())
+                                    .setText(entry.getValue())
+                                    .setCreatedAt(currentTS);
+                            db.persist(answer);
+                        }
 
                         // Ask if the user wants to record more responses
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
