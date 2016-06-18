@@ -29,7 +29,7 @@ public class SurveyDetails extends AppCompatActivity {
         surveyId = getIntent().getLongExtra("surveyId", 0);
         surveyName = getIntent().getStringExtra("surveyName");
 
-        if (surveyId == 0) {
+        if (surveyId == 0 || surveyName.isEmpty()) {
             Intent intent = new Intent(SurveyDetails.this, MainActivity.class);
             startActivity(intent);
         }
@@ -51,8 +51,7 @@ public class SurveyDetails extends AppCompatActivity {
 
         // check criterion - https://github.com/yahoo/squidb/wiki/SquiDB's-query-builder#criterion
         int qgCount = db.count(QuestionGroup.class, QuestionGroup.SURVEY_ID.eq(surveyId));
-        if (qgCount == 0) {
-            button.setEnabled(false);
-        }
+        // disabling new response button if there is no QG for the given survey
+        if (qgCount == 0) button.setEnabled(false);
     }
 }

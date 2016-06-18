@@ -1,2 +1,5 @@
-- Added session management
+- Added session management and logout
 - Generating form on the fly
+- saving responses in the db
+- added better database handling
+- minor fixes
