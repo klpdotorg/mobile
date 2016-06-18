@@ -9,15 +9,21 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class BoundarySelectionActivity extends AppCompatActivity {
-    String surveyId;
+    Long surveyId;
     String surveyName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boundary_selection);
-        surveyId = getIntent().getStringExtra("surveyId");
+        surveyId = getIntent().getLongExtra("surveyId", 0);
         surveyName = getIntent().getStringExtra("surveyName");
+
+        if (surveyId == 0) {
+            Intent intent = new Intent(BoundarySelectionActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+
         TextView textView = (TextView) findViewById(R.id.survey_details);
         textView.setText(surveyName);
 

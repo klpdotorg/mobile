@@ -34,7 +34,7 @@ import in.org.klp.kontact.utils.SessionManager;
 public class QuestionFragment extends Fragment {
 
     private ArrayAdapter<String> mQuestionsAdapter;
-    private String surveyId;
+    private Long surveyId;
     private String surveyName;
     private String schoolId;
     private Long questionGroupId;
@@ -73,9 +73,14 @@ public class QuestionFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
 
-        surveyId = intent.getStringExtra("surveyId");
+        surveyId = intent.getLongExtra("surveyId", 0);
         surveyName = intent.getStringExtra("surveyName");
         schoolId = intent.getStringExtra("schoolId");
+
+        if (surveyId == 0) {
+            Intent intentMain = new Intent(getActivity(), MainActivity.class);
+            startActivity(intentMain);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_question, container, false);
 
@@ -91,14 +96,14 @@ public class QuestionFragment extends Fragment {
         @Override
         protected ArrayList<Question> doInBackground(Void... params) {
             Intent intent = getActivity().getIntent();
-            surveyId = intent.getStringExtra("surveyId");
+            surveyId = intent.getLongExtra("surveyId", 0);
 
             db = new KontactDatabase(getActivity());
             SquidCursor<QuestionGroup> qgCursor = null;
             SquidCursor<QuestionGroupQuestion> qgqCursor = null;
 
             Query listQGquery = Query.select().from(QuestionGroup.TABLE)
-                    .where(QuestionGroup.SURVEY_ID.eq(Long.valueOf(surveyId))).limit(1);
+                    .where(QuestionGroup.SURVEY_ID.eq(surveyId)).limit(1);
             qgCursor = db.query(QuestionGroup.class, listQGquery);
 
             try {

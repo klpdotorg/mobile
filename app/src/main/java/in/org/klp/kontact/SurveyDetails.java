@@ -6,17 +6,34 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.yahoo.squidb.sql.Query;
+
+import in.org.klp.kontact.db.KontactDatabase;
+import in.org.klp.kontact.db.Question;
+import in.org.klp.kontact.db.QuestionGroup;
 
 public class SurveyDetails extends AppCompatActivity {
-    String surveyId;
+    Long surveyId;
     String surveyName;
+    KontactDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_survey_details);
-        surveyId = getIntent().getStringExtra("surveyId");
+
+        db = new KontactDatabase(this);
+
+        surveyId = getIntent().getLongExtra("surveyId", 0);
         surveyName = getIntent().getStringExtra("surveyName");
+
+        if (surveyId == 0) {
+            Intent intent = new Intent(SurveyDetails.this, MainActivity.class);
+            startActivity(intent);
+        }
+
         TextView textView = (TextView) findViewById(R.id.survey_details);
         textView.setText(surveyName);
 
@@ -31,5 +48,11 @@ public class SurveyDetails extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // check criterion - https://github.com/yahoo/squidb/wiki/SquiDB's-query-builder#criterion
+        int qgCount = db.count(QuestionGroup.class, QuestionGroup.SURVEY_ID.eq(surveyId));
+        if (qgCount == 0) {
+            button.setEnabled(false);
+        }
     }
 }
