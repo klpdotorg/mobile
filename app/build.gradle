@@ -11,8 +11,8 @@ android {
 
     defaultConfig {
         applicationId "in.org.klp.kontact"
-        minSdkVersion 14
-        targetSdkVersion 23
+        minSdkVersion 15
+        targetSdkVersion 22
         versionCode 9
         versionName "0.7"
     }
@@ -46,6 +46,8 @@ dependencies {
     compile 'com.yahoo.squidb:squidb:2.0.2'
     compile 'com.yahoo.squidb:squidb-annotations:2.0.2'
     apt 'com.yahoo.squidb:squidb-processor:2.0.2'
+
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
 }
 
 def Properties props = new Properties()

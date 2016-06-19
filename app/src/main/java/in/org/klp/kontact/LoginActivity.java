@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build.VERSION;
@@ -20,6 +21,7 @@ import android.provider.ContactsContract.Contacts.Data;
 import android.provider.ContactsContract.Profile;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -31,7 +33,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -53,6 +54,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.org.klp.kontact.db.DatabaseCopyHelper;
 import in.org.klp.kontact.utils.SessionManager;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -81,8 +83,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     // UI references.
     private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
+    private TextInputEditText mPasswordView;
     private View mLoginFormView;
     private SessionManager mSession;
     private ProgressDialog progressDialog = null;
@@ -98,6 +99,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
 
         mSession = new SessionManager(getApplicationContext());
+        DatabaseCopyHelper dbCopyHelper = new DatabaseCopyHelper(this);
+        SQLiteDatabase dbCopy = dbCopyHelper.getReadableDatabase();
 
         if (mSession.isLoggedIn()) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -110,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = (TextInputEditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -139,7 +142,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
         mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -210,7 +212,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -246,11 +248,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
         }
-    }
-
-    private boolean isPasswordValid(String password) {
-        //any password is fine
-        return true;
     }
 
     /**
