@@ -16,7 +16,15 @@
         <TextView
             android:id="@+id/survey_details"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/colorGreySteel"/>
         <Button
             android:id="@+id/select_district"
             android:layout_width="match_parent"
@@ -37,6 +45,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/school"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/colorGreySteel"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/textViewChosenSchool"
+            android:layout_gravity="center_horizontal" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/colorGreySteel"/>
+
         <Button
             android:id="@+id/questions_activity"
             android:layout_width="match_parent"

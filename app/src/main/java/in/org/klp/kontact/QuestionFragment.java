@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Query;
@@ -28,6 +29,7 @@ import in.org.klp.kontact.db.KontactDatabase;
 import in.org.klp.kontact.db.Question;
 import in.org.klp.kontact.db.QuestionGroup;
 import in.org.klp.kontact.db.QuestionGroupQuestion;
+import in.org.klp.kontact.db.School;
 import in.org.klp.kontact.db.Story;
 import in.org.klp.kontact.utils.SessionManager;
 
@@ -36,7 +38,7 @@ public class QuestionFragment extends Fragment {
     private ArrayAdapter<String> mQuestionsAdapter;
     private Long surveyId;
     private String surveyName;
-    private String schoolId;
+    private Long schoolId;
     private Long questionGroupId;
     private LinearLayout linearLayoutQuestions;
     private KontactDatabase db;
@@ -67,6 +69,8 @@ public class QuestionFragment extends Fragment {
                 new ArrayList<String>()
         );
 
+        db = new KontactDatabase(getActivity());
+
         // check if user is logged in
         session = new SessionManager(getActivity());
         session.checkLogin();
@@ -75,14 +79,19 @@ public class QuestionFragment extends Fragment {
 
         surveyId = intent.getLongExtra("surveyId", 0);
         surveyName = intent.getStringExtra("surveyName");
-        schoolId = intent.getStringExtra("schoolId");
+        schoolId = intent.getLongExtra("schoolId", 0);
+
+        View rootView = inflater.inflate(R.layout.fragment_question, container, false);
+
+        School school = db.fetch(School.class, schoolId);
+        TextView textViewSchool = (TextView) rootView.findViewById(R.id.textViewSchool);
+        textViewSchool.setText(school.getName());
 
         if (surveyId == 0) {
             Intent intentMain = new Intent(getActivity(), MainActivity.class);
             startActivity(intentMain);
         }
 
-        View rootView = inflater.inflate(R.layout.fragment_question, container, false);
 
         linearLayoutQuestions = (LinearLayout) rootView.findViewById(R.id.linearLayoutQuestions);
 
@@ -98,7 +107,6 @@ public class QuestionFragment extends Fragment {
             Intent intent = getActivity().getIntent();
             surveyId = intent.getLongExtra("surveyId", 0);
 
-            db = new KontactDatabase(getActivity());
             SquidCursor<QuestionGroup> qgCursor = null;
             SquidCursor<QuestionGroupQuestion> qgqCursor = null;
 
@@ -136,7 +144,9 @@ public class QuestionFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Question> result) {
             if (result != null) {
+                // TODO: DONT REMOVE THE TEXT VIEW
                 linearLayoutQuestions.removeAllViews();
+
                 for (Question question : result) {
                     // TODO: get question type and generate widgets according to it.
                     Switch mSwitch = new Switch(getActivity());
@@ -176,7 +186,7 @@ public class QuestionFragment extends Fragment {
                         Long currentTS = System.currentTimeMillis();
 
                         Story story = new Story()
-                                .setSchoolId(Long.parseLong(schoolId))
+                                .setSchoolId(schoolId)
                                 .setUserId(Long.parseLong(user.get(session.KEY_ID)))
                                 .setGroupId(questionGroupId)
                                 .setCreatedAt(currentTS);
