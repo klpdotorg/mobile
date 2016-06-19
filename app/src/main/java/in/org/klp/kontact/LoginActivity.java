@@ -1,7 +1,5 @@
 package in.org.klp.kontact;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.app.ProgressDialog;
@@ -12,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -25,7 +22,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,7 +31,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -43,18 +45,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import in.org.klp.kontact.db.DatabaseCopyHelper;
+import in.org.klp.kontact.utils.KLPVolleySingleton;
 import in.org.klp.kontact.utils.SessionManager;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -76,10 +73,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "mobile@klp.org.in:mobile"
     };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -98,10 +91,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Calling getReadableDatabase() uses SQLiteAssetHelper
+        // to copy the prepopulated database to the device.
+        // Read comments at DatabaseCopyHelper class.
         mSession = new SessionManager(getApplicationContext());
         DatabaseCopyHelper dbCopyHelper = new DatabaseCopyHelper(this);
         SQLiteDatabase dbCopy = dbCopyHelper.getReadableDatabase();
 
+        // if already logged in, redirect to MainActivity
         if (mSession.isLoggedIn()) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -196,17 +193,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String email = mEmailView.getText().toString();
+        final String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -237,8 +231,43 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute(new String[]{});
+            final String LOGIN_URL = "http://dev.klp.org.in/api/v1/users/login";
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST,
+                    LOGIN_URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    showProgress(false);
+                    if (response != null) finishLogin(response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                    showProgress(false);
+                    Toast.makeText(LoginActivity.this, "Something broke..", Toast.LENGTH_LONG).show();
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    // set the POST params
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("email", email);
+                    params.put("password", password);
+                    return params;
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    // set extra headers
+                    Map<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/x-www-form-urlencoded");
+                    return headers;
+                }
+            };
+            // Add request to the RequestQueue maintained by the Singleton
+            KLPVolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
         }
     }
 
@@ -347,23 +376,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         client.disconnect();
     }
 
-
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                Email.ADDRESS,
-                Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
-    }
-
     protected void finishLogin(String userInfo) {
         //parse the userInfo String
         try {
             JSONObject userLoginInfo = new JSONObject(userInfo);
-            if(userLoginInfo.has("token"))
-            {
+            if (userLoginInfo.has("token")) {
                 // create session
                 mSession.createLoginSession(
                         userLoginInfo.getString("first_name"),
@@ -373,134 +390,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
-            }
-            else {
+            } else {
                 //Show login dialog again. Clear out fields. Show a message. Ask to login again
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<String, Void, String> {
+    private interface ProfileQuery {
+        String[] PROJECTION = {
+                Email.ADDRESS,
+                Email.IS_PRIMARY,
+        };
 
-        protected String LOG_TAG = UserLoginTask.class.getSimpleName();
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            // TODO: attempt authentication against a network service.
-
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String userInfo = null;
-
-            try {
-                final String USER_BASE_URL = "http://dev.klp.org.in/api/v1/users/login";
-
-                Uri builtUri = Uri.parse(USER_BASE_URL).buildUpon().build();
-
-                URL url = new URL(builtUri.toString());
-                String requestParams = "email=" + URLEncoder.encode(mEmail, "UTF-8") + "&password=" + URLEncoder.encode(mPassword, "UTF-8");
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                urlConnection.setFixedLengthStreamingMode(requestParams.getBytes().length);
-                urlConnection.setDoOutput(true);
-
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(urlConnection.getOutputStream());
-                outputStreamWriter.write(requestParams);
-                outputStreamWriter.flush();
-                outputStreamWriter.close();
-
-                int responseCode = urlConnection.getResponseCode();
-                String responseMsg = urlConnection.getResponseMessage();
-                Log.v(LOG_TAG, "Response code is: " + responseCode);
-                Log.v(LOG_TAG, "response message is: " + responseMsg);
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    Log.v(LOG_TAG, "Response code is: " + responseCode);
-                }
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                userInfo = buffer.toString();
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-            try {
-                Log.v(LOG_TAG, userInfo);
-            } catch (Exception e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-
-            return userInfo;
-        }
-
-        @Override
-        protected void onPostExecute(final String userInfo) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (userInfo != null) {
-                finishLogin(userInfo);
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
+        int ADDRESS = 0;
+        int IS_PRIMARY = 1;
     }
 }
 

@@ -43,11 +43,17 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+
+    // squidb - https://github.com/yahoo/squidb
     compile 'com.yahoo.squidb:squidb:2.0.2'
     compile 'com.yahoo.squidb:squidb-annotations:2.0.2'
     apt 'com.yahoo.squidb:squidb-processor:2.0.2'
 
+    // SQLite Asset Helper - https://github.com/jgilfelt/android-sqlite-asset-helper
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
+
+    // Volley - https://android.googlesource.com/platform/frameworks/volley
+    compile 'com.android.volley:volley:1.0.0'
 }
 
 def Properties props = new Properties()

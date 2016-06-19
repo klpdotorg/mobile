@@ -1,7 +1,6 @@
 package in.org.klp.kontact;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.yahoo.squidb.data.SquidCursor;
@@ -36,8 +34,6 @@ import java.util.ArrayList;
 import in.org.klp.kontact.adapters.SurveyAdapter;
 import in.org.klp.kontact.data.SurveyDbHelper;
 import in.org.klp.kontact.db.KontactDatabase;
-import in.org.klp.kontact.db.QuestionGroup;
-import in.org.klp.kontact.db.QuestionGroupQuestion;
 import in.org.klp.kontact.db.Survey;
 
 public class SurveyFragment extends Fragment {
