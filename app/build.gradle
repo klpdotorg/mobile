@@ -12,9 +12,9 @@ android {
     defaultConfig {
         applicationId "in.org.klp.kontact"
         minSdkVersion 15
-        targetSdkVersion 22
-        versionCode 9
-        versionName "0.7"
+        targetSdkVersion 23
+        versionCode 10
+        versionName "0.8"
     }
     buildTypes {
         release {
