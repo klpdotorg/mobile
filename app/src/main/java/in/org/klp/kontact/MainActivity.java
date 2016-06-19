@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -27,6 +28,8 @@ import in.org.klp.kontact.utils.SessionManager;
 
 public class MainActivity extends AppCompatActivity {
     private SessionManager mSession;
+    private Snackbar snackbarSync;
+    private FetchSurveyTask surveyTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view)
             {
+                snackbarSync = Snackbar.make(view, "Getting data from server...", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("STOP", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            surveyTask.cancel(true);
+                            snackbarSync.dismiss();
+                        }
+                    });
+                snackbarSync.show();
                 updateSurvey();
             }
         });
@@ -77,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateSurvey() {
-        FetchSurveyTask surveyTask = new FetchSurveyTask();
+        surveyTask = new FetchSurveyTask();
         surveyTask.execute();
     }
 
@@ -252,8 +264,12 @@ public class MainActivity extends AppCompatActivity {
             // Populate questions
             processURL("https://dev.klp.org.in/api/v1/questions/?source=mobile", "question");
 
-            // Populate schools
-            processURL("https://dev.klp.org.in/api/v1/schools/list/", "school");
+            // Populate school
+            if (!isCancelled()) {
+                // because this one takes time,
+                // just checking if the async task has been cancelled before starting
+                processURL("https://dev.klp.org.in/api/v1/schools/list/", "school");
+            }
 
             // Populate boundaries
             processURL("https://dev.klp.org.in/api/v1/boundary/admin3s", "boundary");
@@ -266,12 +282,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[] result) {
-//            if (result != null) {
-//                mSurveyAdapter.clear();
-//                for (String surveyStr : result) {
-//                    mSurveyAdapter.add(surveyStr);
-//                }
-//            }
+            if (snackbarSync != null) {
+                snackbarSync.dismiss();
+            }
             super.onPostExecute(result);
         }
 
