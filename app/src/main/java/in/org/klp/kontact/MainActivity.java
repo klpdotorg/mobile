@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     dbHelper.insert_question(questionId, text, key, options, type, school_type);
                 } catch (SQLiteException e) {
-                    Log.v(LOG_TAG, "Questiongroup Insert Error: " + e.toString());
+                    Log.v(LOG_TAG, "Question Insert Error: " + e.toString());
                 }
 
                 for (int j = 0; j < questiongroupSetArray.length(); j++) {
@@ -411,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
                     status = questiongroupObject.getInt("status");
                     source = questiongroupObject.getString("source");
 
-                    if (source.equals("sms")) {
+                    if (source.equals("mobile")) {
                         if (status.equals(1)) {
                             try {
                                 dbHelper.insert_questiongroupquestion(throughId, questionId, questiongroupId, sequence);
