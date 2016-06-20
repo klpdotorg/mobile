@@ -45,3 +45,4 @@ build/
 # Publishing API settings
 app/*.json
 app/*.apk
+shareable/
