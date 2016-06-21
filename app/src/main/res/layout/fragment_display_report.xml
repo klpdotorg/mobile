@@ -13,14 +13,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="70dp"
+            android:textSize="17dp"
             android:textAlignment="center"/>
 
         <TextView
-            android:paddingTop="100dp"
+            android:paddingTop="60dp"
             android:id="@+id/aggregate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textSize="25dp"
             android:textAlignment="center"/>
 
         <TextView
@@ -28,14 +30,16 @@
             android:id="@+id/block_aggregate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:visibility="gone"/>
 
         <TextView
             android:paddingTop="20dp"
             android:id="@+id/district_aggregate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </FrameLayout>

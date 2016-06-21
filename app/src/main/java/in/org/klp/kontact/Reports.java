@@ -182,7 +182,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
         //Long qid=params[0];
         int schoolcount=0, responses=1, aggregate=0;
 
-        Cursor cursor_sc=null, cursor_resp=null, cursor_agg=null;
+        Cursor cursor_sc, cursor_resp, cursor_agg, cursor_block_agg;
 
         cursor_sc = db.rawQuery("select count("+ SchoolContract.SchoolEntry._ID+") as count from school where boundary_id=" +String.valueOf(bid),null);
         try {
@@ -212,7 +212,23 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
             while (cursor_agg.moveToNext()) {
                 aggregate=Integer.parseInt(cursor_agg.getString(0));
             }
-        } finally {
+        } catch (NumberFormatException e) {
+            aggregate=0;
+        }finally {
+            if (cursor_agg != null)
+                cursor_agg.close();
+        }
+
+        cursor_block_agg = db.rawQuery("select sum(case when text='true' then 1 else 0 end) as total from answer" +
+                " where question_id=" + qid + " and story_id in (select _id from story where school_id in (" +
+                "select _id from school where boundary_id=" + bid + "))", null);
+        try {
+            while (cursor_block_agg.moveToNext()) {
+                aggregate=Integer.parseInt(cursor_agg.getString(0));
+            }
+        } catch (Exception e) {
+            aggregate=0;
+        }finally {
             if (cursor_agg != null)
                 cursor_agg.close();
         }

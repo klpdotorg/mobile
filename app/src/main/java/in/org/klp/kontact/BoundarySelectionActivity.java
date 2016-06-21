@@ -2,7 +2,9 @@ package in.org.klp.kontact;
 
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -37,6 +39,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
     int cyear, cmonth, cdate, chour, cminute;
     EditText editText=null;
     SimpleDateFormat dateFormat;
+    Context context = this;
 
     KontactDatabase db;
 
@@ -45,6 +48,8 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boundary_selection);
         db = new KontactDatabase(this);
+
+        SharedPreferences sharedPreferences=getSharedPreferences("boundary", MODE_PRIVATE);
 
         surveyId = getIntent().getLongExtra("surveyId", 0);
         surveyName = getIntent().getStringExtra("surveyName");
@@ -94,7 +99,11 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
 
         Spinner sp_district=(Spinner) findViewById(R.id.select_district);
         fill_dropdown(1, sp_district.getId(), 1);
-        sp_district.setSelection(0);
+        sp_district.setSelection(sharedPreferences.getInt("district",0));
+        Spinner sp_block=(Spinner) findViewById(R.id.select_block);
+        sp_block.setSelection(sharedPreferences.getInt("block",0));
+        Spinner sp_cluster=(Spinner) findViewById(R.id.select_cluster);
+        sp_cluster.setSelection(sharedPreferences.getInt("cluster",0));
         TextView textView = (TextView) findViewById(R.id.survey_details);
         textView.setText(surveyName);
 
@@ -106,7 +115,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
                 intent.putExtra("surveyId", surveyId);
                 intent.putExtra("surveyName", surveyName);
                 intent.putExtra("bid", bid);
-                intent.putExtra("boundary", district + ", " + block + ", " + cluster);
+                intent.putExtra("boundary", district.toUpperCase() + ", " + block.toUpperCase() + ", " + cluster.toUpperCase());
                 startActivity(intent);
             }
         });
@@ -133,23 +142,30 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
                                int pos, long id) {
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
+        SharedPreferences sharedPreferences = getSharedPreferences("boundary", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
         StringWithTags boundaryForSelector = (StringWithTags) parent.getItemAtPosition(pos);
         int viewid=parent.getId();
         switch (viewid){
             case R.id.select_district:
                 fill_dropdown(1,R.id.select_block, Integer.parseInt(boundaryForSelector.id.toString()));
+                editor.putInt("district", pos);
                 district=((StringWithTags) parent.getItemAtPosition(pos)).string;
                 break;
             case R.id.select_block:
                 fill_dropdown(1,R.id.select_cluster, Integer.parseInt(boundaryForSelector.id.toString()));
+                editor.putInt("block",pos);
                 block=((StringWithTags) parent.getItemAtPosition(pos)).string;
                 break;
             case R.id.select_cluster:
                 fill_schools(R.id.school_list, Integer.parseInt(boundaryForSelector.id.toString()));
                 cluster=((StringWithTags) parent.getItemAtPosition(pos)).string;
+                editor.putInt("cluster", pos);
                 bid=new Long(((StringWithTags) parent.getItemAtPosition(pos)).id.toString());
                 break;
         }
+        editor.commit();
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -187,7 +203,6 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
                     .where(Boundary.BOUNDARY_ID.eq(parent==1?null:parent));
         List<StringWithTags> boundaryList = new ArrayList<StringWithTags>();
         boundary_cursor = db.query(Boundary.class, listboundary);
-        boundaryList.add(new StringWithTags("--Select--", 0, 0));
         if (boundary_cursor.moveToFirst()) {
             do {
                 StringWithTags boundary = new StringWithTags(boundary_cursor.getString(2), Integer.parseInt(boundary_cursor.getString(0)), Integer.parseInt(boundary_cursor.getString(3).equals("district") ? "1" : boundary_cursor.getString(1)));
