@@ -33,7 +33,7 @@ public class SurveyDetails extends AppCompatActivity {
         TextView textView = (TextView) findViewById(R.id.survey_details);
         textView.setText(surveyName);
 
-        Button button = (Button) findViewById(R.id.new_response);
+        Button button = (Button) findViewById(R.id.generate_report);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -41,9 +41,25 @@ public class SurveyDetails extends AppCompatActivity {
                 Intent intent = new Intent(SurveyDetails.this, BoundarySelectionActivity.class);
                 intent.putExtra("surveyId", surveyId);
                 intent.putExtra("surveyName", surveyName);
+                intent.putExtra("type","report");
                 startActivity(intent);
             }
         });
+
+        button = (Button) findViewById(R.id.new_response);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Intent intent = new Intent(SurveyDetails.this, BoundarySelectionActivity.class);
+                intent.putExtra("surveyId", surveyId);
+                intent.putExtra("surveyName", surveyName);
+                intent.putExtra("type","response");
+                startActivity(intent);
+            }
+        });
+
+
 
         // check criterion - https://github.com/yahoo/squidb/wiki/SquiDB's-query-builder#criterion
         int qgCount = db.count(QuestionGroup.class, QuestionGroup.SURVEY_ID.eq(surveyId));
