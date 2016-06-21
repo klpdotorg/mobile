@@ -1,191 +1,192 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center_horizontal"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
 
 
-
-              tools:context="in.org.klp.kontact.LoginActivity"
-              android:weightSum="1"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1"
+    tools:context="in.org.klp.kontact.LoginActivity">
 
     <!-- Login progress -->
 
     <!-- Header bar -->
-        <LinearLayout
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="48dp"
-        android:background="@color/colorWhite"
-        android:orientation="horizontal"
         android:layout_alignParentTop="true"
+        android:background="@color/colorWhite"
         android:divider="?android:dividerHorizontal"
-        android:showDividers="middle"
-        >
+        android:orientation="horizontal"
+        android:showDividers="middle">
 
-        <ImageView android:layout_width="70dp"
-                   android:layout_height="40dp"
-                   android:background="@drawable/klp_banner_text"
-                   android:layout_marginLeft="10dp"
-                   android:layout_gravity="left|center_vertical"/>
-
-
-        <TextView android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:text="@string/action_sign_in_short"
-                  android:textColor="@color/colorBrandGreen"
-                  android:textSize="18sp"
-                  android:textStyle="bold"
-                  android:layout_gravity="center_vertical|right"
-                  android:textAlignment="textEnd"
-                  android:layout_marginRight="10dp"/>
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/klp_banner_text" />
 
 
-        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="10dp"
+            android:text="@string/action_sign_in_short"
+            android:textAlignment="textEnd"
+            android:textColor="@color/colorBrandGreen"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
 
     <!-- Add a divider. Probably better way of doing this is there. Check it out later -->
-    <View android:layout_width="fill_parent"
-          android:layout_height="5dp"
-          android:background="@color/colorBrandRed"/>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
+        android:background="@color/colorBrandRed" />
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="250dp"
         android:layout_height="145dp"
-        android:id="@+id/imageView"
-        android:contentDescription="KLP logo"
-        android:src="@drawable/banner_kontact"
         android:layout_gravity="center_horizontal"
-        />
-
+        android:layout_marginBottom="20dp"
+        android:contentDescription="KLP logo"
+        android:src="@drawable/banner_kontact" />
 
 
     <ScrollView
+        android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/login_form"
+        android:layout_gravity="center"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_gravity="center">
+        android:layout_marginTop="20dp">
+
+        <LinearLayout
+            android:id="@+id/email_login_form"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/email_login_form"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:orientation="vertical"
-                >
+                android:orientation="horizontal">
+                <!-- <TextView
+                     android:text="Username:"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_column="0"
+                     android:layout_span="0"
+                     android:layout_gravity="center"/> -->
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:minWidth="500px"
 
-                <LinearLayout android:layout_width="fill_parent"
-                          android:layout_height="fill_parent"
-                          android:orientation="horizontal">
-                   <!-- <TextView
-                        android:text="Username:"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_column="0"
-                        android:layout_span="0"
-                        android:layout_gravity="center"/> -->
-                    <android.support.design.widget.TextInputLayout
+                    >
+
+                    <AutoCompleteTextView
+                        android:id="@+id/email"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:minWidth="500px"
+                        android:layout_weight="10"
+                        android:editable="true"
+                        android:elegantTextHeight="true"
+                        android:gravity="left|center_vertical"
+                        android:hint="@string/prompt_enter_email"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textSize="15dp"/>
 
-                       >
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
 
-                        <AutoCompleteTextView
-                            android:id="@+id/email"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/prompt_email"
-                            android:inputType="textEmailAddress"
-                            android:maxLines="1"
-                            android:layout_weight="10"
-                            android:singleLine="true"
-                            android:gravity="left|center_vertical"
-                            android:elegantTextHeight="true"
-                            android:editable="true"
-                            android:textStyle="normal"
-                            android:typeface="sans"
-                            />
-
-                     </android.support.design.widget.TextInputLayout>
-                </LinearLayout>
-
-                <!--Begin second TableRow -->
-                <LinearLayout android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
-                          android:orientation="horizontal">
-                    <!--<TextView
-                        android:text="Password:"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"/> -->
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="321dp"
-                        android:layout_height="wrap_content"
-                        android:minWidth="500dp"
-                        >
-
-                        <android.support.design.widget.TextInputEditText
-                            android:id="@+id/password"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/prompt_password"
-                            android:imeActionId="@+id/login"
-                            android:imeActionLabel="@string/action_sign_in_short"
-                            android:imeOptions="actionUnspecified"
-                            android:inputType="textPassword"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:textStyle="normal"
-                            android:typeface="serif"
-                            android:drawableBottom="@color/colorBrandRed"/>
-
-                    </android.support.design.widget.TextInputLayout>
-                </LinearLayout>
-
-
-                <Button
-                    android:id="@+id/email_sign_in_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="125dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/action_sign_in_short"
-                    android:textStyle="bold"
-                    android:layout_column="1"
-                    android:layout_span="0"
-                    android:background="@color/colorBrandGreen"
-                    android:textColor="@color/colorWhite"
-                    android:layout_gravity="center_horizontal"/>
-
-                <TextView
-                    android:layout_width="165dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/prompt_register"
-                    android:id="@+id/textView"
-                    android:textColor="@color/colorGreyGravel"
-                    android:layout_gravity="center"
-                    android:textAlignment="center"
-                    android:paddingBottom="10dp"/>
-
-                <Button
+            <!--Begin second TableRow -->
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!--<TextView
+                    android:text="Password:"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/register"
-                    android:background="@color/colorBrandTurquoise"
-                    android:id="@+id/email_sign_up_button"
-                    android:layout_gravity="center_horizontal"
-                    android:textColor="@color/colorWhite"/>
+                    android:layout_gravity="center"/> -->
 
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="321dp"
+                    android:layout_height="wrap_content"
+                    android:minWidth="500dp">
+
+                    <EditText
+                        android:id="@+id/password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableBottom="@color/colorBrandOrange"
+                        android:hint="@string/prompt_enter_password"
+                        android:imeActionId="@+id/login"
+                        android:imeActionLabel="@string/action_sign_in_short"
+                        android:imeOptions="actionUnspecified"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textStyle="normal"
+                        android:typeface="serif"
+                        android:textSize="15dp"/>
+
+                </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
 
+            <Button
+                android:id="@+id/email_sign_in_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_span="0"
+                android:background="@color/colorBrandGreen"
+                android:text="@string/action_sign_in_short"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="165dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:paddingBottom="10dp"
+                android:text="@string/prompt_register"
+                android:textAlignment="center"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorGreyGravel" />
+
+            <Button
+                android:id="@+id/email_sign_up_button"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/colorBrandTurquoise"
+                android:text="@string/register"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
 
     </ScrollView>
-
 
 
 </LinearLayout>

@@ -21,6 +21,7 @@ public class SignUpResultDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         final Bundle args = getArguments();
         builder.setMessage(args.getString("result"))
+                .setTitle(args.getString("title", ""))
                 .setNeutralButton(args.getString("buttonText"), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if(args.getString("buttonText").equalsIgnoreCase("Login")) {

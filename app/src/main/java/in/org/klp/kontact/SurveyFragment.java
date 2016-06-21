@@ -33,6 +33,7 @@ import java.util.ArrayList;
 
 import in.org.klp.kontact.adapters.SurveyAdapter;
 import in.org.klp.kontact.data.SurveyDbHelper;
+import in.org.klp.kontact.db.Boundary;
 import in.org.klp.kontact.db.KontactDatabase;
 import in.org.klp.kontact.db.Survey;
 
@@ -150,64 +151,6 @@ public class SurveyFragment extends Fragment {
                     if (surveyCursor != null) {
                         surveyCursor.close();
                     }
-                }
-            } else {
-                // we don't have surveys in DB
-                // ideally we should get surveys in DB during sync
-                // and NOT call API like this
-                try {
-                    final String SURVEY_BASE_URL = "http://dev.klp.org.in/api/v1/surveys/";
-
-                    Uri builtUri = Uri.parse(SURVEY_BASE_URL).buildUpon().build();
-
-                    URL url = new URL(builtUri.toString());
-
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.connect();
-
-                    // Read the input stream into a String
-                    InputStream inputStream = urlConnection.getInputStream();
-                    StringBuffer buffer = new StringBuffer();
-                    if (inputStream == null) {
-                        return null;
-                    }
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                        // But it does make debugging a *lot* easier if you print out the completed
-                        // buffer for debugging.
-                        buffer.append(line + "\n");
-                    }
-
-                    if (buffer.length() == 0) {
-                        // Stream was empty.  No point in parsing.
-                        return null;
-                    }
-                    surveyJsonStr = buffer.toString();
-
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Error ", e);
-                    return null;
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (final IOException e) {
-                            Log.e(LOG_TAG, "Error closing stream", e);
-                        }
-                    }
-                }
-                try {
-                    saveSurveyDataFromJson(surveyJsonStr);
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
                 }
             }
             return null;
