@@ -65,7 +65,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp">
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp">
 
         <LinearLayout
             android:id="@+id/email_login_form"
@@ -99,12 +100,13 @@
                         android:editable="true"
                         android:elegantTextHeight="true"
                         android:gravity="left|center_vertical"
-                        android:hint="@string/prompt_email"
+                        android:hint="@string/prompt_enter_email"
                         android:inputType="textEmailAddress"
                         android:maxLines="1"
                         android:singleLine="true"
                         android:textStyle="normal"
-                        android:typeface="sans" />
+                        android:typeface="sans"
+                        android:textSize="15dp"/>
 
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
@@ -125,12 +127,12 @@
                     android:layout_height="wrap_content"
                     android:minWidth="500dp">
 
-                    <android.support.design.widget.TextInputEditText
+                    <EditText
                         android:id="@+id/password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableBottom="@color/colorBrandRed"
-                        android:hint="@string/prompt_password"
+                        android:drawableBottom="@color/colorBrandOrange"
+                        android:hint="@string/prompt_enter_password"
                         android:imeActionId="@+id/login"
                         android:imeActionLabel="@string/action_sign_in_short"
                         android:imeOptions="actionUnspecified"
@@ -138,7 +140,8 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:textStyle="normal"
-                        android:typeface="serif" />
+                        android:typeface="serif"
+                        android:textSize="15dp"/>
 
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
@@ -172,12 +175,13 @@
 
             <Button
                 android:id="@+id/email_sign_up_button"
-                android:layout_width="wrap_content"
+                android:layout_width="125dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:background="@color/colorBrandTurquoise"
                 android:text="@string/register"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"/>
 
         </LinearLayout>
 

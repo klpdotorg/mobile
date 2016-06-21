@@ -79,7 +79,9 @@
                 android:hint="@string/prompt_enter_email"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                android:textSize="15dp"/>
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/password"
@@ -93,7 +95,9 @@
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                android:textSize="15dp"/>
 
             <EditText
                 android:id="@+id/verify_password"
@@ -107,7 +111,9 @@
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textAlignment="textStart"
+                android:textSize="15dp"/>
 
 
             <EditText
@@ -118,7 +124,9 @@
                 android:ems="10"
                 android:gravity="center"
                 android:hint="@string/first_name"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textAlignment="textStart"
+                android:textSize="15dp"/>
 
             <EditText
                 android:id="@+id/user_last_name"
@@ -128,7 +136,8 @@
                 android:ems="10"
                 android:hint="@string/last_name"
                 android:inputType="textPersonName"
-                android:textAlignment="center" />
+                android:textAlignment="textStart"
+                android:textSize="15dp"/>
 
             <EditText
                 android:id="@+id/user_phone"
@@ -138,7 +147,9 @@
                 android:ems="10"
                 android:hint="@string/mobile_number"
                 android:inputType="phone"
-                android:gravity="center" />
+                android:gravity="center"
+                android:textAlignment="textStart"
+                android:textSize="15dp"/>
 
         </LinearLayout>
 

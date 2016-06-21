@@ -25,16 +25,16 @@ public class SessionManager {
     int PRIVATE_MODE = 0;
 
     // Sharedpref file name
-    private static final String PREF_NAME = "KLPPref";
+    private static final String PREF_NAME = "in.org.klp.mobile.KLPPrefs";
 
     // All Shared Preferences Keys
-    private static final String IS_LOGGED_IN = "IsLoggedIn";
+    private static final String IS_LOGGED_IN = "isLoggedIn";
 
     // User name (make variable public to access from outside)
-    public static final String KEY_NAME = "name";
+    public static final String KEY_NAME = "userName";
 
     // Email address (make variable public to access from outside)
-    public static final String KEY_ID = "id";
+    public static final String KEY_ID = "userId";
 
     // Token
     public static final String KEY_TOKEN = "token";

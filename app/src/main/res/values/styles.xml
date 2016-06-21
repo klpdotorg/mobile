@@ -10,6 +10,15 @@
 
     </style>
 
+    <style name="EditTextTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorControlNormal">@color/colorGreyGravel</item>
+        <item name="android:colorControlActivated">@color/colorBrandOrange</item>
+    </style>
+
+    <style name="StyledEditText">
+        <item name="android:theme">@style/EditTextTheme</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

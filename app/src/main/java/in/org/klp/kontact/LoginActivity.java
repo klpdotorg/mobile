@@ -18,7 +18,6 @@ import android.provider.ContactsContract.Contacts.Data;
 import android.provider.ContactsContract.Profile;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -29,6 +28,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     // UI references.
     private AutoCompleteTextView mEmailView;
-    private TextInputEditText mPasswordView;
+    private EditText mPasswordView;
     private View mLoginFormView;
     private SessionManager mSession;
     private ProgressDialog progressDialog = null;
@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
-        mPasswordView = (TextInputEditText) findViewById(R.id.password);
+        mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
