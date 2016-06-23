@@ -5,6 +5,6 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
     android:id="@+id/list_item_survey_textview"
-    android:textSize="18dp">
+    style="@android:style/TextAppearance.Large">
 
 </TextView>

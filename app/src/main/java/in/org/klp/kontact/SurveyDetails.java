@@ -6,9 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import in.org.klp.kontact.db.KontactDatabase;
 import in.org.klp.kontact.db.QuestionGroup;
+import in.org.klp.kontact.db.Survey;
 
 public class SurveyDetails extends AppCompatActivity {
     Long surveyId;
@@ -26,22 +28,27 @@ public class SurveyDetails extends AppCompatActivity {
         surveyName = getIntent().getStringExtra("surveyName");
 
         if (surveyId == 0 || surveyName.isEmpty()) {
+            Toast.makeText(this, "Invalid Survey ID/Name", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(SurveyDetails.this, MainActivity.class);
             startActivity(intent);
         }
 
-        TextView textView = (TextView) findViewById(R.id.survey_details);
-        textView.setText(surveyName);
+        Survey survey = db.fetch(Survey.class, surveyId);
+
+        TextView textViewName = (TextView) findViewById(R.id.textViewSurveyName);
+        textViewName.setText(survey.getName());
+
+        TextView textViewPartner = (TextView) findViewById(R.id.textViewSurveyPartner);
+        textViewPartner.setText(survey.getPartner());
 
         Button button = (Button) findViewById(R.id.generate_report);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 Intent intent = new Intent(SurveyDetails.this, BoundarySelectionActivity.class);
                 intent.putExtra("surveyId", surveyId);
                 intent.putExtra("surveyName", surveyName);
-                intent.putExtra("type","report");
+                intent.putExtra("type", "report");
                 startActivity(intent);
             }
         });
@@ -49,16 +56,14 @@ public class SurveyDetails extends AppCompatActivity {
         button = (Button) findViewById(R.id.new_response);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 Intent intent = new Intent(SurveyDetails.this, BoundarySelectionActivity.class);
                 intent.putExtra("surveyId", surveyId);
                 intent.putExtra("surveyName", surveyName);
-                intent.putExtra("type","response");
+                intent.putExtra("type", "response");
                 startActivity(intent);
             }
         });
-
 
 
         // check criterion - https://github.com/yahoo/squidb/wiki/SquiDB's-query-builder#criterion
