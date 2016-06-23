@@ -4,6 +4,10 @@ apply plugin: 'com.github.triplet.play'
 android {
     signingConfigs {
         release
+        config {
+            keyAlias 'subha'
+            keyPassword 'sametime'
+        }
     }
 
     compileSdkVersion 23
@@ -27,8 +31,8 @@ android {
         devel {
             applicationId "in.org.klp.mobile.development"
             buildConfigField 'String', 'HOST', '"http://dev.klp.org.in:80"'
+            minSdkVersion 21
         }
-
         prod {
             applicationId "in.org.klp.mobile.release"
             buildConfigField 'String', 'HOST', '"http://klp.org.in:80"'
@@ -48,21 +52,18 @@ play {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
-
     // squidb - https://github.com/yahoo/squidb
     compile 'com.yahoo.squidb:squidb:2.0.2'
     compile 'com.yahoo.squidb:squidb-annotations:2.0.2'
     apt 'com.yahoo.squidb:squidb-processor:2.0.2'
-
     // SQLite Asset Helper - https://github.com/jgilfelt/android-sqlite-asset-helper
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
-
     // Volley - https://android.googlesource.com/platform/frameworks/volley
     compile 'com.android.volley:volley:1.0.0'
 }
