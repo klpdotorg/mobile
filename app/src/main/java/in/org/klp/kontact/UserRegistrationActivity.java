@@ -118,7 +118,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
                     //If no errors, proceed with post to server.
                     if (!cancel) {
                         showProgress(true);
-                        final String SIGNUP_URL = "http://dev.klp.org.in/api/v1/users";
+                        final String SIGNUP_URL = BuildConfig.HOST + "/api/v1/users";
 
                         StringRequest stringRequest = new StringRequest(Request.Method.POST,
                                 SIGNUP_URL, new Response.Listener<String>() {
