@@ -2,7 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.triplet.play'
 
 android {
-   
+    signingConfigs {
+        release
+    }
 
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
@@ -24,12 +26,11 @@ android {
     productFlavors {
         devel {
             applicationId "in.org.klp.mobile.development"
-            buildConfigField 'String', 'HOST', '"http://dev.klp.org.in:80"'
-            minSdkVersion 21
+            buildConfigField 'String', 'HOST', '"https://dev.klp.org.in"'
         }
         prod {
             applicationId "in.org.klp.mobile.release"
-            buildConfigField 'String', 'HOST', '"http://klp.org.in:80"'
+            buildConfigField 'String', 'HOST', '"https://klp.org.in"'
         }
     }
 }
@@ -52,11 +53,10 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+
     // squidb - https://github.com/yahoo/squidb
-    apt 'com.yahoo.squidb:squidb-processor:2.0.2'
     compile 'com.yahoo.squidb:squidb:2.0.2'
     compile 'com.yahoo.squidb:squidb-annotations:2.0.2'
-
     apt 'com.yahoo.squidb:squidb-processor:2.0.2'
 
     // SQLite Asset Helper - https://github.com/jgilfelt/android-sqlite-asset-helper

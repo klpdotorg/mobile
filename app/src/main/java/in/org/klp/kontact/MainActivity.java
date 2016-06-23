@@ -251,30 +251,30 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String[] doInBackground(Void... params) {
+            Log.d(this.toString(), BuildConfig.HOST);
 
             // Populate surveys
-            processURL("https://dev.klp.org.in/api/v1/surveys/?source=mobile", "survey");
+            processURL(BuildConfig.HOST + "/api/v1/surveys/?source=mobile", "survey");
 
             // Populate questiongroups
-            processURL("https://dev.klp.org.in/api/v1/questiongroups/?source=mobile", "questiongroup");
+            processURL(BuildConfig.HOST + "/api/v1/questiongroups/?source=mobile", "questiongroup");
 
             // Populate questions
-            processURL("https://dev.klp.org.in/api/v1/questions/?source=mobile", "question");
+            processURL(BuildConfig.HOST + "/api/v1/questions/?source=mobile", "question");
 
             // Populate school
-            if (!isCancelled()) {
-                // because this one takes time,
-                // just checking if the async task has been cancelled before starting
-                processURL("https://dev.klp.org.in/api/v1/schools/list/", "school");
-            }
+//            if (!isCancelled()) {
+//                // because this one takes time,
+//                // just checking if the async task has been cancelled before starting
+//                processURL(BuildConfig.HOST + "/api/v1/schools/list/", "school");
+//            }
 
             // Populate boundaries
-            processURL("https://dev.klp.org.in/api/v1/boundary/admin3s", "boundary");
-            processURL("https://dev.klp.org.in/api/v1/boundary/admin2s", "boundary");
-            processURL("https://dev.klp.org.in/api/v1/boundary/admin1s", "boundary");
+            processURL(BuildConfig.HOST + "/api/v1/boundary/admin3s", "boundary");
+            processURL(BuildConfig.HOST + "/api/v1/boundary/admin2s", "boundary");
+            processURL(BuildConfig.HOST + "/api/v1/boundary/admin1s", "boundary");
 
             return null;
-
         }
 
         @Override
