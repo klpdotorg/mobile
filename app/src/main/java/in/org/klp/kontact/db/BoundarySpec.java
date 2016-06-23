@@ -16,7 +16,9 @@ public class BoundarySpec {
     @ColumnSpec(name="boundary_id")
     public long boundary_id;
 
+    @ColumnSpec(name="name")
     public String name;
+
     public String hierarchy;
     public String type;
 }

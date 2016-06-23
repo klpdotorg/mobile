@@ -2,13 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.triplet.play'
 
 android {
-    signingConfigs {
-        release
-        config {
-            keyAlias 'subha'
-            keyPassword 'sametime'
-        }
-    }
+   
 
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
@@ -17,8 +11,8 @@ android {
         applicationId "in.org.klp.kontact"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 10
-        versionName "0.8"
+        versionCode 12
+        versionName "0.10"
     }
     buildTypes {
         release {
@@ -54,14 +48,17 @@ play {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
-    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:support-v4:23.4.0'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     // squidb - https://github.com/yahoo/squidb
+    apt 'com.yahoo.squidb:squidb-processor:2.0.2'
     compile 'com.yahoo.squidb:squidb:2.0.2'
     compile 'com.yahoo.squidb:squidb-annotations:2.0.2'
+
     apt 'com.yahoo.squidb:squidb-processor:2.0.2'
+
     // SQLite Asset Helper - https://github.com/jgilfelt/android-sqlite-asset-helper
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     // Volley - https://android.googlesource.com/platform/frameworks/volley
@@ -70,10 +67,10 @@ dependencies {
 
 def Properties props = new Properties()
 def propFile = new File('release.properties')
-if (propFile.canRead()){
+if (propFile.canRead()) {
     props.load(new FileInputStream(propFile))
 
-    if (props!=null && props.containsKey('KEYSTORE') && props.containsKey('KEYSTORE_PASSWORD') &&
+    if (props != null && props.containsKey('KEYSTORE') && props.containsKey('KEYSTORE_PASSWORD') &&
             props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
         android.signingConfigs.release.storeFile = file(props['KEYSTORE'])
         android.signingConfigs.release.storePassword = props['KEYSTORE_PASSWORD']
@@ -83,7 +80,7 @@ if (propFile.canRead()){
         println 'release.properties found but some entries are missing'
         android.buildTypes.release.signingConfig = null
     }
-}else {
+} else {
     println 'release.properties not found'
     android.buildTypes.release.signingConfig = null
 }

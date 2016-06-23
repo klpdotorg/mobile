@@ -14,6 +14,7 @@ public class AnswerSpec {
     @ColumnSpec(name="_id")
     long Id;
 
+    @ColumnSpec(name="text", constraints = "NOT NULL")
     public String text;
 
     @ColumnSpec(name="story_id", constraints = "NOT NULL")

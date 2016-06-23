@@ -25,40 +25,41 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="@color/colorGreySteel"/>
-        <Button
-            android:id="@+id/select_district"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/district"/>
-        <Button
-            android:id="@+id/select_block"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/block"/>
-        <Button
-            android:id="@+id/select_cluster"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/cluster"/>
-        <Button
-            android:id="@+id/select_school"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/school"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/colorGreySteel"/>
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:id="@+id/textViewChosenSchool"
-            android:layout_gravity="center_horizontal" />
+            android:text="@string/prompt_district"/>
+        <Spinner
+            android:id="@+id/select_district"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prompt_block"/>
+        <Spinner
+            android:id="@+id/select_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prompt_cluster"/>
+        <Spinner
+            android:id="@+id/select_cluster"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/txt_select_school"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prompt_school"
+            android:visibility="gone"/>
+        <Spinner
+            android:id="@+id/select_school"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
 
         <View
             android:layout_width="match_parent"
@@ -66,12 +67,44 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="@color/colorGreySteel"/>
-
-        <Button
-            android:id="@+id/questions_activity"
+        <LinearLayout
+            android:id="@+id/date_selection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/questions"/>
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/start_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/prompt_start_date"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusableInTouchMode="false"
+                android:inputType="none"/>
+            <EditText
+                android:id="@+id/end_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/prompt_end_date"
+                android:cursorVisible="false"
+                android:focusableInTouchMode="false"
+                android:inputType="date"
+                android:clickable="false"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/report_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/questions"
+            android:visibility="gone"/>
+
+        <ListView
+            android:id="@+id/school_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 </RelativeLayout>

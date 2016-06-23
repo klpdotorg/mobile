@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
@@ -42,14 +43,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button notification_button = (Button) findViewById(R.id.notification_button);
-        notification_button.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v) {
-                createNotification();
-            }
-        });
-
         Button survey_button = (Button) findViewById(R.id.survey_button);
         survey_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,9 +72,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void createNotification() {
-        // Placeholder to create notification about sync.
-        // new DownloadTask(getApplicationContext()).execute(0);
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     public void logoutUser(View view) {

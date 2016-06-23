@@ -11,6 +11,10 @@
     <string name="block">Block</string>
     <string name="cluster">Cluster</string>
     <string name="school">School</string>
+    <string name="prompt_district">Select District</string>
+    <string name="prompt_block">Select Block</string>
+    <string name="prompt_cluster">Select Cluster</string>
+    <string name="prompt_school">Select School</string>
 
     <!-- Strings related to login -->
     <string name="prompt_register">Not a user yet?</string>
@@ -45,5 +49,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="backtologin">BACK TO <u>LOGIN</u></string>
+
+    <string name="prompt_start_date">Start Date</string>
+    <string name="prompt_end_date">End Date</string>
+
 
 </resources>
