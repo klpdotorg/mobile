@@ -23,6 +23,17 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    productFlavors {
+        devel {
+            applicationId "in.org.klp.mobile.development"
+            buildConfigField 'String', 'HOST', '"http://dev.klp.org.in:80"'
+        }
+
+        prod {
+            applicationId "in.org.klp.mobile.release"
+            buildConfigField 'String', 'HOST', '"http://klp.org.in:80"'
+        }
+    }
 }
 
 repositories {

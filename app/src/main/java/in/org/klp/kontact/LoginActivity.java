@@ -231,7 +231,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            final String LOGIN_URL = "http://dev.klp.org.in/api/v1/users/login";
+            final String LOGIN_URL = BuildConfig.HOST  + "/api/v1/users/login";
 
             StringRequest stringRequest = new StringRequest(Request.Method.POST,
                     LOGIN_URL, new Response.Listener<String>() {
