@@ -13,8 +13,8 @@ android {
         applicationId "in.org.klp.kontact"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 12
-        versionName "0.10"
+        versionCode 13
+        versionName "0.11"
     }
     buildTypes {
         release {
@@ -25,11 +25,11 @@ android {
     }
     productFlavors {
         devel {
-            applicationId "in.org.klp.mobile.development"
+            applicationId "in.org.klp.kontact.development"
             buildConfigField 'String', 'HOST', '"https://dev.klp.org.in"'
         }
         prod {
-            applicationId "in.org.klp.mobile.release"
+            applicationId "in.org.klp.kontact"
             buildConfigField 'String', 'HOST', '"https://klp.org.in"'
         }
     }
