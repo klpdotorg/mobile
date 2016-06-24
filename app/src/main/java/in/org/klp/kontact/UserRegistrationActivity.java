@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -132,12 +133,16 @@ public class UserRegistrationActivity extends AppCompatActivity {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                showSignupResultDialog(
-                                        "Error",
-                                        "Signup failed - " + error.getMessage(),
-                                        "Try Again");
+                                if (error.networkResponse == null) {
+                                    Toast.makeText(UserRegistrationActivity.this, "No Internet Connection", Toast.LENGTH_LONG).show();
+                                } else {
+                                    showSignupResultDialog(
+                                            "Error",
+                                            "Signup failed - " + error.getMessage(),
+                                            "Try Again");
 
-                                clearAllFields();
+                                    clearAllFields();
+                                }
                                 showProgress(false);
                             }
                         }) {

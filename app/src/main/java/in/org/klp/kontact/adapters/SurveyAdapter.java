@@ -22,6 +22,7 @@ public class SurveyAdapter extends ArrayAdapter<Survey> {
     // View lookup cache
     private static class SurveyHolder {
         TextView name;
+        TextView partner;
     }
 
     public SurveyAdapter(ArrayList<Survey> surveys, Context context) {
@@ -38,9 +39,12 @@ public class SurveyAdapter extends ArrayAdapter<Survey> {
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         convertView = inflater.inflate(R.layout.list_item_survey, parent, false);
-        surveyHolder.name = (TextView) convertView.findViewById(R.id.list_item_survey_textview);
+        surveyHolder.name = (TextView) convertView.findViewById(R.id.textViewName);
         surveyHolder.name.setText(survey.getName());
         surveyHolder.name.setTag(survey.getId());
+
+        surveyHolder.partner = (TextView) convertView.findViewById(R.id.textViewPartner);
+        surveyHolder.partner.setText(survey.getPartner());
 
         return convertView;
     }

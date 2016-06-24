@@ -157,27 +157,36 @@
 
     <Button
         android:id="@+id/register_button"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:background="@color/colorBrandTurquoise"
+        android:background="@color/colorBrandGreen"
         android:text="@string/register"
         android:textColor="@color/colorWhite"
         android:textStyle="bold" />
 
 
     <TextView
+        android:id="@+id/textView"
+        android:layout_width="165dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:paddingBottom="10dp"
+        android:text="@string/prompt_login"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/colorGreyGravel" />
+
+    <Button
         android:id="@+id/backtologin"
-        android:layout_width="wrap_content"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:linksClickable="true"
-        android:text="@string/backtologin"
-        android:textColor="@color/colorPrimary"
-        android:textSize="15dp"
-        android:textStyle="normal" />
+        android:background="@color/colorBrandTurquoise"
+        android:text="@string/login"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"/>
 
 </LinearLayout>
