@@ -15,15 +15,47 @@
             android:paddingTop="70dp"
             android:textSize="17dp"
             android:textAlignment="center"/>
-
-        <TextView
-            android:paddingTop="60dp"
-            android:id="@+id/aggregate"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="25dp"
-            android:textAlignment="center"/>
+            android:orientation="horizontal">
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="40dp">
+            <TableRow>
+                <TextView android:text="School Count"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/school_count"
+                    android:text="School Count"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Responses"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/response_count"
+                    android:text="Responses"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:text="Answers"/>
+            </TableRow>
+            <TableRow>
+                <TextView android:id="@+id/ans_count"
+                    android:text="Answers"/>
+            </TableRow>
+        </TableLayout>
+            <TextView
+                android:paddingTop="50dp"
+                android:id="@+id/aggregate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+
 
         <TextView
             android:paddingTop="100dp"

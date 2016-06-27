@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,9 +22,11 @@ import android.widget.TextView;
 import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Query;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import in.org.klp.kontact.data.StringWithTags;
@@ -33,7 +36,7 @@ import in.org.klp.kontact.db.School;
 import in.org.klp.kontact.db.Survey;
 
 public class BoundarySelectionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    Long surveyId, bid;
+    Long surveyId, bid, sdate=null, edate=null;
     String surveyName, type="", district, block, cluster;
     SquidCursor<Boundary> boundary_cursor = null;
     SquidCursor<School> school_cursor = null;
@@ -78,6 +81,8 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         chour=c.get(Calendar.HOUR_OF_DAY);
         cminute=c.get(Calendar.MINUTE);
 
+        sdate=milliseconds("01-01-2012");
+        edate=System.currentTimeMillis();
         EditText editText=(EditText) findViewById(R.id.start_date);
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,9 +128,43 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
                 intent.putExtra("surveyName", surveyName);
                 intent.putExtra("bid", bid);
                 intent.putExtra("boundary", district.toUpperCase() + ", " + block.toUpperCase() + ", " + cluster.toUpperCase());
+                changedate();
+                intent.putExtra("sdate", sdate);
+                intent.putExtra("edate", edate);
                 startActivity(intent);
             }
         });
+    }
+
+    private void changedate(){
+        EditText editText=(EditText) findViewById(R.id.start_date);
+        if (!editText.getText().toString().equals(""))
+            sdate=milliseconds(editText.getText().toString());
+        editText=(EditText) findViewById(R.id.end_date);
+        if (!editText.getText().toString().equals(""))
+            edate=milliseconds(editText.getText().toString());
+
+    }
+
+    public long milliseconds(String date)
+    {
+        //String date_ = date;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        try
+        {
+            Date mDate = sdf.parse(date.trim());
+            Log.w("current", String.valueOf(System.currentTimeMillis()));
+            long timeInMilliseconds = mDate.getTime();
+            Log.w("test", String.valueOf(timeInMilliseconds));
+            return timeInMilliseconds;
+        }
+        catch (ParseException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
     private void setdate(DatePicker view, int y, int m, int d, int id){
