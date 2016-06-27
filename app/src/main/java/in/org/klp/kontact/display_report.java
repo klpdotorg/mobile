@@ -26,7 +26,7 @@ public class display_report extends Fragment {
     private static final String ARG_PARAM5 = "dist_agg";
 
     private String mParam1;
-    private String q_name, agg, blck_agg, dist_agg;
+    private String q_name, agg, schoolcount, responses, answers, blck_agg, dist_agg;
 
     private OnFragmentInteractionListener mListener;
 
@@ -57,10 +57,15 @@ public class display_report extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             q_name = getArguments().getString(ARG_PARAM2);
-            agg = getArguments().getString(ARG_PARAM3);
+            String[] output = getArguments().getString(ARG_PARAM3).toString().trim().split("\\|");
+            agg=output[0]+"%";
+            schoolcount=output[1];
+            responses=output[2];
+            answers=output[3];
             blck_agg = getArguments().getString(ARG_PARAM4);
             dist_agg = getArguments().getString(ARG_PARAM5);
         }
@@ -75,6 +80,12 @@ public class display_report extends Fragment {
         tv_qname.setText(q_name);
         TextView tv_agg=(TextView) view.findViewById(R.id.aggregate);
         tv_agg.setText(agg);
+        TextView tv_sc_count=(TextView) view.findViewById(R.id.school_count);
+        tv_sc_count.setText(schoolcount);
+        TextView tv_res_count=(TextView) view.findViewById(R.id.response_count);
+        tv_res_count.setText(responses);
+        TextView tv_ans_count=(TextView) view.findViewById(R.id.ans_count);
+        tv_ans_count.setText(answers);
         TextView tv_blck=(TextView) view.findViewById(R.id.block_aggregate);
         tv_blck.setText(blck_agg);
         TextView tv_dist=(TextView) view.findViewById(R.id.district_aggregate);

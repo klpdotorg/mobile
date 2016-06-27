@@ -28,7 +28,7 @@ import in.org.klp.kontact.utils.SmartFragmentStatePagerAdapter;
 
 public class Reports extends AppCompatActivity implements display_report.OnFragmentInteractionListener {
 
-    private Long surveyId, questionGroupId, bid;
+    private Long surveyId, questionGroupId, bid, sdate, edate;
     Context context=this;
     ViewPager vpPager;
     private KontactDatabase db;
@@ -179,8 +179,10 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
     private String fetchAnswers(Long qid) {
         Intent intent = getIntent();
         bid = intent.getLongExtra("bid", 0);
+        sdate=intent.getLongExtra("sdate",0);
+        edate=intent.getLongExtra("edate",0);
         //Long qid=params[0];
-        int schoolcount=0, responses=1, aggregate=0;
+        int schoolcount=0, responses=0, ans=0, aggregate=0;
 
         Cursor cursor_sc, cursor_resp, cursor_agg, cursor_block_agg;
 
@@ -194,7 +196,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
                 cursor_sc.close();
         }
 
-        cursor_resp = db.rawQuery("select count(_id) as count from school where boundary_id=" + bid +" and _id in " +
+        /*cursor_resp = db.rawQuery("select count(_id) as count from school where boundary_id=" + bid +" and _id in " +
                 "(select school_id from story where _id in (select story_id from answer where question_id=" + qid + " and text='true'))",null);
         try {
             while (cursor_resp.moveToNext()) {
@@ -205,11 +207,13 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
                 cursor_resp.close();
         }
 
-        cursor_agg = db.rawQuery("select sum(case when text='true' then 1 else 0 end) as total from answer" +
-                " where question_id=" + qid + " and story_id in (select _id from story where school_id in (" +
-                "select _id from school where boundary_id=" + bid + "))", null);
+        cursor_agg = db.rawQuery("select inst._id, count(case when ans.text='true' then 1 else 0 end) as total, " +
+                "count(ans.text) as response, from answer as ans, school as inst, story as st " +
+                "where ans.created_at>=" + sdate + " and ans.created_at<=" + edate + " and ans.question_id=" + qid + " and ans.story_id=st._id and st.school_id=inst._id and " +
+                "inst.boundary_id=" + bid + " group by inst._id", null);
         try {
             while (cursor_agg.moveToNext()) {
+
                 aggregate=Integer.parseInt(cursor_agg.getString(0));
             }
         } catch (NumberFormatException e) {
@@ -217,14 +221,16 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
         }finally {
             if (cursor_agg != null)
                 cursor_agg.close();
-        }
+        }*/
 
-        cursor_block_agg = db.rawQuery("select sum(case when text='true' then 1 else 0 end) as total from answer" +
-                " where question_id=" + qid + " and story_id in (select _id from story where school_id in (" +
-                "select _id from school where boundary_id=" + bid + "))", null);
+        cursor_agg = db.rawQuery("select inst._id, sum(case when ans.text='true' then 1 else 0 end) as total, " +
+                "count(ans.text) as response from answer as ans, school as inst, story as st where ans.question_id=" + qid + " " +
+                "and ans.story_id=st._id and st.school_id=inst._id and inst.boundary_id=" + bid +
+                " and ans.created_at>=" + sdate + " and ans.created_at<=" + edate + " group by inst._id", null);
         try {
-            while (cursor_block_agg.moveToNext()) {
-                aggregate=Integer.parseInt(cursor_agg.getString(0));
+            while (cursor_agg.moveToNext()) {
+                responses+=Integer.parseInt(cursor_agg.getString(2));
+                ans+=Integer.parseInt(cursor_agg.getString(1));
             }
         } catch (Exception e) {
             aggregate=0;
@@ -233,10 +239,10 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
                 cursor_agg.close();
         }
 
-        if (schoolcount==0)
-            return String.valueOf(100*responses/1)+"%(0/"+schoolcount+")";
+        if (schoolcount==0 || responses==0)
+            return "0|"+schoolcount+"|"+responses+"|"+ans;
         else
-            return String.valueOf(100*responses/schoolcount)+"%("+responses+"/"+schoolcount+")";
+            return String.valueOf(100*ans/responses)+"|"+schoolcount+"|"+responses+"|"+ans;
     }
 
     @Override
