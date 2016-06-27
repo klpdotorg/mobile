@@ -55,5 +55,9 @@
     <string name="prompt_start_date">Start Date</string>
     <string name="prompt_end_date">End Date</string>
 
+    <string name="answer_yes">Yes</string>
+    <string name="answer_no">No</string>
+    <string name="answer_unknown">Don\'t Know</string>
 
+    <string name="prompt_new_rsponse">Do you want to record another response?</string>
 </resources>

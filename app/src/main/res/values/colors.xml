@@ -21,7 +21,7 @@
     $grey-silver: #bbb;
     $grey-steel: #898989;
     $grey-gravel: #4d4d4d;-->
-    <color name="colorWhite">#fff</color>
+    <color name="colorWhite">#ffffff</color>
     <color name="colorBlack">#000</color>
     <color name="colorGreyMist">#f6f6f6</color>
     <color name="colorGreyCloud">#d8d8d8</color>
