@@ -26,7 +26,7 @@ public class display_report extends Fragment {
     private static final String ARG_PARAM5 = "dist_agg";
 
     private String mParam1;
-    private String q_name, agg, schoolcount, responses, answers, blck_agg, dist_agg;
+    private String q_name, agg, schoolcount, schoolwithresponse, responses, desc, blck_agg, dist_agg;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,8 +64,9 @@ public class display_report extends Fragment {
             String[] output = getArguments().getString(ARG_PARAM3).toString().trim().split("\\|");
             agg=output[0]+"%";
             schoolcount=output[1];
-            responses=output[2];
-            answers=output[3];
+            schoolwithresponse=output[2];
+            responses=output[3];
+            desc=output[4];
             blck_agg = getArguments().getString(ARG_PARAM4);
             dist_agg = getArguments().getString(ARG_PARAM5);
         }
@@ -76,20 +77,22 @@ public class display_report extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_display_report, container, false);
-        TextView tv_qname=(TextView) view.findViewById(R.id.question_name);
-        tv_qname.setText(q_name);
-        TextView tv_agg=(TextView) view.findViewById(R.id.aggregate);
-        tv_agg.setText(agg);
-        TextView tv_sc_count=(TextView) view.findViewById(R.id.school_count);
-        tv_sc_count.setText(schoolcount);
-        TextView tv_res_count=(TextView) view.findViewById(R.id.response_count);
-        tv_res_count.setText(responses);
-        TextView tv_ans_count=(TextView) view.findViewById(R.id.ans_count);
-        tv_ans_count.setText(answers);
-        TextView tv_blck=(TextView) view.findViewById(R.id.block_aggregate);
-        tv_blck.setText(blck_agg);
-        TextView tv_dist=(TextView) view.findViewById(R.id.district_aggregate);
-        tv_dist.setText(dist_agg);
+        TextView tv=(TextView) view.findViewById(R.id.question_name);
+        tv.setText(q_name);
+        tv=(TextView) view.findViewById(R.id.aggregate);
+        tv.setText(agg);
+        tv=(TextView) view.findViewById(R.id.school_count);
+        tv.setText(schoolcount);
+        tv=(TextView) view.findViewById(R.id.school_resp_count);
+        tv.setText(schoolwithresponse);
+        tv=(TextView) view.findViewById(R.id.res_count);
+        tv.setText(responses);
+        tv=(TextView) view.findViewById(R.id.desc);
+        tv.setText(desc);
+        tv=(TextView) view.findViewById(R.id.block_aggregate);
+        tv.setText(blck_agg);
+        tv=(TextView) view.findViewById(R.id.district_aggregate);
+        tv.setText(dist_agg);
         return view;
     }
 

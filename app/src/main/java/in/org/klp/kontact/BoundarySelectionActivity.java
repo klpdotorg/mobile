@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -134,8 +133,11 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         if (!editText.getText().toString().equals(""))
             sdate=milliseconds(editText.getText().toString());
         editText=(EditText) findViewById(R.id.end_date);
-        if (!editText.getText().toString().equals(""))
-            edate=milliseconds(editText.getText().toString());
+        if (!editText.getText().toString().equals("")) {
+            String[] alter_date=editText.getText().toString().split("\\-");
+            String addstr=String.valueOf(Integer.parseInt(alter_date[0])+1)+"-"+alter_date[1]+"-"+alter_date[2];
+            edate = milliseconds(addstr);
+        }
 
     }
 
@@ -146,9 +148,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         try
         {
             Date mDate = sdf.parse(date.trim());
-            Log.w("current", String.valueOf(System.currentTimeMillis()));
             long timeInMilliseconds = mDate.getTime();
-            Log.w("test", String.valueOf(timeInMilliseconds));
             return timeInMilliseconds;
         }
         catch (ParseException e)
@@ -169,11 +169,11 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
                 editText.setText(String.format("%02d-%02d-%04d", dayOfMonth, monthOfYear + 1, year));
             }
         }, y, m, d);
-        /*try {
-           // dpd.getDatePicker().setMaxDate(((Date) dateFormat.parse(String.format("%4d-%2d-%2d", y + 2, m + 1, d))).getTime() * 1);
-           // dpd.getDatePicker().setMinDate(((Date) dateFormat.parse(String.format("%4d-%2d-%2d", y, m + 1, d))).getTime() * 1);
-        } catch (ParseException p) {
-        }*/
+        try {
+            dpd.getDatePicker().setMaxDate(new Date().getTime());
+           // dpd.getDatePicker().setMinDate();
+        } catch (Exception e) {
+        }
         dpd.show();
     }
 
