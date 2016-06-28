@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import in.org.klp.kontact.db.KontactDatabase;
 import in.org.klp.kontact.db.Survey;
 
 import in.org.klp.kontact.data.SurveyDbHelper;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
         SurveyDbHelper dbHelper;
+        private KontactDatabase db;
 
         private String processPaginatedURL(String apiURL, String type) {
             int count = 0;
@@ -468,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveSurveyDataFromJson(String surveyJsonStr)
                 throws JSONException {
-
+            db = new KontactDatabase(MainActivity.this);
             dbHelper = new SurveyDbHelper(MainActivity.this);
 
             final String FEATURES = "features";
@@ -493,7 +495,10 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     Survey survey = new Survey()
-                            .setId(surveyId);
+                            .setId(surveyId)
+                            .setName(surveyName)
+                            .setPartner(surveyPartner);
+
                     dbHelper.insert_survey(surveyId, surveyPartner, surveyName);
                 } catch (SQLiteException e) {
                     Log.v(LOG_TAG, "Survey Insert Error: " + e.toString());
