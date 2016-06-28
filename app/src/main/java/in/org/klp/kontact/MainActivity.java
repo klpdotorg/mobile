@@ -477,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
 
             for (int i = 0; i < surveyArray.length(); i++) {
 
-                String surveyId;
+                Integer surveyId;
                 String surveyName;
                 String surveyPartner;
 
@@ -487,13 +487,14 @@ public class MainActivity extends AppCompatActivity {
                 // Get the JSON object representing the partner
                 JSONObject partnerObject = surveyObject.getJSONObject("partner");
 
-                surveyId = surveyObject.getString("id");
+                surveyId = surveyObject.getInt("id");
                 surveyName = surveyObject.getString("name");
                 surveyPartner = partnerObject.getString("name");
 
                 try {
-                    Survey survey = new Survey();
-                    dbHelper.insert_survey(Integer.parseInt(surveyId), surveyPartner, surveyName);
+                    Survey survey = new Survey()
+                            .setId(surveyId);
+                    dbHelper.insert_survey(surveyId, surveyPartner, surveyName);
                 } catch (SQLiteException e) {
                     Log.v(LOG_TAG, "Survey Insert Error: " + e.toString());
                 }
