@@ -4,74 +4,53 @@
     android:layout_height="match_parent"
     tools:context="in.org.klp.kontact.display_report">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/question_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="70dp"
-            android:textSize="17dp"
-            android:textAlignment="center"/>
+        android:paddingBottom="25dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="40dp">
-            <TableRow>
-                <TextView android:text="School Count"/>
-            </TableRow>
-            <TableRow>
-                <TextView android:id="@+id/school_count"
-                    android:text="School Count"/>
-            </TableRow>
-            <TableRow>
-                <TextView android:text="Responses"/>
-            </TableRow>
-            <TableRow>
-                <TextView android:id="@+id/response_count"
-                    android:text="Responses"/>
-            </TableRow>
-            <TableRow>
-                <TextView android:text="Answers"/>
-            </TableRow>
-            <TableRow>
-                <TextView android:id="@+id/ans_count"
-                    android:text="Answers"/>
-            </TableRow>
-        </TableLayout>
-            <TextView
+            android:orientation="vertical">
+
+            <TextView style="@style/style_for_lable"
+                android:text="Number of Schools"/>
+            <TextView style="@style/style_for_value"
+                android:id="@+id/school_count"/>
+            <TextView style="@style/style_for_lable"
+                android:text="Number of Schools with Responses"/>
+            <TextView style="@style/style_for_value"
+                android:id="@+id/school_resp_count"/>
+            <TextView style="@style/style_for_lable"
+                android:text="Number of Responses"/>
+            <TextView style="@style/style_for_value"
+                android:id="@+id/res_count"/>
+            <TextView style="@style/def_text_view"
+                android:id="@+id/question_name"
                 android:paddingTop="50dp"
-                android:id="@+id/aggregate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="30dp"
+                android:textSize="17dp"
                 android:textAlignment="center"/>
+            <TextView
+                android:paddingTop="30dp"
+                android:id="@+id/aggregate"
+                style="@style/style_for_value"
+                android:textSize="25dp"/>
+            <TextView style="@style/style_for_value"
+                android:id="@+id/desc"/>
         </LinearLayout>
 
-
+    </ScrollView>
 
         <TextView
+            style="@style/style_for_lable"
             android:paddingTop="100dp"
             android:id="@+id/block_aggregate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
             android:visibility="gone"/>
 
-        <TextView
+        <TextView style="@style/style_for_lable"
             android:paddingTop="20dp"
             android:id="@+id/district_aggregate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:textAlignment="center"
             android:visibility="gone"/>
-    </LinearLayout>
 
 </FrameLayout>

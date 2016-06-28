@@ -34,10 +34,8 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
     private KontactDatabase db;
     int qcount=0;
     private SmartFragmentStatePagerAdapter adapterViewPager;
-    String boundary="", agg="";
 
     public void onFragmentInteraction(Uri uri) {
-        //you can leave it empty
     }
 
     @Override
@@ -46,9 +44,14 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
         setContentView(R.layout.activity_reports);
         db=new KontactDatabase(context);
 
-        String boundry_text= getIntent().getStringExtra("boundary");
-        TextView tv=(TextView) findViewById(R.id.selected_boundaries);
-        tv.setText(boundry_text);
+        String[] boundry_text= getIntent().getStringExtra("boundary").split(",");
+
+        TextView tv=(TextView) findViewById(R.id.dist_name);
+        tv.setText(boundry_text[0]);
+        tv=(TextView) findViewById(R.id.blck_name);
+        tv.setText(boundry_text[1]);
+        tv=(TextView) findViewById(R.id.clst_name);
+        tv.setText(boundry_text[2]);
 
         fetchQuestions();
         vpPager = (ViewPager) findViewById(R.id.vpPager);
@@ -57,21 +60,17 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
             // This method will be invoked when a new page becomes selected.
             @Override
             public void onPageSelected(int position) {
-                //Toast.makeText(display_reports.this,
-                //"Selected page position: " + position, Toast.LENGTH_SHORT).show();
             }
 
             // This method will be invoked when the current page is scrolled
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                // Code goes here
             }
 
             // Called when the scroll state changes:
             // SCROLL_STATE_IDLE, SCROLL_STATE_DRAGGING, SCROLL_STATE_SETTLING
             @Override
             public void onPageScrollStateChanged(int state) {
-                // Code goes here
             }
         });
     }
@@ -181,10 +180,9 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
         bid = intent.getLongExtra("bid", 0);
         sdate=intent.getLongExtra("sdate",0);
         edate=intent.getLongExtra("edate",0);
-        //Long qid=params[0];
-        int schoolcount=0, responses=0, ans=0, aggregate=0;
+        int schoolcount=0, responses=0, ans=0, schoolwithresponse=0;
 
-        Cursor cursor_sc, cursor_resp, cursor_agg, cursor_block_agg;
+        Cursor cursor_sc, cursor_agg, cursor_block_agg;
 
         cursor_sc = db.rawQuery("select count("+ SchoolContract.SchoolEntry._ID+") as count from school where boundary_id=" +String.valueOf(bid),null);
         try {
@@ -196,33 +194,6 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
                 cursor_sc.close();
         }
 
-        /*cursor_resp = db.rawQuery("select count(_id) as count from school where boundary_id=" + bid +" and _id in " +
-                "(select school_id from story where _id in (select story_id from answer where question_id=" + qid + " and text='true'))",null);
-        try {
-            while (cursor_resp.moveToNext()) {
-                responses=Integer.parseInt(cursor_resp.getString(0));
-            }
-        } finally {
-            if (cursor_resp != null)
-                cursor_resp.close();
-        }
-
-        cursor_agg = db.rawQuery("select inst._id, count(case when ans.text='true' then 1 else 0 end) as total, " +
-                "count(ans.text) as response, from answer as ans, school as inst, story as st " +
-                "where ans.created_at>=" + sdate + " and ans.created_at<=" + edate + " and ans.question_id=" + qid + " and ans.story_id=st._id and st.school_id=inst._id and " +
-                "inst.boundary_id=" + bid + " group by inst._id", null);
-        try {
-            while (cursor_agg.moveToNext()) {
-
-                aggregate=Integer.parseInt(cursor_agg.getString(0));
-            }
-        } catch (NumberFormatException e) {
-            aggregate=0;
-        }finally {
-            if (cursor_agg != null)
-                cursor_agg.close();
-        }*/
-
         cursor_agg = db.rawQuery("select inst._id, sum(case when ans.text='true' then 1 else 0 end) as total, " +
                 "count(ans.text) as response from answer as ans, school as inst, story as st where ans.question_id=" + qid + " " +
                 "and ans.story_id=st._id and st.school_id=inst._id and inst.boundary_id=" + bid +
@@ -231,18 +202,18 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
             while (cursor_agg.moveToNext()) {
                 responses+=Integer.parseInt(cursor_agg.getString(2));
                 ans+=Integer.parseInt(cursor_agg.getString(1));
+                schoolwithresponse+=1;
             }
         } catch (Exception e) {
-            aggregate=0;
         }finally {
             if (cursor_agg != null)
                 cursor_agg.close();
         }
 
         if (schoolcount==0 || responses==0)
-            return "0|"+schoolcount+"|"+responses+"|"+ans;
+            return "0|"+schoolcount+"|"+schoolwithresponse+"|"+responses+"|("+ans+"/"+responses+" Responses)";
         else
-            return String.valueOf(100*ans/responses)+"|"+schoolcount+"|"+responses+"|"+ans;
+            return String.valueOf(100*ans/responses)+"|"+schoolcount+"|"+schoolwithresponse+"|"+responses+"|("+ans+"/"+responses+" Responses)";
     }
 
     @Override
