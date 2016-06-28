@@ -32,6 +32,7 @@ import in.org.klp.kontact.data.StringWithTags;
 import in.org.klp.kontact.db.Boundary;
 import in.org.klp.kontact.db.KontactDatabase;
 import in.org.klp.kontact.db.School;
+import in.org.klp.kontact.db.Survey;
 
 public class BoundarySelectionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     Long surveyId, bid, sdate=null, edate=null;
@@ -108,8 +109,14 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         sp_block.setSelection(sharedPreferences.getInt("block",0));
         Spinner sp_cluster=(Spinner) findViewById(R.id.select_cluster);
         sp_cluster.setSelection(sharedPreferences.getInt("cluster",0));
-        TextView textView = (TextView) findViewById(R.id.survey_details);
-        textView.setText(surveyName);
+
+        Survey survey = db.fetch(Survey.class, surveyId);
+
+        TextView textViewName = (TextView) findViewById(R.id.textViewSurveyName);
+        textViewName.setText(survey.getName());
+
+        TextView textViewPartner = (TextView) findViewById(R.id.textViewSurveyPartner);
+        textViewPartner.setText(survey.getPartner());
 
         bt_report.setOnClickListener(new View.OnClickListener() {
             @Override
