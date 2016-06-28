@@ -6,8 +6,10 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import com.yahoo.squidb.data.SquidDatabase;
+import com.yahoo.squidb.data.TableModel;
 import com.yahoo.squidb.data.adapter.SQLiteDatabaseWrapper;
 import com.yahoo.squidb.sql.Table;
+import com.yahoo.squidb.sql.TableStatement;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -80,6 +82,10 @@ public class KontactDatabase extends SquidDatabase {
         return true;
     }
 
-    // Other overridable methods exist for migrations and initialization;
-    // omitted for brevity
+    // by default squidb wont let you override the id field
+    // this is the way to do it
+    // https://github.com/yahoo/squidb/issues/186
+    public boolean insertWithId(TableModel item) {
+        return insertRow(item, TableStatement.ConflictAlgorithm.REPLACE);
+    }
 }
