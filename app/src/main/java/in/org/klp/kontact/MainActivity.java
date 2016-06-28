@@ -24,6 +24,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import in.org.klp.kontact.db.Survey;
+
 import in.org.klp.kontact.data.SurveyDbHelper;
 import in.org.klp.kontact.utils.SessionManager;
 
@@ -490,6 +492,7 @@ public class MainActivity extends AppCompatActivity {
                 surveyPartner = partnerObject.getString("name");
 
                 try {
+                    Survey survey = new Survey();
                     dbHelper.insert_survey(Integer.parseInt(surveyId), surveyPartner, surveyName);
                 } catch (SQLiteException e) {
                     Log.v(LOG_TAG, "Survey Insert Error: " + e.toString());
