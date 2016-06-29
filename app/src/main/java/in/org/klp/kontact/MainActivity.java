@@ -378,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
 
             for (int i = 0; i < questionArray.length(); i++) {
 
-                Integer questionId;
+                long questionId;
                 String text;
                 String key;
                 String options;
@@ -396,15 +396,18 @@ public class MainActivity extends AppCompatActivity {
                 type = questionObject.getString("question_type");
                 school_type = schoolObject.getString("name");
 
-                try {
-                    dbHelper.insert_question(questionId, text, key, options, type, school_type);
-                } catch (SQLiteException e) {
-                    Log.v(LOG_TAG, "Question Insert Error: " + e.toString());
-                }
+                Question question = new Question()
+                        .setId(questionId)
+                        .setText(text)
+                        .setKey(key)
+                        .setOptions(options)
+                        .setType(type)
+                        .setSchoolType(school_type);
+                db.insertWithId(question);
 
                 for (int j = 0; j < questiongroupSetArray.length(); j++) {
                     Integer throughId;
-                    Integer questiongroupId;
+                    long questiongroupId;
                     Integer sequence;
 
                     Integer status;
@@ -420,11 +423,12 @@ public class MainActivity extends AppCompatActivity {
 
                     if (source.equals("mobile")) {
                         if (status.equals(1)) {
-                            try {
-                                dbHelper.insert_questiongroupquestion(throughId, questionId, questiongroupId, sequence);
-                            } catch (SQLiteException e) {
-                                Log.v(LOG_TAG, "QuestiongroupQuestion Insert Error: " + e.toString());
-                            }
+                            QuestionGroupQuestion questionGroupQuestion = new QuestionGroupQuestion()
+                                    .setId(throughId)
+                                    .setQuestionId(questionId)
+                                    .setQuestiongroupId(questiongroupId)
+                                    .setSequence(sequence);
+                            db.insertWithId(questionGroupQuestion);
                         }
                     }
 
