@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -50,6 +51,7 @@ public class QuestionFragment extends Fragment {
     private LinearLayout linearLayoutQuestions;
     private KontactDatabase db;
     SessionManager session;
+    private HashMap<String, String> userType;
 
     public QuestionFragment() {
     }
@@ -78,6 +80,26 @@ public class QuestionFragment extends Fragment {
             Intent intentMain = new Intent(getActivity(), MainActivity.class);
             startActivity(intentMain);
         }
+
+        // defining user types
+        userType = new HashMap<String, String>();
+        userType.put("Parents", "PR");
+        userType.put("Teachers", "TR");
+        userType.put("Volunteer", "VR");
+        userType.put("Cbo Member", "CM");
+        userType.put("Headmaster", "HM");
+        userType.put("Sdmc Member", "SM");
+        userType.put("Local Leader", "LL");
+        userType.put("Akshara Staff", "AS");
+        userType.put("Educated Youth", "EY");
+        userType.put("Education Official", "EO");
+        userType.put("Elected Representative", "ER");
+
+        Spinner spinnerUserType = (Spinner) rootView.findViewById(R.id.spinnerUserType);
+        List<String> userTypeNames = new ArrayList<>();
+        userTypeNames.addAll(userType.keySet());
+        ArrayAdapter<String> userTypeAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, userTypeNames);
+        spinnerUserType.setAdapter(userTypeAdapter);
 
         SquidCursor<QuestionGroup> qgCursor = null;
         SquidCursor<QuestionGroupQuestion> qgqCursor = null;
