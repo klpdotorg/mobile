@@ -52,10 +52,4 @@
     <style name="table_row" parent="style_for_value">
         <item name="android:layout_weight">1</item>
     </style>
-
-    <style name="KLPTheme" parent="AppTheme" >
-        <item name="colorPrimary">@color/colorBrandTurquoise</item>
-        <item name="colorPrimaryDark">@color/commonGreenLeaf</item>
-        <item name="colorAccent">@color/colorBrandTurquoise</item>
-    </style>
 </resources>

@@ -52,10 +52,6 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
         return answers;
     }
 
-    public void addAnswer(Question question, String answer) {
-        this.answers.put(question, answer);
-    }
-
     @Override
     public View getView(int position, View convertView, final ViewGroup parent) {
         final Question question = getItem(position);

@@ -10,18 +10,19 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_activity_survey"
-            android:id="@+id/survey_button"
-            android:background="@color/colorBrandTurquoise"
-            android:textColor="@color/colorWhite"
-            android:layout_marginBottom="10dp" />
+            android:text="Go to the Surveys"
+            android:id="@+id/survey_button" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Sync Data"
-            android:id="@+id/sync_button"
-            android:textColor="@color/colorWhite"
-            android:background="@color/colorBrandTurquoise"
-            android:layout_marginBottom="10dp" />
+            android:id="@+id/sync_button" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:id="@+id/btnLogout"
+            android:onClick="logoutUser" />
 
 </LinearLayout>
