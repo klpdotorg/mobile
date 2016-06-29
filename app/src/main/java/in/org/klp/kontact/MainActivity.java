@@ -472,7 +472,6 @@ public class MainActivity extends AppCompatActivity {
         private void saveSurveyDataFromJson(String surveyJsonStr)
                 throws JSONException {
             db = new KontactDatabase(MainActivity.this);
-            dbHelper = new SurveyDbHelper(MainActivity.this);
 
             final String FEATURES = "features";
             JSONObject surveyJson = new JSONObject(surveyJsonStr);
