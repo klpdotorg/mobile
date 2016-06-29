@@ -348,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < schoolArray.length(); i++) {
 
                 Integer schoolId;
-                Integer boundaryId;
+                long boundaryId;
                 String name;
 
                 JSONObject schoolObject = schoolArray.getJSONObject(i);
@@ -358,11 +358,11 @@ public class MainActivity extends AppCompatActivity {
                 boundaryId = boundaryObject.getInt("id");
                 name = schoolObject.getString("name");
 
-                try {
-                    dbHelper.insert_school(schoolId, boundaryId, name);
-                } catch (SQLiteException e) {
-                    Log.v(LOG_TAG, "School Insert Error: " + e.toString());
-                }
+                School school = new School()
+                        .setId(schoolId)
+                        .setBoundaryId(boundaryId)
+                        .setName(name);
+                db.insertWithId(school);
             }
             return next;
         }
