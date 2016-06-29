@@ -338,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
 
         private String saveSchoolDataFromJson(String schoolJsonStr)
                 throws JSONException {
-            dbHelper = new SurveyDbHelper(MainActivity.this);
+            db = new KontactDatabase(MainActivity.this);
 
             final String FEATURES = "features";
             JSONObject schoolJson = new JSONObject(schoolJsonStr);
@@ -370,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveQuestionDataFromJson(String questionJsonStr)
                 throws JSONException {
-            dbHelper = new SurveyDbHelper(MainActivity.this);
+            db = new KontactDatabase(MainActivity.this);
 
             final String FEATURES = "features";
             JSONObject questionJson = new JSONObject(questionJsonStr);
