@@ -27,6 +27,11 @@ import java.net.URL;
 import in.org.klp.kontact.data.StringWithTags;
 import in.org.klp.kontact.db.KontactDatabase;
 import in.org.klp.kontact.db.Survey;
+import in.org.klp.kontact.db.Question;
+import in.org.klp.kontact.db.QuestionGroup;
+import in.org.klp.kontact.db.QuestionGroupQuestion;
+import in.org.klp.kontact.db.Boundary;
+import in.org.klp.kontact.db.School;
 
 import in.org.klp.kontact.data.SurveyDbHelper;
 import in.org.klp.kontact.utils.SessionManager;
@@ -430,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveQuestiongroupDataFromJson(String questiongroupJsonStr)
                 throws JSONException {
-            dbHelper = new SurveyDbHelper(MainActivity.this);
+            db = new KontactDatabase(MainActivity.this);
 
             final String FEATURES = "features";
             JSONObject questiongroupJson = new JSONObject(questiongroupJsonStr);
@@ -440,10 +445,10 @@ public class MainActivity extends AppCompatActivity {
 
                 Integer groupId;
                 Integer status;
-                Integer start_date;
-                Integer end_date;
+                long start_date;
+                long end_date;
                 Integer version;
-                Integer surveyId;
+                long surveyId;
                 String source;
 
                 // Get the JSON object representing the survey
@@ -460,12 +465,15 @@ public class MainActivity extends AppCompatActivity {
                 source = questiongroupObject.getString("source");
                 surveyId = surveyObject.getInt("id");
 
-                try {
-                    dbHelper.insert_questiongroup(groupId, status, start_date, end_date, version, source, surveyId);
-                } catch (SQLiteException e) {
-                    Log.v(LOG_TAG, "Questiongroup Insert Error: " + e.toString());
-                }
-
+                QuestionGroup questionGroup = new QuestionGroup()
+                        .setId(groupId)
+                        .setStatus(status)
+                        .setStartDate(start_date)
+                        .setEndDate(end_date)
+                        .setVersion(version)
+                        .setSource(source)
+                        .setSurveyId(surveyId);
+                db.insertWithId(questionGroup);
             }
         }
 
