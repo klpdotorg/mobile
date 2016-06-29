@@ -246,7 +246,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
 
     private List<StringWithTags> get_boundary_data(int parent) {
         Query listboundary = Query.select().from(Boundary.TABLE)
-                    .where(Boundary.BOUNDARY_ID.eq(parent==1?null:parent).and(Boundary.TYPE.eq("primaryschool"))).orderBy();
+                    .where(Boundary.BOUNDARY_ID.eq(oparent).and(Boundary.TYPE.eq("primaryschool"))).orderBy();
         List<StringWithTags> boundaryList = new ArrayList<StringWithTags>();
         boundary_cursor = db.query(Boundary.class, listboundary);
         if (boundary_cursor.moveToFirst()) {
