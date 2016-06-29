@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
 
         private String saveBoundaryDataFromJson(String boundaryJsonStr)
                 throws JSONException {
-            dbHelper = new SurveyDbHelper(MainActivity.this);
+            db = new KontactDatabase(MainActivity.this);
 
             final String FEATURES = "features";
             JSONObject boundaryJson = new JSONObject(boundaryJsonStr);
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < boundaryArray.length(); i++) {
 
                 Integer boundaryId;
-                Integer parentId;
+                long parentId;
                 String name;
                 String hierarchy;
                 String school_type;
@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
                     parentId = parentObject.getInt("id");
                 }
                 else {
-                    parentId = -1;
+                    parentId = 1;
                 }
 
                 boundaryId = boundaryObject.getInt("id");
@@ -326,11 +326,13 @@ public class MainActivity extends AppCompatActivity {
                 hierarchy = boundaryObject.getString("type");
                 school_type = boundaryObject.getString("school_type");
 
-                try {
-                    dbHelper.insert_boundary(boundaryId, parentId, name, hierarchy, school_type);
-                } catch (SQLiteException e) {
-                    Log.v(LOG_TAG, "Boundary Insert Error: " + e.toString());
-                }
+                Boundary boundary = new Boundary()
+                        .setId(boundaryId)
+                        .setBoundaryId(parentId)
+                        .setName(name)
+                        .setHierarchy(hierarchy)
+                        .setType(school_type);
+                db.insertWithId(boundary);
             }
             return next;
         }
