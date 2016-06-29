@@ -16,6 +16,7 @@
     <string name="prompt_block">Select Block</string>
     <string name="prompt_cluster">Select Cluster</string>
     <string name="prompt_school">Select School</string>
+    <string name="prompt_user_type">Select Respondent Type</string>
 
     <!-- Strings related to login -->
     <string name="prompt_register">Not a user yet?</string>
