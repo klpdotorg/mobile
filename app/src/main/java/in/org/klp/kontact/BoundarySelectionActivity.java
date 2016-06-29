@@ -9,11 +9,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -43,6 +47,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
     EditText editText=null;
     SimpleDateFormat dateFormat;
     Context context = this;
+    long llHeight;
 
     KontactDatabase db;
 
@@ -60,7 +65,52 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         Button bt_report = (Button) findViewById(R.id.report_button);
         EditText start_date=(EditText) findViewById(R.id.start_date);
         EditText end_date=(EditText) findViewById(R.id.end_date);
-        ListView listView=(ListView) findViewById(R.id.school_list);
+
+        final LinearLayout llBoundarySelect = (LinearLayout) findViewById(R.id.ll_select_boundary);
+        final ListView listView=(ListView) findViewById(R.id.school_list);
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int mLastFirstVisibleItem;
+            private boolean toolbarCollapsed = false;
+            private String lastScrollDirection = "DOWN";
+
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                /* scrollStat can be -->
+                int	SCROLL_STATE_FLING
+                    The user had previously been scrolling using touch and had performed a fling.
+                int	SCROLL_STATE_IDLE
+                    The view is not scrolling.
+                int	SCROLL_STATE_TOUCH_SCROLL
+                    The user is scrolling using touch, and their finger is still on the screen
+                 */
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                llHeight = listView.getHeight();
+                if(mLastFirstVisibleItem < firstVisibleItem)
+                {
+                    Log.i("SCROLLING DOWN","TRUE");
+                    if (llBoundarySelect.getVisibility() == LinearLayout.VISIBLE && !toolbarCollapsed && lastScrollDirection == "DOWN") {
+                        collapse(llBoundarySelect);
+                        toolbarCollapsed = true;
+                    }
+                    lastScrollDirection = "DOWN";
+                }
+                if(mLastFirstVisibleItem > firstVisibleItem)
+                {
+                    Log.i("SCROLLING UP","TRUE");
+                    if (llBoundarySelect.getVisibility() == LinearLayout.GONE && toolbarCollapsed && lastScrollDirection == "UP") {
+                        expand(llBoundarySelect);
+                        toolbarCollapsed = false;
+                    }
+                    lastScrollDirection = "UP";
+                }
+                mLastFirstVisibleItem = firstVisibleItem;
+            }
+        });
+
         if (type.equals("report")) {
             bt_report.setVisibility(View.VISIBLE);
             start_date.setVisibility(View.VISIBLE);
@@ -280,5 +330,59 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
     protected void onDestroy() {
         super.onDestroy();
         db.close();
+    }
+
+    public static void expand(final View v) {
+        v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? LinearLayout.LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    public static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    v.setVisibility(View.GONE);
+                }else{
+                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
     }
 }
