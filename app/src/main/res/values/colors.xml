@@ -6,6 +6,7 @@
     <color name="colorAccent">#cb0012</color>
     <!-- KLP brand colors off dubdubdub -->
     <color name="colorBrandGreen">#26b262</color>
+    <color name="colorBrandGreenDark">#1a964f</color>
     <color name="colorBrandTurquoise">#24b2b6</color>
     <color name="colorBrandOrange">#ec6608</color>
     <color name="colorBrandBlue">#3891e3</color>
@@ -21,6 +22,15 @@
     $grey-silver: #bbb;
     $grey-steel: #898989;
     $grey-gravel: #4d4d4d;-->
+    <color name="commonPurpleAmethyst">#7b7795</color>
+    <color name="commonMaroon">#a31460</color>
+    <color name="commonMaroonDark">#9b0756</color>
+    <color name="commonPinkSalmon">#f87c84</color>
+    <color name="commonPinkSalmonDark">#e2686f</color>
+    <color name="commonYellowMild">#ffeda0</color>
+    <color name="commonOrangeMild">#faa060</color>
+    <color name="commonGreenPista">#addd8e</color>
+    <color name="commonGreenLeaf">#44c28c</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorBlack">#000</color>
     <color name="colorGreyMist">#f6f6f6</color>
