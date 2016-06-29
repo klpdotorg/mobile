@@ -35,7 +35,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="15dp"
-        android:background="@color/colorBrandTurquoise">
+        android:id="@+id/ll_select_boundary"
+        android:background="@color/colorGreyMist">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
