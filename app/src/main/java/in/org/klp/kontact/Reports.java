@@ -18,7 +18,6 @@ import com.yahoo.squidb.sql.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-import in.org.klp.kontact.data.SchoolContract;
 import in.org.klp.kontact.data.StringWithTags;
 import in.org.klp.kontact.db.KontactDatabase;
 import in.org.klp.kontact.db.Question;
@@ -184,7 +183,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
 
         Cursor cursor_sc, cursor_agg, cursor_block_agg;
 
-        cursor_sc = db.rawQuery("select count("+ SchoolContract.SchoolEntry._ID+") as count from school where boundary_id=" +String.valueOf(bid),null);
+        cursor_sc = db.rawQuery("select count(_id) as count from school where boundary_id=" +String.valueOf(bid),null);
         try {
             while (cursor_sc.moveToNext()) {
                 schoolcount=Integer.parseInt(cursor_sc.getString(0));
