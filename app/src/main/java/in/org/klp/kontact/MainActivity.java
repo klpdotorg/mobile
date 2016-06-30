@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         private KontactDatabase db;
         String next;
 
-        private String processPaginatedURL(String apiURL, final String type) {
+        private void processPaginatedURL(String apiURL, final String type) {
             int count = 0;
             next = apiURL;
             while(!next.equals("null")) {
@@ -148,8 +148,6 @@ public class MainActivity extends AppCompatActivity {
                 count++;
                 Log.v(LOG_TAG, "Page count is: " + Integer.toString(count));
             }
-
-            return null;
         }
 
         private void processURL(String apiURL, final String type) {
@@ -172,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.getMessage(), e);
-                        e.printStackTrace();
                     }
                 }
             }, new Response.ErrorListener() {
