@@ -246,12 +246,12 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         int viewid=parent.getId();
         switch (viewid){
             case R.id.select_district:
-                fill_dropdown(1,R.id.select_block, Integer.parseInt(boundaryForSelector.id.toString()));
+                fill_dropdown(1, R.id.select_block, Integer.parseInt(boundaryForSelector.id.toString()));
                 editor.putInt("district", pos);
                 district=((StringWithTags) parent.getItemAtPosition(pos)).string;
                 break;
             case R.id.select_block:
-                fill_dropdown(1,R.id.select_cluster, Integer.parseInt(boundaryForSelector.id.toString()));
+                fill_dropdown(1, R.id.select_cluster, Integer.parseInt(boundaryForSelector.id.toString()));
                 editor.putInt("block",pos);
                 block=((StringWithTags) parent.getItemAtPosition(pos)).string;
                 break;
@@ -297,12 +297,15 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
 
     private List<StringWithTags> get_boundary_data(int parent) {
         Query listboundary = Query.select().from(Boundary.TABLE)
-                    .where(Boundary.BOUNDARY_ID.eq(parent).and(Boundary.TYPE.eq("primaryschool"))).orderBy();
+                .where(Boundary.PARENT_ID.eq(parent).and(Boundary.TYPE.eq("primaryschool")))
+                .orderBy(Boundary.NAME.asc());
+
         List<StringWithTags> boundaryList = new ArrayList<StringWithTags>();
         boundary_cursor = db.query(Boundary.class, listboundary);
         if (boundary_cursor.moveToFirst()) {
             do {
-                StringWithTags boundary = new StringWithTags(boundary_cursor.getString(2), Integer.parseInt(boundary_cursor.getString(0)), Integer.parseInt(boundary_cursor.getString(3).equals("district") ? "1" : boundary_cursor.getString(1)));
+                Boundary b = new Boundary(boundary_cursor);
+                StringWithTags boundary = new StringWithTags(b.getName(), b.getId(), b.getHierarchy().equals("district") ? "1" : b.getParentId());
                 boundaryList.add(boundary);
             } while (boundary_cursor.moveToNext());
         }
@@ -318,7 +321,8 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         school_cursor = db.query(School.class, listschool);
         if (school_cursor.moveToFirst()) {
             do {
-                StringWithTags school = new StringWithTags(school_cursor.getString(2), Integer.parseInt(school_cursor.getString(0)),1);
+                School sch = new School(school_cursor);
+                StringWithTags school = new StringWithTags(sch.getName(), sch.getId(), 1);
                 schoolList.add(school);
             } while (school_cursor.moveToNext());
         }

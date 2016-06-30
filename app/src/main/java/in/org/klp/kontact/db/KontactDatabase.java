@@ -23,7 +23,7 @@ import java.io.OutputStream;
 public class KontactDatabase extends SquidDatabase {
 
     private static String DB_NAME ="kontact.db";
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
     private static String DB_PATH = "";
     private static Context myContext;
 
@@ -72,12 +72,20 @@ public class KontactDatabase extends SquidDatabase {
         // nothing happens
         // to create tables, try like this -> tryCreateTable(School.TABLE)
         // https://github.com/yahoo/squidb/wiki/Implementing-database-upgrades
-        switch(oldVersion) {
-            case 1:
-                // These tables were added in v2
-                tryCreateTable(Story.TABLE);
-                tryCreateTable(Answer.TABLE);
-        }
+//        switch(oldVersion) {
+//            case 1:
+//                // These tables were added in v2
+//                tryCreateTable(Story.TABLE);
+//                tryCreateTable(Answer.TABLE);
+//        }
+
+        /*
+         * Commented everything because we're letting SQLite Asset Helper handle the migrations.
+         * because that library handles copying over the database.
+         * If we had a normal application that didn't come with prepopulated database,
+         * we could have used this method to manage migrations.
+         */
+
         // https://github.com/yahoo/squidb/wiki/Implementing-database-upgrades#some-people-just-want-to-watch-the-world-burn
         return true;
     }
