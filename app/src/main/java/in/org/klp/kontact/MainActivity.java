@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (type.equals("school") || type.equals("boundary")) {
                 processPaginatedURL(apiURL, type);
+                return;
             }
 
             StringRequest stringRequest = new StringRequest(Request.Method.GET,
