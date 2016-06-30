@@ -138,13 +138,12 @@ public class MainActivity extends AppCompatActivity {
                             }
                         } catch (JSONException e) {
                             Log.e(LOG_TAG, e.getMessage(), e);
-                            e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.v(LOG_TAG, "Error parsing the survey results");
+                        Log.e(LOG_TAG, "Error parsing the " + type + " results");
                     }
                 });
                 KLPVolleySingleton.getInstance(MainActivity.this).addToRequestQueue(stringRequest);
