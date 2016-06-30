@@ -104,38 +104,35 @@ public class MainActivity extends AppCompatActivity {
 
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
         private KontactDatabase db;
-        String next;
 
         private void processPaginatedURL(String apiURL, final String type) {
-            int count = 0;
-            next = apiURL;
-            while(!next.equals("null")) {
-
-                StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                        next, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            if (type.equals("school")) {
-                                next = saveSchoolDataFromJson(response);
-                            }
-                            else {
-                                next = saveBoundaryDataFromJson(response);
-                            }
-                        } catch (JSONException e) {
-                            Log.e(LOG_TAG, e.getMessage(), e);
+            StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                    apiURL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    String next;
+                    try {
+                        if (type.equals("school")) {
+                            next = saveSchoolDataFromJson(response);
                         }
+                        else {
+                            next = saveBoundaryDataFromJson(response);
+                        }
+                        Log.v(LOG_TAG, next);
+                        if (!next.equals("null")) {
+                            processPaginatedURL(next, type);
+                        }
+                    } catch (JSONException e) {
+                        Log.e(LOG_TAG, e.getMessage(), e);
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(LOG_TAG, "Error parsing the " + type + " results");
-                    }
-                });
-                KLPVolleySingleton.getInstance(MainActivity.this).addToRequestQueue(stringRequest);
-                count++;
-                Log.v(LOG_TAG, "Page count is: " + Integer.toString(count));
-            }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(LOG_TAG, "Error parsing the " + type + " results");
+                }
+            });
+            KLPVolleySingleton.getInstance(MainActivity.this).addToRequestQueue(stringRequest);
         }
 
         private void processURL(String apiURL, final String type) {
