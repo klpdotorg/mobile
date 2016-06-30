@@ -40,7 +40,6 @@ import in.org.klp.kontact.db.QuestionGroupQuestion;
 import in.org.klp.kontact.db.Boundary;
 import in.org.klp.kontact.db.School;
 
-import in.org.klp.kontact.data.SurveyDbHelper;
 import in.org.klp.kontact.utils.KLPVolleySingleton;
 import in.org.klp.kontact.utils.SessionManager;
 
@@ -116,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
     public class FetchSurveyTask extends AsyncTask<Void, Void, String[]> {
 
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
-        SurveyDbHelper dbHelper;
         private KontactDatabase db;
         String next;
 

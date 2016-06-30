@@ -27,7 +27,6 @@ import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
 import in.org.klp.kontact.adapters.SurveyAdapter;
-import in.org.klp.kontact.data.SurveyDbHelper;
 import in.org.klp.kontact.db.KontactDatabase;
 import in.org.klp.kontact.db.Survey;
 
