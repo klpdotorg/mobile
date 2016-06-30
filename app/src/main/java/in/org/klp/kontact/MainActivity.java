@@ -118,75 +118,36 @@ public class MainActivity extends AppCompatActivity {
         private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
         SurveyDbHelper dbHelper;
         private KontactDatabase db;
+        String next;
 
-        private String processPaginatedURL(String apiURL, String type) {
+        private String processPaginatedURL(String apiURL, final String type) {
             int count = 0;
-            while(!apiURL.equals("null")) {
-                HttpURLConnection urlConnection = null;
-                BufferedReader reader = null;
+            next = apiURL;
+            while(!next.equals("null")) {
 
-                // Will contain the raw JSON response as a string.
-                String JsonStr = null;
-
-                try {
-                    final String SURVEY_BASE_URL = apiURL;
-
-                    Uri builtUri = Uri.parse(SURVEY_BASE_URL).buildUpon().build();
-
-                    URL url = new URL(builtUri.toString());
-
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.connect();
-
-                    // Read the input stream into a String
-                    InputStream inputStream = urlConnection.getInputStream();
-                    StringBuffer buffer = new StringBuffer();
-                    if (inputStream == null) {
-                        return null;
-                    }
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                        // But it does make debugging a *lot* easier if you print out the completed
-                        // buffer for debugging.
-                        buffer.append(line + "\n");
-                    }
-
-                    if (buffer.length() == 0) {
-                        // Stream was empty.  No point in parsing.
-                        return null;
-                    }
-                    JsonStr = buffer.toString();
-
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Error ", e);
-                    return null;
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                    if (reader != null) {
+                StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                        next, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
                         try {
-                            reader.close();
-                        } catch (final IOException e) {
-                            Log.e(LOG_TAG, "Error closing stream", e);
+                            if (type.equals("school")) {
+                                next = saveSchoolDataFromJson(response);
+                            }
+                            else {
+                                next = saveBoundaryDataFromJson(response);
+                            }
+                        } catch (JSONException e) {
+                            Log.e(LOG_TAG, e.getMessage(), e);
+                            e.printStackTrace();
                         }
                     }
-                }
-                try {
-                    if (type.equals("school")) {
-                        apiURL = saveSchoolDataFromJson(JsonStr);
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.v(LOG_TAG, "Error parsing the survey results");
                     }
-                    else {
-                        apiURL = saveBoundaryDataFromJson(JsonStr);
-                    }
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
-                }
+                });
+                KLPVolleySingleton.getInstance(MainActivity.this).addToRequestQueue(stringRequest);
                 count++;
                 Log.v(LOG_TAG, "Page count is: " + Integer.toString(count));
             }
