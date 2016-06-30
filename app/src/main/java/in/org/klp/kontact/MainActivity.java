@@ -14,6 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -35,6 +41,7 @@ import in.org.klp.kontact.db.Boundary;
 import in.org.klp.kontact.db.School;
 
 import in.org.klp.kontact.data.SurveyDbHelper;
+import in.org.klp.kontact.utils.KLPVolleySingleton;
 import in.org.klp.kontact.utils.SessionManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -187,10 +194,10 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
-        private String processURL(String apiURL, String type) {
+        private void processURL(String apiURL, final String type) {
 
             if (type.equals("school") || type.equals("boundary")) {
-                return processPaginatedURL(apiURL, type);
+                processPaginatedURL(apiURL, type);
             }
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -200,70 +207,32 @@ public class MainActivity extends AppCompatActivity {
             // Will contain the raw JSON response as a string.
             String JsonStr = null;
 
-            try {
-                final String SURVEY_BASE_URL = apiURL;
+            final String BASE_URL = apiURL;
 
-                Uri builtUri = Uri.parse(SURVEY_BASE_URL).buildUpon().build();
-
-                URL url = new URL(builtUri.toString());
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                JsonStr = buffer.toString();
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
+            StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                    BASE_URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
                     try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
+                        if (type.equals("survey")) {
+                            saveSurveyDataFromJson(response);
+                        } else if (type.equals("questiongroup")) {
+                            saveQuestiongroupDataFromJson(response);
+                        } else {
+                            saveQuestionDataFromJson(response);
+                        }
+                    } catch (JSONException e) {
+                        Log.e(LOG_TAG, e.getMessage(), e);
+                        e.printStackTrace();
                     }
                 }
-            }
-            try {
-                if (type.equals("survey")) {
-                    saveSurveyDataFromJson(JsonStr);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.v(LOG_TAG, "Error parsing the survey results");
                 }
-                else if (type.equals("questiongroup")) {
-                    saveQuestiongroupDataFromJson(JsonStr);
-                }
-                else {
-                    saveQuestionDataFromJson(JsonStr);
-                }
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-
-            return null;
+            });
+            KLPVolleySingleton.getInstance(MainActivity.this).addToRequestQueue(stringRequest);
         }
 
         @Override
