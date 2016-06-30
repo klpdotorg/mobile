@@ -105,6 +105,7 @@ public class QuestionFragment extends Fragment {
                     // select * from question where id=qID
                     Question question = db.fetch(Question.class, qID);
                     mQuestionsAdapter.add(question);
+                    mQuestionsAdapter.addAnswer(question, getString(R.string.answer_unknown));
                 }
             }
         } finally {

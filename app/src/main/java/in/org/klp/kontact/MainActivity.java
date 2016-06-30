@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -49,9 +50,6 @@ public class MainActivity extends AppCompatActivity {
         mSession = new SessionManager(getApplicationContext());
         mSession.checkLogin();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         Button survey_button = (Button) findViewById(R.id.survey_button);
         survey_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -90,7 +86,18 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void logoutUser(View view) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+            logoutUser();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void logoutUser() {
         mSession.logoutUser();
     }
 
