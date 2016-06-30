@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
             final String FEATURES = "features";
             JSONObject boundaryJson = new JSONObject(boundaryJsonStr);
-            String next = boundaryJson.getString("next");
+            String next_url = boundaryJson.getString("next");
             JSONArray boundaryArray = boundaryJson.getJSONArray(FEATURES);
 
             for (int i = 0; i < boundaryArray.length(); i++) {
@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
                         .setType(school_type);
                 db.insertWithId(boundary);
             }
-            return next;
+            return next_url;
         }
 
 
@@ -273,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
 
             final String FEATURES = "features";
             JSONObject schoolJson = new JSONObject(schoolJsonStr);
-            String next = schoolJson.getString("next");
+            String next_url = schoolJson.getString("next");
             JSONArray schoolArray = schoolJson.getJSONArray(FEATURES);
 
             for (int i = 0; i < schoolArray.length(); i++) {
@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                         .setName(name);
                 db.insertWithId(school);
             }
-            return next;
+            return next_url;
         }
 
 
