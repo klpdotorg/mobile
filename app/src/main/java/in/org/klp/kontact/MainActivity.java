@@ -160,10 +160,8 @@ public class MainActivity extends AppCompatActivity {
                 processPaginatedURL(apiURL, type);
             }
 
-            final String BASE_URL = apiURL;
-
             StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                    BASE_URL, new Response.Listener<String>() {
+                    apiURL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     try {
