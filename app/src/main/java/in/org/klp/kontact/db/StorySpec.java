@@ -22,6 +22,9 @@ public class StorySpec {
     @ColumnSpec(name="group_id", constraints = "NOT NULL")
     public long group_id;
 
+    @ColumnSpec(name="respondent_type", constraints = "NOT NULL", defaultValue = "PR")
+    public String respondent_type;
+
     @ColumnSpec(name="created_at", constraints = "NOT NULL")
     public long created_at;
 

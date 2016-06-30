@@ -14,6 +14,10 @@ public class QuestionSpec {
     long Id;
 
     public String text;
+
+    @ColumnSpec(name="display_text")
+    public String display_text;
+
     public String key;
     public String options;
     public String type;

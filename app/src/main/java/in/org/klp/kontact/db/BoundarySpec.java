@@ -14,7 +14,7 @@ public class BoundarySpec {
     long Id;
 
     @ColumnSpec(name="boundary_id")
-    public long boundary_id;
+    public long parent_id;
 
     @ColumnSpec(name="name")
     public String name;
