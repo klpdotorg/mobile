@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Boundary boundary = new Boundary()
                         .setId(boundaryId)
-                        .setBoundaryId(parentId)
+                        .setParentId(parentId)
                         .setName(name)
                         .setHierarchy(hierarchy)
                         .setType(school_type);
