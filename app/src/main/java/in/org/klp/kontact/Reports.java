@@ -193,7 +193,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
                 cursor_sc.close();
         }
 
-        cursor_agg = db.rawQuery("select inst._id, sum(case when ans.text='true' then 1 else 0 end) as total, " +
+        cursor_agg = db.rawQuery("select inst._id, sum(case when ans.text='Yes' then 1 else 0 end) as total, " +
                 "count(ans.text) as response from answer as ans, school as inst, story as st where ans.question_id=" + qid + " " +
                 "and ans.story_id=st._id and st.school_id=inst._id and inst.boundary_id=" + bid +
                 " and ans.created_at>=" + sdate + " and ans.created_at<=" + edate + " group by inst._id", null);
