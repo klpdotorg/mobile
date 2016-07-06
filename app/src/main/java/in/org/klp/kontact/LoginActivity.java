@@ -1,6 +1,7 @@
 package in.org.klp.kontact;
 
 import android.annotation.TargetApi;
+import android.app.DialogFragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.app.ProgressDialog;
 import android.content.CursorLoader;
@@ -18,8 +19,8 @@ import android.provider.ContactsContract.Contacts.Data;
 import android.provider.ContactsContract.Profile;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 import in.org.klp.kontact.db.DatabaseCopyHelper;
+import in.org.klp.kontact.dialogs.ChangePasswordDialogFragment;
 import in.org.klp.kontact.utils.KLPVolleySingleton;
 import in.org.klp.kontact.utils.SessionManager;
 
@@ -59,7 +61,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, ChangePasswordDialogFragment.NoticeDialogListener {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -130,6 +132,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivity(intent);
             }
         });
+        final FragmentManager fragManager = getFragmentManager();
+        TextView changePasswordLink = (TextView) findViewById(R.id.changePassword);
+        changePasswordLink.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v(LoginActivity.class.getSimpleName(), "change password clicked");
+                ChangePasswordDialogFragment dialog = new ChangePasswordDialogFragment();
+                dialog.show(fragManager,"Change Password");
+            }
+        });
+
+        TextView forgotPasswordLink = (TextView) findViewById(R.id.forgotPassword);
+        forgotPasswordLink.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v(LoginActivity.class.getSimpleName(), "forgot password clicked");
+            }
+        });
+
         mLoginFormView = findViewById(R.id.login_form);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -392,6 +413,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    /*
+    ChangePasswordDialogFragment.NoticeDialogListener implementation methods to pass info from dialog to the activity
+     */
+    public void onDialogPositiveClick(DialogFragment dialog) {
+
+    }
+
+    @Override
+    /*
+    ChangePasswordDialogFragment.NoticeDialogListener implementation method to pass info from dialog to the activity
+     */
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        //do nothing
     }
 
     private interface ProfileQuery {

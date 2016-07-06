@@ -23,6 +23,8 @@
     <string name="prompt_login">Already a user?</string>
     <string name="register">REGISTER</string>
     <string name="login">LOGIN</string>
+    <string name="changePassword">Change password</string>
+    <string name="forgotPassword">Forgot password?</string>
 
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">LOGIN</string>
@@ -34,6 +36,16 @@
 
     <string name="title_activity_question">Questions</string>
 
+    <!-- Dialog button strings -->
+    <string name="Submit">Submit</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Ok">OK</string>
+
+    <!--Strings for the change password dialog -->
+    <string name="dialog_old_password">Old Password</string>
+    <string name="dialog_new_password">New Password</string>
+    <string name="dialog_reenter_new_password">Re-enter new password</string>
+    <string name="dialog_error_password_mismatch">Passwords do not match. Please re-enter</string>
     <!-- Strings for sign up activity -->
     <string name="title_activity_user_registration">UserRegistrationActivity</string>
     <string name="prompt_enter_email">E-MAIL ID/ಇಮೇಲ್ ವಿಳಾಸ</string>

@@ -56,7 +56,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
         android:contentDescription="KLP logo"
-        android:src="@drawable/banner_kontact" />
+        android:src="@drawable/konnect" />
 
 
     <ScrollView
@@ -161,6 +161,33 @@
                 android:textColor="@color/colorWhite"
                 android:textStyle="bold" />
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/changePassword"
+                    android:layout_width="165dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/changePassword"
+                    android:textAlignment="textEnd"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/colorBrandBlue"
+                    android:clickable="true"/>
+                <TextView
+                    android:id="@+id/forgotPassword"
+                    android:layout_width="165dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/forgotPassword"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/colorBrandBlue"
+                    android:clickable="true"/>
+        </LinearLayout>
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="165dp"
