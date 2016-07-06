@@ -2,7 +2,6 @@ package in.org.klp.kontact;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.yahoo.squidb.data.ICursor;
 import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Query;
 
@@ -181,7 +181,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
         edate=intent.getLongExtra("edate",0);
         int schoolcount=0, responses=0, ans=0, schoolwithresponse=0;
 
-        Cursor cursor_sc, cursor_agg, cursor_block_agg;
+        ICursor cursor_sc, cursor_agg, cursor_block_agg;
 
         cursor_sc = db.rawQuery("select count(_id) as count from school where boundary_id=" +String.valueOf(bid),null);
         try {
