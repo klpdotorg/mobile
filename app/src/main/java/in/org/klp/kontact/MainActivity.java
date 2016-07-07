@@ -1,5 +1,6 @@
 package in.org.klp.kontact;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,31 +11,49 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
+import com.yahoo.squidb.data.SquidCursor;
+import com.yahoo.squidb.data.TableModel;
+import com.yahoo.squidb.sql.Property;
+import com.yahoo.squidb.sql.Query;
+import com.yahoo.squidb.sql.Update;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import in.org.klp.kontact.db.Answer;
+import in.org.klp.kontact.db.Boundary;
 import in.org.klp.kontact.db.KontactDatabase;
-import in.org.klp.kontact.db.Survey;
 import in.org.klp.kontact.db.Question;
 import in.org.klp.kontact.db.QuestionGroup;
 import in.org.klp.kontact.db.QuestionGroupQuestion;
-import in.org.klp.kontact.db.Boundary;
 import in.org.klp.kontact.db.School;
-
+import in.org.klp.kontact.db.Story;
+import in.org.klp.kontact.db.Survey;
 import in.org.klp.kontact.utils.KLPVolleySingleton;
 import in.org.klp.kontact.utils.SessionManager;
+
+import static junit.framework.Assert.assertTrue;
 
 public class MainActivity extends AppCompatActivity {
     private SessionManager mSession;
     private Snackbar snackbarSync;
-    private FetchSurveyTask surveyTask;
+    private SyncDownloadTask downloadTask;
+    private ProgressDialog progressDialog = null;
+    private KontactDatabase db;
+    private Integer syncRequestCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
         Button survey_button = (Button) findViewById(R.id.survey_button);
         survey_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 Intent myIntent = new Intent(MainActivity.this, SurveyActivity.class);
                 startActivity(myIntent);
             }
@@ -57,18 +75,8 @@ public class MainActivity extends AppCompatActivity {
         Button sync_button = (Button) findViewById(R.id.sync_button);
         sync_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-                snackbarSync = Snackbar.make(view, "Getting data from server...", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("STOP", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            surveyTask.cancel(true);
-                            snackbarSync.dismiss();
-                        }
-                    });
-                snackbarSync.show();
-                updateSurvey();
+            public void onClick(View view) {
+                doSync();
             }
         });
     }
@@ -95,14 +103,112 @@ public class MainActivity extends AppCompatActivity {
         mSession.logoutUser();
     }
 
-    private void updateSurvey() {
-        surveyTask = new FetchSurveyTask();
-        surveyTask.execute();
+    private void doSync() {
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setTitle("Uploading");
+        progressDialog.setMessage("Uploading responses to server");
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
+
+        syncUpload();
     }
 
-    public class FetchSurveyTask extends AsyncTask<Void, Void, String[]> {
+    public void syncUpload() {
+        HashMap<String, String> user = mSession.getUserDetails();
 
-        private final String LOG_TAG = FetchSurveyTask.class.getSimpleName();
+        db = ((KLPApplication) getApplicationContext()).getDb();
+        Query listStoryQuery = Query.select().from(Story.TABLE)
+                .where(Story.SYNCED.eq(0));
+        SquidCursor<Story> storiesCursor = db.query(Story.class, listStoryQuery);
+        SquidCursor<Answer> answerCursor = null;
+
+        JSONObject requestJson = new JSONObject();
+        JSONArray storyArray = new JSONArray();
+
+        try {
+            while (storiesCursor.moveToNext()) {
+                Story story = new Story(storiesCursor);
+                JSONObject storyJson = db.modelObjectToJson(story);
+
+                answerCursor = db.query(Answer.class,
+                        Query.select().from(Answer.TABLE)
+                                .where(Answer.STORY_ID.eq(story.getId()))
+                );
+
+                JSONArray answerArray = new JSONArray();
+                while (answerCursor.moveToNext()) {
+                    Answer answer = new Answer(answerCursor);
+                    JSONObject answerJson = db.modelObjectToJson(answer);
+                    answerArray.put(answerJson);
+                }
+                storyJson.put("answers", answerArray);
+                storyArray.put(storyJson);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if (storiesCursor != null) storiesCursor.close();
+            if (answerCursor != null) answerCursor.close();
+        }
+        try {
+            requestJson.put("stories", storyArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        final String SYNC_URL = BuildConfig.HOST + "/api/v1/sync";
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.POST, SYNC_URL, requestJson, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.d(this.toString(), response.toString(4));
+                            // TODO: show error
+                            String error = response.get("error").toString();
+
+                            JSONArray success = response.getJSONArray("success");
+                            for (int i = 0; i < success.length(); i++) {
+                                Update storyUpdate = Update.table(Story.TABLE)
+                                        .set(Story.SYNCED, 1)
+                                        .where(Story.ID.eq(success.get(i)));
+                                db.update(storyUpdate);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        progressDialog.setMessage("Uploading finished");
+                        progressDialog.setTitle("Downloading");
+
+                        SyncDownloadTask downloadTask = new SyncDownloadTask();
+                        downloadTask.execute();
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        error.printStackTrace();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> user = mSession.getUserDetails();
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Token " + user.get("token"));
+                return headers;
+            }
+        };
+        KLPVolleySingleton.getInstance(MainActivity.this).addToRequestQueue(jsObjRequest);
+
+    }
+
+    public class SyncDownloadTask extends AsyncTask<Void, String, String[]> {
+
+        private final String LOG_TAG = SyncDownloadTask.class.getSimpleName();
         private KontactDatabase db;
 
         private void processPaginatedURL(String apiURL, final String type) {
@@ -110,12 +216,12 @@ public class MainActivity extends AppCompatActivity {
                     apiURL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    publishProgress("Downloading " + type);
                     String next;
                     try {
                         if (type.equals("school")) {
                             next = saveSchoolDataFromJson(response);
-                        }
-                        else {
+                        } else {
                             next = saveBoundaryDataFromJson(response);
                         }
                         Log.v(LOG_TAG, next);
@@ -146,6 +252,8 @@ public class MainActivity extends AppCompatActivity {
                     apiURL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    publishProgress("Downloading " + type);
+
                     try {
                         if (type.equals("survey")) {
                             saveSurveyDataFromJson(response);
@@ -157,14 +265,21 @@ public class MainActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.getMessage(), e);
                     }
+
+                    syncRequestCount--;
+                    if (syncRequestCount == 0) progressDialog.dismiss();
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    syncRequestCount--;
+                    if (syncRequestCount == 0) progressDialog.dismiss();
                     Log.v(LOG_TAG, "Error parsing the survey results");
                 }
             });
+
             KLPVolleySingleton.getInstance(MainActivity.this).addToRequestQueue(stringRequest);
+            syncRequestCount++;
         }
 
         @Override
@@ -192,20 +307,22 @@ public class MainActivity extends AppCompatActivity {
             processURL(BuildConfig.HOST + "/api/v1/boundary/admin2s", "boundary");
             processURL(BuildConfig.HOST + "/api/v1/boundary/admin1s", "boundary");
 
-            return null;
+            return new String[0];
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            progressDialog.setMessage(values[0]);
         }
 
         @Override
         protected void onPostExecute(String[] result) {
-            if (snackbarSync != null) {
-                snackbarSync.dismiss();
-            }
-            super.onPostExecute(result);
+            progressDialog.dismiss();
         }
 
         private String saveBoundaryDataFromJson(String boundaryJsonStr)
                 throws JSONException {
-            db = new KontactDatabase(MainActivity.this);
+            db = ((KLPApplication) getApplicationContext()).getDb();
 
             final String FEATURES = "features";
             JSONObject boundaryJson = new JSONObject(boundaryJsonStr);
@@ -224,8 +341,7 @@ public class MainActivity extends AppCompatActivity {
                 if (boundaryObject.has("parent")) {
                     JSONObject parentObject = boundaryObject.getJSONObject("parent");
                     parentId = parentObject.getInt("id");
-                }
-                else {
+                } else {
                     parentId = 1;
                 }
 
@@ -248,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
 
         private String saveSchoolDataFromJson(String schoolJsonStr)
                 throws JSONException {
-            db = new KontactDatabase(MainActivity.this);
+            db = ((KLPApplication) getApplicationContext()).getDb();
 
             final String FEATURES = "features";
             JSONObject schoolJson = new JSONObject(schoolJsonStr);
@@ -280,16 +396,19 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveQuestionDataFromJson(String questionJsonStr)
                 throws JSONException {
-            db = new KontactDatabase(MainActivity.this);
+            db = ((KLPApplication) getApplicationContext()).getDb();
 
             final String FEATURES = "features";
             JSONObject questionJson = new JSONObject(questionJsonStr);
             JSONArray questionArray = questionJson.getJSONArray(FEATURES);
+            db.deleteAll(Question.class);
 
             for (int i = 0; i < questionArray.length(); i++) {
 
                 long questionId;
                 String text;
+                String text_kn;
+                String display_text;
                 String key;
                 String options;
                 String type;
@@ -301,6 +420,8 @@ public class MainActivity extends AppCompatActivity {
 
                 questionId = questionObject.getInt("id");
                 text = questionObject.getString("text");
+                text_kn = questionObject.getString("text_kn");
+                display_text = questionObject.getString("display_text");
                 key = questionObject.getString("key");
                 options = questionObject.getString("options");
                 type = questionObject.getString("question_type");
@@ -309,27 +430,23 @@ public class MainActivity extends AppCompatActivity {
                 Question question = new Question()
                         .setId(questionId)
                         .setText(text)
+                        .setTextKn(text_kn)
+                        .setDisplayText(display_text)
                         .setKey(key)
                         .setOptions(options)
                         .setType(type)
                         .setSchoolType(school_type);
+                
                 db.insertWithId(question);
 
                 for (int j = 0; j < questiongroupSetArray.length(); j++) {
-                    Integer throughId;
-                    long questiongroupId;
-                    Integer sequence;
-
-                    Integer status;
-                    String source;
-
                     JSONObject questiongroupObject = questiongroupSetArray.getJSONObject(j);
 
-                    throughId = questiongroupObject.getInt("through_id");
-                    questiongroupId = questiongroupObject.getInt("questiongroup");
-                    sequence = questiongroupObject.getInt("sequence");
-                    status = questiongroupObject.getInt("status");
-                    source = questiongroupObject.getString("source");
+                    Integer throughId = questiongroupObject.getInt("through_id");
+                    long questiongroupId = questiongroupObject.getInt("questiongroup");
+                    Integer sequence = questiongroupObject.getInt("sequence");
+                    Integer status = questiongroupObject.getInt("status");
+                    String source = questiongroupObject.getString("source");
 
                     if (source.equals("mobile")) {
                         if (status.equals(1)) {
@@ -349,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveQuestiongroupDataFromJson(String questiongroupJsonStr)
                 throws JSONException {
-            db = new KontactDatabase(MainActivity.this);
+            db = ((KLPApplication) getApplicationContext()).getDb();
 
             final String FEATURES = "features";
             JSONObject questiongroupJson = new JSONObject(questiongroupJsonStr);
@@ -393,7 +510,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveSurveyDataFromJson(String surveyJsonStr)
                 throws JSONException {
-            db = new KontactDatabase(MainActivity.this);
+            db = ((KLPApplication) getApplicationContext()).getDb();
 
             final String FEATURES = "features";
             JSONObject surveyJson = new JSONObject(surveyJsonStr);
