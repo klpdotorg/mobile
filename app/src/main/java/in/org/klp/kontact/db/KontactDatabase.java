@@ -34,6 +34,7 @@ public class KontactDatabase extends SquidDatabase {
 
     private static String DB_NAME ="kontact.db";
     private static final int VERSION = 4;
+
     private static String DB_PATH = "";
     private static Context mContext;
 
