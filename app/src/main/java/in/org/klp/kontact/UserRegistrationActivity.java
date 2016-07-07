@@ -150,11 +150,11 @@ public class UserRegistrationActivity extends AppCompatActivity {
                             protected Map<String, String> getParams() {
                                 // set the POST params
                                 Map<String, String> params = new HashMap<String, String>();
-                                params.put("email", emailValue);
+                                params.put("email", emailValue.trim());
                                 params.put("password", passwordValue);
-                                params.put("first_name", firstNameValue);
-                                params.put("last_name", lastNameValue);
-                                params.put("mobile_no", phoneNoValue);
+                                params.put("first_name", firstNameValue.trim());
+                                params.put("last_name", lastNameValue.trim());
+                                params.put("mobile_no", phoneNoValue.trim());
                                 return params;
                             }
                             /*
