@@ -15,7 +15,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/KLPTheme">
+        android:theme="@style/KLPTheme"
+        android:name=".KLPApplication">
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
