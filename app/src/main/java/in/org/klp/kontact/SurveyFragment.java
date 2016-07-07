@@ -43,7 +43,7 @@ public class SurveyFragment extends Fragment {
         super.onCreate(SavedInstanceState);
         setHasOptionsMenu(true);
 
-        db = new KontactDatabase(getActivity());
+        db = ((KLPApplication) getActivity().getApplicationContext()).getDb();
     }
 
     @Override

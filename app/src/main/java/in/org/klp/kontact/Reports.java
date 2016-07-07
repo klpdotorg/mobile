@@ -41,7 +41,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
-        db=new KontactDatabase(context);
+        db = ((KLPApplication) getApplicationContext()).getDb();
 
         String[] boundry_text= getIntent().getStringExtra("boundary").split(",");
 
