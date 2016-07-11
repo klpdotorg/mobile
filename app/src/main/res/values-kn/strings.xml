@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ಕನೆಕ್ಟ್</string>
     <string name="answer_yes">ಹೌದು</string>
-    <string name="answer_no">ಯಾವುದೇ</string>
-    <string name="answer_unknown">ಗೊತ್ತಿಲ್ಲ</string>
-    <string name="title_activity_survey">ಪರಿಶೀಲನೆ</string>
+    <string name="answer_no">ಇಲ್ಲ</string>
+    <string name="answer_unknown">ಗೊತ್ತಿಲ್ಲ</string>
 </resources>

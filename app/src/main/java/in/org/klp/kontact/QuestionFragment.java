@@ -62,7 +62,7 @@ public class QuestionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        db = new KontactDatabase(getActivity());
+        db = ((KLPApplication) getActivity().getApplicationContext()).getDb();
 
         // check if user is logged in
         session = new SessionManager(getActivity());

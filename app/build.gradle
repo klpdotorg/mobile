@@ -24,12 +24,19 @@ android {
         }
     }
     productFlavors {
+        local {
+            applicationId "in.org.klp.kontact.local"
+            resValue "string", "app_name", "KLP Konnect Local"
+            buildConfigField 'String', 'HOST', '"http://dubdubdub.local:8001"'
+        }
         devel {
             applicationId "in.org.klp.kontact.development"
+            resValue "string", "app_name", "KLP Konnect Dev"
             buildConfigField 'String', 'HOST', '"https://dev.klp.org.in"'
         }
         prod {
             applicationId "in.org.klp.kontact"
+            resValue "string", "app_name", "KLP Konnect"
             buildConfigField 'String', 'HOST', '"https://klp.org.in"'
         }
     }
@@ -55,9 +62,10 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 
     // squidb - https://github.com/yahoo/squidb
-    compile 'com.yahoo.squidb:squidb:2.0.2'
-    compile 'com.yahoo.squidb:squidb-annotations:2.0.2'
-    apt 'com.yahoo.squidb:squidb-processor:2.0.2'
+    compile 'com.yahoo.squidb:squidb:3.0.0'
+    compile 'com.yahoo.squidb:squidb-annotations:3.0.0'
+    compile 'com.yahoo.squidb:squidb-android:3.0.0'
+    apt 'com.yahoo.squidb:squidb-processor:3.0.0'
 
     // SQLite Asset Helper - https://github.com/jgilfelt/android-sqlite-asset-helper
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
