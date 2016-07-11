@@ -11,12 +11,14 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,9 +50,11 @@ public class QuestionFragment extends Fragment {
     private String surveyName;
     private Long schoolId;
     private Long questionGroupId;
+    private String mSelectedUserType;
     private LinearLayout linearLayoutQuestions;
     private KontactDatabase db;
     SessionManager session;
+    private LinkedHashMap<String, String> userType;
 
     public QuestionFragment() {
     }
@@ -57,7 +62,7 @@ public class QuestionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        db = new KontactDatabase(getActivity());
+        db = ((KLPApplication) getActivity().getApplicationContext()).getDb();
 
         // check if user is logged in
         session = new SessionManager(getActivity());
@@ -78,6 +83,27 @@ public class QuestionFragment extends Fragment {
             Intent intentMain = new Intent(getActivity(), MainActivity.class);
             startActivity(intentMain);
         }
+
+        // defining user types
+        userType = new LinkedHashMap<String, String>();
+        userType.put("Parents", "PR");
+        userType.put("Teachers", "TR");
+        userType.put("Volunteer", "VR");
+        userType.put("Cbo Member", "CM");
+        userType.put("Headmaster", "HM");
+        userType.put("Sdmc Member", "SM");
+        userType.put("Local Leader", "LL");
+        userType.put("Akshara Staff", "AS");
+        userType.put("Educated Youth", "EY");
+        userType.put("Education Official", "EO");
+        userType.put("Elected Representative", "ER");
+
+        final Spinner spinnerUserType = (Spinner) rootView.findViewById(R.id.spinnerUserType);
+        List<String> userTypeNames = new ArrayList<>();
+        userTypeNames.addAll(userType.keySet());
+        ArrayAdapter<String> userTypeAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, userTypeNames);
+        spinnerUserType.setAdapter(userTypeAdapter);
+        mSelectedUserType = "PA";
 
         SquidCursor<QuestionGroup> qgCursor = null;
         SquidCursor<QuestionGroupQuestion> qgqCursor = null;
@@ -125,11 +151,13 @@ public class QuestionFragment extends Fragment {
             public void onClick(View view) {
                 HashMap<String, String> user = session.getUserDetails();
                 Long currentTS = System.currentTimeMillis();
+                mSelectedUserType = userType.get(spinnerUserType.getSelectedItem().toString());
 
                 Story story = new Story()
                         .setSchoolId(schoolId)
                         .setUserId(Long.parseLong(user.get(session.KEY_ID)))
                         .setGroupId(questionGroupId)
+                        .setRespondentType(mSelectedUserType)
                         .setCreatedAt(currentTS);
                 db.persist(story);
                 Log.d(this.toString(), "Created story: " + String.valueOf(story.getId()));

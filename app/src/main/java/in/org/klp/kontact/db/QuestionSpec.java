@@ -14,10 +14,17 @@ public class QuestionSpec {
     long Id;
 
     public String text;
+
+    @ColumnSpec(name="display_text")
+    public String display_text;
+
     public String key;
     public String options;
     public String type;
 
     @ColumnSpec(name="school_type")
     public String school_type;
+
+    @ColumnSpec(name="text_kn")
+    public String text_kn;
 }

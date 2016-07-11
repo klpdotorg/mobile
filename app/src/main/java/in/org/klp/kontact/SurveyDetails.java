@@ -22,7 +22,7 @@ public class SurveyDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_survey_details);
 
-        db = new KontactDatabase(this);
+        db = ((KLPApplication) getApplicationContext()).getDb();
 
         surveyId = getIntent().getLongExtra("surveyId", 0);
         surveyName = getIntent().getStringExtra("surveyName");

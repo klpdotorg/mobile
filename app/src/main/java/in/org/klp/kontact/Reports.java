@@ -2,7 +2,6 @@ package in.org.klp.kontact;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.yahoo.squidb.data.ICursor;
 import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Query;
 
@@ -41,7 +41,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
-        db=new KontactDatabase(context);
+        db = ((KLPApplication) getApplicationContext()).getDb();
 
         String[] boundry_text= getIntent().getStringExtra("boundary").split(",");
 
@@ -181,7 +181,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
         edate=intent.getLongExtra("edate",0);
         int schoolcount=0, responses=0, ans=0, schoolwithresponse=0;
 
-        Cursor cursor_sc, cursor_agg, cursor_block_agg;
+        ICursor cursor_sc, cursor_agg, cursor_block_agg;
 
         cursor_sc = db.rawQuery("select count(_id) as count from school where boundary_id=" +String.valueOf(bid),null);
         try {
@@ -193,7 +193,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
                 cursor_sc.close();
         }
 
-        cursor_agg = db.rawQuery("select inst._id, sum(case when ans.text='true' then 1 else 0 end) as total, " +
+        cursor_agg = db.rawQuery("select inst._id, sum(case when ans.text='Yes' then 1 else 0 end) as total, " +
                 "count(ans.text) as response from answer as ans, school as inst, story as st where ans.question_id=" + qid + " " +
                 "and ans.story_id=st._id and st.school_id=inst._id and inst.boundary_id=" + bid +
                 " and ans.created_at>=" + sdate + " and ans.created_at<=" + edate + " group by inst._id", null);
