@@ -13,12 +13,12 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link display_report.OnFragmentInteractionListener} interface
+ * {@link ReportsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link display_report#newInstance} factory method to
+ * Use the {@link ReportsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class display_report extends Fragment {
+public class ReportsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "question_name";
     private static final String ARG_PARAM3 = "agg";
@@ -30,7 +30,7 @@ public class display_report extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public display_report() {
+    public ReportsFragment() {
         // Required empty public constructor
     }
 
@@ -40,10 +40,10 @@ public class display_report extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment display_report.
+     * @return A new instance of fragment ReportsFragment.
      */
-    public static display_report newInstance(String param1, String param2, String param3, String param4, String param5) {
-        display_report fragment = new display_report();
+    public static ReportsFragment newInstance(String param1, String param2, String param3, String param4, String param5) {
+        ReportsFragment fragment = new ReportsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

@@ -25,7 +25,7 @@ import in.org.klp.kontact.db.QuestionGroup;
 import in.org.klp.kontact.db.QuestionGroupQuestion;
 import in.org.klp.kontact.utils.SmartFragmentStatePagerAdapter;
 
-public class Reports extends AppCompatActivity implements display_report.OnFragmentInteractionListener {
+public class ReportsActivity extends AppCompatActivity implements ReportsFragment.OnFragmentInteractionListener {
 
     private Long surveyId, questionGroupId, bid, sdate, edate;
     Context context=this;
@@ -95,7 +95,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
         public Fragment getItem(int position) {
             for (int i=0;i<NUM_ITEMS;i++)
                 if (position==i)
-                    return display_report.newInstance(String.valueOf(i), list.get(i).toString(), list.get(i).parent.toString(), "Block Average : 70%", "District Average : 30%" );
+                    return ReportsFragment.newInstance(String.valueOf(i), list.get(i).toString(), list.get(i).parent.toString(), "Block Average : 70%", "District Average : 30%" );
             return null;
         }
 
@@ -164,7 +164,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
             List<StringWithTags> questions=new ArrayList<StringWithTags>();
             if (result != null) {
                 for (Question question : result){
-                    StringWithTags ques=new StringWithTags(question.getText(), question.getId(), fetchAnswers(new Long(question.getId())));
+                    StringWithTags ques=new StringWithTags(question.getTextKn() != null ? question.getTextKn() : question.getText(), question.getId(), fetchAnswers(new Long(question.getId())));
                     questions.add(ques);
                 }
                 adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), qcount, questions);
