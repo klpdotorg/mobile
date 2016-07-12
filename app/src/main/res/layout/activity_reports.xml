@@ -18,14 +18,18 @@
                 android:text="@string/district"/>
             <TextView style="@style/table_header"
                 android:text="@string/block"/>
-            <TextView style="@style/table_header"
-                android:text="@string/cluster"/>
         </TableRow>
         <TableRow>
             <TextView style="@style/table_row"
                 android:id="@+id/dist_name"/>
             <TextView style="@style/table_row"
                 android:id="@+id/blck_name"/>
+        </TableRow>
+        <TableRow>
+            <TextView style="@style/table_header"
+                android:text="@string/cluster"/>
+        </TableRow>
+        <TableRow>
             <TextView style="@style/table_row"
                 android:id="@+id/clst_name"/>
         </TableRow>
