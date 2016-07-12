@@ -1,10 +1,15 @@
 package in.org.klp.kontact;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -71,6 +76,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(myIntent);
             }
         });
+        // if the app just updated or this is the first run, disable survey button
+        // survey button is enabled again in postExecute() of Download Sync
+        if (isSyncNeeded()) {
+            survey_button.setEnabled(false);
+            survey_button.setAlpha(.5f);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You should \"Sync\" data to get updates from KLP.")
+                    .setTitle("Sync Needed");
+            builder.setPositiveButton("Ok, Sync Now", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
 
         Button sync_button = (Button) findViewById(R.id.sync_button);
         sync_button.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +101,41 @@ public class MainActivity extends AppCompatActivity {
                 doSync();
             }
         });
+
+
     }
+
+    public boolean isSyncNeeded() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int currentVersion = 0;
+        try {
+            currentVersion = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_CONFIGURATIONS).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d(this.toString(), "if you're here, you're in trouble");
+            return true;
+        }
+
+        final int lastVersion = prefs.getInt("lastVersion", -1);
+        if (currentVersion > lastVersion) {
+            // first time running the app or app just updated
+//            prefs.edit().putInt("lastVersion", currentVersion).commit();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void startSync() {
+        // TODO: disable all buttons
+        // TODO: call doSync()
+    }
+
+    public void endSync() {
+        // TODO: enable all buttons
+        // TODO: dismiss sync progress dialog
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -318,6 +374,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String[] result) {
             progressDialog.dismiss();
+            Button survey_button = (Button) findViewById(R.id.survey_button);
+            if (!survey_button.isEnabled()) survey_button.setEnabled(true);
         }
 
         private String saveBoundaryDataFromJson(String boundaryJsonStr)
