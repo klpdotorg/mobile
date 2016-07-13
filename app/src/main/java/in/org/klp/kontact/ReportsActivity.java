@@ -2,7 +2,6 @@ package in.org.klp.kontact;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.yahoo.squidb.data.ICursor;
 import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Query;
 
@@ -25,7 +25,7 @@ import in.org.klp.kontact.db.QuestionGroup;
 import in.org.klp.kontact.db.QuestionGroupQuestion;
 import in.org.klp.kontact.utils.SmartFragmentStatePagerAdapter;
 
-public class Reports extends AppCompatActivity implements display_report.OnFragmentInteractionListener {
+public class ReportsActivity extends AppCompatActivity implements ReportsFragment.OnFragmentInteractionListener {
 
     private Long surveyId, questionGroupId, bid, sdate, edate;
     Context context=this;
@@ -41,7 +41,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
-        db=new KontactDatabase(context);
+        db = ((KLPApplication) getApplicationContext()).getDb();
 
         String[] boundry_text= getIntent().getStringExtra("boundary").split(",");
 
@@ -95,7 +95,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
         public Fragment getItem(int position) {
             for (int i=0;i<NUM_ITEMS;i++)
                 if (position==i)
-                    return display_report.newInstance(String.valueOf(i), list.get(i).toString(), list.get(i).parent.toString(), "Block Average : 70%", "District Average : 30%" );
+                    return ReportsFragment.newInstance(String.valueOf(i), list.get(i).toString(), list.get(i).parent.toString() );
             return null;
         }
 
@@ -164,7 +164,7 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
             List<StringWithTags> questions=new ArrayList<StringWithTags>();
             if (result != null) {
                 for (Question question : result){
-                    StringWithTags ques=new StringWithTags(question.getText(), question.getId(), fetchAnswers(new Long(question.getId())));
+                    StringWithTags ques=new StringWithTags(question.getTextKn() != null ? question.getTextKn() : question.getText(), question.getId(), fetchAnswers(new Long(question.getId())));
                     questions.add(ques);
                 }
                 adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), qcount, questions);
@@ -179,9 +179,9 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
         bid = intent.getLongExtra("bid", 0);
         sdate=intent.getLongExtra("sdate",0);
         edate=intent.getLongExtra("edate",0);
-        int schoolcount=0, responses=0, ans=0, schoolwithresponse=0;
+        int schoolcount=0, responses=0, ans=0, yes=0, no=0, dn=0, schoolwithresponse=0;
 
-        Cursor cursor_sc, cursor_agg, cursor_block_agg;
+        ICursor cursor_sc, cursor_agg, cursor_block_agg;
 
         cursor_sc = db.rawQuery("select count(_id) as count from school where boundary_id=" +String.valueOf(bid),null);
         try {
@@ -193,14 +193,18 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
                 cursor_sc.close();
         }
 
-        cursor_agg = db.rawQuery("select inst._id, sum(case when ans.text='Yes' then 1 else 0 end) as total, " +
+        cursor_agg = db.rawQuery("select inst._id, sum(case when ans.text='Yes' then 1 else 0 end) as yes," +
+                "sum(case when ans.text='No' then 1 else 0 end) as no, sum(case when ans.text not in ('Yes','No') " +
+                "then 1 else 0 end) as dn," +
                 "count(ans.text) as response from answer as ans, school as inst, story as st where ans.question_id=" + qid + " " +
                 "and ans.story_id=st._id and st.school_id=inst._id and inst.boundary_id=" + bid +
                 " and ans.created_at>=" + sdate + " and ans.created_at<=" + edate + " group by inst._id", null);
         try {
             while (cursor_agg.moveToNext()) {
-                responses+=Integer.parseInt(cursor_agg.getString(2));
-                ans+=Integer.parseInt(cursor_agg.getString(1));
+                responses+=Integer.parseInt(cursor_agg.getString(4));
+                yes+=Integer.parseInt(cursor_agg.getString(1));
+                no+=Integer.parseInt(cursor_agg.getString(2));
+                dn+=Integer.parseInt(cursor_agg.getString(3));
                 schoolwithresponse+=1;
             }
         } catch (Exception e) {
@@ -209,10 +213,10 @@ public class Reports extends AppCompatActivity implements display_report.OnFragm
                 cursor_agg.close();
         }
 
-        if (schoolcount==0 || responses==0)
-            return "0|"+schoolcount+"|"+schoolwithresponse+"|"+responses+"|("+ans+"/"+responses+" Responses)";
-        else
-            return String.valueOf(100*ans/responses)+"|"+schoolcount+"|"+schoolwithresponse+"|"+responses+"|("+ans+"/"+responses+" Responses)";
+        //if (schoolcount==0 || responses==0)
+        return schoolcount+"|"+schoolwithresponse+"|"+responses+"|"+yes+"|"+no+"|"+dn;
+        //else
+        //    return String.valueOf(100*ans/responses)+"|"+schoolcount+"|"+schoolwithresponse+"|"+responses+"|("+ans+"/"+responses+" Responses)";
     }
 
     @Override

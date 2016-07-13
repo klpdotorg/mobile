@@ -5,16 +5,26 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import com.yahoo.squidb.android.AndroidOpenHelper;
+import com.yahoo.squidb.data.ISQLiteDatabase;
+import com.yahoo.squidb.data.ISQLiteOpenHelper;
+import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.data.SquidDatabase;
 import com.yahoo.squidb.data.TableModel;
-import com.yahoo.squidb.data.adapter.SQLiteDatabaseWrapper;
+import com.yahoo.squidb.data.ValuesStorage;
+import com.yahoo.squidb.sql.Property;
 import com.yahoo.squidb.sql.Table;
 import com.yahoo.squidb.sql.TableStatement;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * Created by bibhas on 6/17/16.
@@ -23,19 +33,24 @@ import java.io.OutputStream;
 public class KontactDatabase extends SquidDatabase {
 
     private static String DB_NAME ="kontact.db";
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
+
     private static String DB_PATH = "";
-    private static Context myContext;
+    private static Context mContext;
 
     public KontactDatabase(Context context) {
-        super(context);
-        myContext = context;
+        mContext = context;
 
         if (android.os.Build.VERSION.SDK_INT >= 17) {
             DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
         } else {
             DB_PATH = "/data/data/" + context.getPackageName() + "/databases/";
         }
+    }
+
+    @Override
+    protected ISQLiteOpenHelper createOpenHelper(String databaseName, OpenHelperDelegate delegate, int version) {
+        return new AndroidOpenHelper(mContext, databaseName, delegate, version);
     }
 
     @Override
@@ -68,7 +83,7 @@ public class KontactDatabase extends SquidDatabase {
     }
 
     @Override
-    protected boolean onUpgrade(SQLiteDatabaseWrapper db, int oldVersion, int newVersion) {
+    protected boolean onUpgrade(ISQLiteDatabase db, int oldVersion, int newVersion) {
         // nothing happens
         // to create tables, try like this -> tryCreateTable(School.TABLE)
         // https://github.com/yahoo/squidb/wiki/Implementing-database-upgrades
@@ -95,5 +110,18 @@ public class KontactDatabase extends SquidDatabase {
     // https://github.com/yahoo/squidb/issues/186
     public boolean insertWithId(TableModel item) {
         return insertRow(item, TableStatement.ConflictAlgorithm.REPLACE);
+    }
+
+    public JSONObject modelObjectToJson(TableModel obj) {
+        JSONObject jobj = new JSONObject();
+        try {
+            for (Map.Entry<String, Object> s : obj.getMergedValues().valueSet()) {
+                jobj.put(s.getKey(), s.getValue() == null ? "" : s.getValue());
+            }
+        } catch (JSONException e) {
+            Log.d(this.toString(), e.getMessage());
+            e.printStackTrace();
+        }
+        return jobj;
     }
 }

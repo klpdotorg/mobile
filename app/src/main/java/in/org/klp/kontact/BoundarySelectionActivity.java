@@ -56,7 +56,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_boundary_selection);
-        db = new KontactDatabase(this);
+        db = ((KLPApplication) getApplicationContext()).getDb();
 
         SharedPreferences sharedPreferences=getSharedPreferences("boundary", MODE_PRIVATE);
 
@@ -173,7 +173,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
             @Override
             public void onClick(View view)
             {
-                Intent intent = new Intent(BoundarySelectionActivity.this, Reports.class);
+                Intent intent = new Intent(BoundarySelectionActivity.this, ReportsActivity.class);
                 intent.putExtra("surveyId", surveyId);
                 intent.putExtra("surveyName", surveyName);
                 intent.putExtra("bid", bid);

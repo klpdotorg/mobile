@@ -65,7 +65,7 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         convertView = inflater.inflate(R.layout.list_item_question, parent, false);
         questionHolder.qText = (TextView) convertView.findViewById(R.id.textViewQuestion);
-        questionHolder.qText.setText(String.valueOf(question.getId()) + ": " + question.getText());
+        questionHolder.qText.setText(question.getTextKn() != null ? question.getTextKn() : question.getText());
         questionHolder.qText.setTag(question.getId());
 
         questionHolder.rgQuestion = (RadioGroup) convertView.findViewById(R.id.rgQuestion);

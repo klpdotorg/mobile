@@ -245,7 +245,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.d(this.toString(), error.getMessage());
+                    if (error.getMessage() != null) Log.d(this.toString(), error.getMessage());
                     if (error.networkResponse == null) {
                         Toast.makeText(LoginActivity.this, "No Internet Connection", Toast.LENGTH_LONG).show();
                     } else {

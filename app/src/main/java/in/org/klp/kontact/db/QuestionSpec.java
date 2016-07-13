@@ -24,4 +24,7 @@ public class QuestionSpec {
 
     @ColumnSpec(name="school_type")
     public String school_type;
+
+    @ColumnSpec(name="text_kn")
+    public String text_kn;
 }
