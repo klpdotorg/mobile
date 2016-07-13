@@ -167,16 +167,6 @@
             android:layout_alignParentTop="true"
             android:orientation="horizontal">
                 <TextView
-                    android:id="@+id/changePassword"
-                    android:layout_width="165dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:text="@string/changePassword"
-                    android:textAlignment="textEnd"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/colorBrandBlue"
-                    android:clickable="true"/>
-                <TextView
                     android:id="@+id/forgotPassword"
                     android:layout_width="165dp"
                     android:layout_height="wrap_content"
