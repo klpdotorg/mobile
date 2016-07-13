@@ -1,92 +1,96 @@
 package in.org.klp.kontact;
 
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.CursorAdapter;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import in.org.klp.kontact.utils.KLPVolleySingleton;
 
 /**
  * Created by Subha on 7/13/16.
  */
-public class ForgotPasswordActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class ForgotPasswordActivity extends AppCompatActivity{
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_forgotpassword);
+        final AutoCompleteTextView userEmail = (AutoCompleteTextView) findViewById(R.id.forgot_user_email);
+        final Button resetButton = (Button) findViewById(R.id.reset_password_button);
+        resetButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               String email = userEmail.getText().toString();
+                if(email == null || email.length() == 0)
+                    userEmail.setError("Enter a valid e-mail");
+                else
+                    resetPassword(email);
+            }
+        });
     }
 
-    /**
-     * Instantiate and return a new Loader for the given ID.
-     *
-     * @param id   The ID whose loader is to be created.
-     * @param args Any arguments supplied by the caller.
-     * @return Return a new Loader instance that is ready to start loading.
-     */
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+    protected void finishReset(String response)
+    {
+        Log.v(ForgotPasswordActivity.class.getSimpleName(), "Finishing reset -- " + response);
+        Toast.makeText(ForgotPasswordActivity.this, "Password Reset Email Sent", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+    protected void resetPassword(final String email)
+    {
+        String USER_RESET_URL = BuildConfig.HOST  + "/api/v1/password-reset/request";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,
+               USER_RESET_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                if (response != null) finishReset(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.getMessage() != null) Log.d(this.toString(), error.getMessage());
+                if (error.networkResponse == null) {
+                    Toast.makeText(ForgotPasswordActivity.this, "No Internet Connection", Toast.LENGTH_LONG).show();
+                }
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                // set the POST params
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                // set extra headers
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                return headers;
+            }
+        };
+        // Add request to the RequestQueue maintained by the Singleton
+        KLPVolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
-    /**
-     * Called when a previously created loader has finished its load.  Note
-     * that normally an application is <em>not</em> allowed to commit fragment
-     * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
-     * FragmentManager.openTransaction()} for further discussion on this.
-     * <p/>
-     * <p>This function is guaranteed to be called prior to the release of
-     * the last data that was supplied for this Loader.  At this point
-     * you should remove all use of the old data (since it will be released
-     * soon), but should not do your own release of the data since its Loader
-     * owns it and will take care of that.  The Loader will take care of
-     * management of its data so you don't have to.  In particular:
-     * <p/>
-     * <ul>
-     * <li> <p>The Loader will monitor for changes to the data, and report
-     * them to you through new calls here.  You should not monitor the
-     * data yourself.  For example, if the data is a {@link Cursor}
-     * and you place it in a {@link CursorAdapter}, use
-     * the {@link CursorAdapter#CursorAdapter(Context,
-     * Cursor, int)} constructor <em>without</em> passing
-     * in either {@link CursorAdapter#FLAG_AUTO_REQUERY}
-     * or {@link CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER}
-     * (that is, use 0 for the flags argument).  This prevents the CursorAdapter
-     * from doing its own observing of the Cursor, which is not needed since
-     * when a change happens you will get a new Cursor throw another call
-     * here.
-     * <li> The Loader will release the data once it knows the application
-     * is no longer using it.  For example, if the data is
-     * a {@link Cursor} from a {@link CursorLoader},
-     * you should not call close() on it yourself.  If the Cursor is being placed in a
-     * {@link CursorAdapter}, you should use the
-     * {@link CursorAdapter#swapCursor(Cursor)}
-     * method so that the old Cursor is not closed.
-     * </ul>
-     *
-     * @param loader The Loader that has finished.
-     * @param data   The data generated by the Loader.
-     */
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
-    }
-
-    /**
-     * Called when a previously created loader is being reset, and thus
-     * making its data unavailable.  The application should at this point
-     * remove any references it has to the Loader's data.
-     *
-     * @param loader The Loader that is being reset.
-     */
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
 }
