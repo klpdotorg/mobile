@@ -62,4 +62,6 @@
         <item name="colorPrimaryDark">@color/commonGreenLeaf</item>
         <item name="colorAccent">@color/colorBrandTurquoise</item>
     </style>
+    <style name="KLPTheme.NoActionBar" parent="AppTheme.NoActionBar" >
+    </style>
 </resources>

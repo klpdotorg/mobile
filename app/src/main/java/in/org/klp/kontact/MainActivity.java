@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void logoutUser() {
         mSession.logoutUser();
+        this.finish();
     }
 
     public void syncUpload() {

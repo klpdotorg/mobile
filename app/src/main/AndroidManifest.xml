@@ -22,7 +22,7 @@
             android:label="@string/app_name"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/KLPTheme">
+            android:theme="@style/KLPTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,7 +59,7 @@
             android:name=".UserRegistrationActivity"
             android:label="@string/title_activity_user_registration"
             android:parentActivityName=".LoginActivity"
-            android:theme="@style/KLPTheme"
+            android:theme="@style/KLPTheme.NoActionBar"
             android:noHistory="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
