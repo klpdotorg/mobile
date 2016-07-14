@@ -1,4 +1,6 @@
-<resources>
+<resources
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:ignore="MissingTranslation">
     <string name="action_settings">Settings</string>
     <string name="action_logout">Logout</string>
     <string name="action_refresh">Refresh</string>
@@ -23,6 +25,8 @@
     <string name="prompt_login">Already a user?</string>
     <string name="register">REGISTER</string>
     <string name="login">LOGIN</string>
+    <string name="changePassword">Change password</string>
+    <string name="forgotPassword">Forgot password?</string>
 
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">LOGIN</string>
@@ -34,8 +38,19 @@
 
     <string name="title_activity_question">Questions</string>
 
+    <!-- Dialog button strings -->
+    <string name="Submit">Submit</string>
+    <string name="Cancel">Cancel</string>
+    <string name="Ok">OK</string>
+
+    <!--Strings for the change password dialog -->
+    <string name="dialog_old_password">Old Password</string>
+    <string name="dialog_new_password">New Password</string>
+    <string name="dialog_reenter_new_password">Re-enter new password</string>
+    <string name="dialog_error_password_mismatch">Passwords do not match. Please re-enter</string>
     <!-- Strings for sign up activity -->
     <string name="title_activity_user_registration">UserRegistrationActivity</string>
+    <string name="title_activity_forgot_password">Forgot Password</string>
     <string name="prompt_enter_email">E-MAIL ID/ಇಮೇಲ್ ವಿಳಾಸ</string>
     <string name="prompt_enter_password">PASSWORD/ಗುಪ್ತಪದ</string>
     <string name="prompt_verify_password">RE-ENTER PASSWORD/ಗುಪ್ತಪದ ಪರಿಶೀಲಿಸಿ </string>

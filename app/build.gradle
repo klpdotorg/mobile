@@ -13,8 +13,8 @@ android {
         applicationId "in.org.klp.kontact"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 13
-        versionName "0.11"
+        versionCode 16
+        versionName "0.13.1"
     }
     buildTypes {
         release {
@@ -37,7 +37,8 @@ android {
         prod {
             applicationId "in.org.klp.kontact"
             resValue "string", "app_name", "KLP Konnect"
-            buildConfigField 'String', 'HOST', '"https://klp.org.in"'
+            // change this back to https://klp.org.in after testing phase is done
+            buildConfigField 'String', 'HOST', '"https://dev.klp.org.in"'
         }
     }
 }
