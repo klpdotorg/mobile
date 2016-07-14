@@ -72,9 +72,9 @@ public class ReportsFragment extends Fragment {
                 no="0/0\n0%";
                 dn="0/0\n0%";
             } else {
-                yes=String.valueOf(y) + "/" + responses + "\n" + String.valueOf(y*100/Integer.parseInt(responses)) + "%";
-                no=String.valueOf(n) + "/" + responses + "\n" + String.valueOf(n*100/Integer.parseInt(responses)) + "%";
-                dn=String.valueOf(d) + "/" + responses + "\n" + String.valueOf(d*100/Integer.parseInt(responses)) + "%";
+                yes=String.valueOf(y) + ":" + String.valueOf(y*100/Integer.parseInt(responses)) + "%";
+                no=String.valueOf(n) + ":" + String.valueOf(n*100/Integer.parseInt(responses)) + "%";
+                dn=String.valueOf(d) + ":" + String.valueOf(d*100/Integer.parseInt(responses)) + "%";
             }
         }
     }
@@ -95,11 +95,17 @@ public class ReportsFragment extends Fragment {
         tv=(TextView) view.findViewById(R.id.res_count);
         tv.setText(responses);
         tv=(TextView) view.findViewById(R.id.txtyes);
-        tv.setText(yes);
+        tv.setText(yes.split(":")[0]);
+        tv=(TextView) view.findViewById(R.id.txtyesperc);
+        tv.setText(yes.split(":")[1]);
         tv=(TextView) view.findViewById(R.id.txtno);
-        tv.setText(no);
+        tv.setText(no.split(":")[0]);
+        tv=(TextView) view.findViewById(R.id.txtnoperc);
+        tv.setText(no.split(":")[1]);
         tv=(TextView) view.findViewById(R.id.txtdn);
-        tv.setText(dn);
+        tv.setText(dn.split(":")[0]);
+        tv=(TextView) view.findViewById(R.id.txtdnperc);
+        tv.setText(dn.split(":")[1]);
         return view;
     }
 

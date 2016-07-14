@@ -5,6 +5,7 @@
     <string name="title_activity_survey">Surveys</string>
     <string name="title_activity_login">Sign in</string>
     <string name="questions">Take me to the questions!</string>
+    <string name="reports">Take me to the reports!</string>
 
     <!-- Strings related to Boundary selection -->
     <string name="district">District</string>

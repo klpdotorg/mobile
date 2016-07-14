@@ -13,52 +13,67 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView style="@style/style_for_lable"
+            <TextView style="@style/label_text.."
                 android:text="Number of Schools"/>
-            <TextView style="@style/style_for_value"
+            <TextView style="@style/value_text.."
                 android:id="@+id/school_count"/>
-            <TextView style="@style/style_for_lable"
+            <TextView style="@style/label_text.."
                 android:text="Number of Schools with Responses"/>
-            <TextView style="@style/style_for_value"
+            <TextView style="@style/value_text.."
                 android:id="@+id/school_resp_count"/>
-            <TextView style="@style/style_for_lable"
+            <TextView style="@style/label_text.."
                 android:text="Number of Responses"/>
-            <TextView style="@style/style_for_value"
+            <TextView style="@style/value_text.."
                 android:id="@+id/res_count"/>
-            <TextView style="@style/def_text_view"
+            <TextView style="@style/value_text.."
                 android:id="@+id/question_name"
-                android:paddingTop="20dp"
-                android:paddingBottom="20dp"
-                android:textSize="17dp"
-                android:textAlignment="center"/>
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"/>
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TableRow>
-                    <TextView style="@style/style_for_lable"
+                    <TextView style="@style/value_text.."
                         android:text="Yes"
                         android:textAlignment="center"
                         android:layout_weight="1"/>
-                    <TextView style="@style/style_for_lable"
+                    <TextView style="@style/value_text.."
                         android:text="No"
                         android:textAlignment="center"
                         android:layout_weight="1"/>
-                    <TextView style="@style/style_for_lable"
+                    <TextView style="@style/value_text.."
                         android:text="Don't Know"
                         android:textAlignment="center"
                         android:layout_weight="1"/>
                 </TableRow>
                 <TableRow>
-                    <TextView style="@style/style_for_value"
+                    <TextView style="@style/value_text.."
                         android:id="@+id/txtyes"
-                        android:textAlignment="center"
-                        android:layout_weight="1"/>
-                    <TextView style="@style/style_for_value"
+                        android:textColor="#43AD2C"
+                        android:layout_weight="1"
+                        android:textStyle="bold" />
+                    <TextView style="@style/value_text.."
                         android:id="@+id/txtno"
+                        android:textColor="#CD4306"
+                        android:layout_weight="1"
+                        android:textStyle="bold" />
+                    <TextView style="@style/value_text.."
+                        android:id="@+id/txtdn"
+                        android:textColor="#666"
+                        android:layout_weight="1"
+                        android:textStyle="bold" />
+                </TableRow>
+                <TableRow>
+                    <TextView style="@style/label_text"
+                        android:id="@+id/txtyesperc"
                         android:textAlignment="center"
                         android:layout_weight="1"/>
-                    <TextView style="@style/style_for_value"
-                        android:id="@+id/txtdn"
+                    <TextView style="@style/label_text"
+                        android:id="@+id/txtnoperc"
+                        android:textAlignment="center"
+                        android:layout_weight="1"/>
+                    <TextView style="@style/label_text"
+                        android:id="@+id/txtdnperc"
                         android:textAlignment="center"
                         android:layout_weight="1"/>
                 </TableRow>
@@ -67,21 +82,21 @@
             <TextView
                 android:paddingTop="30dp"
                 android:id="@+id/aggregate"
-                style="@style/style_for_value"
+                style="@style/label_text_normal"
                 android:textSize="25dp"/>
-            <TextView style="@style/style_for_value"
+            <TextView style="@style/style_for_v alue"
                 android:id="@+id/desc"/> -->
         </LinearLayout>
 
     </ScrollView>
 
         <TextView
-            style="@style/style_for_lable"
+            style="@style/label_text"
             android:paddingTop="100dp"
             android:id="@+id/block_aggregate"
             android:visibility="gone"/>
 
-        <TextView style="@style/style_for_lable"
+        <TextView style="@style/label_text"
             android:paddingTop="20dp"
             android:id="@+id/district_aggregate"
             android:textAlignment="center"

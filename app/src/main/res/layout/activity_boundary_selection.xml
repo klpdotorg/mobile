@@ -108,7 +108,7 @@
             android:id="@+id/report_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/questions"
+            android:text="@string/reports"
             android:visibility="gone"
             android:layout_marginTop="10dp"
             android:textColor="@color/colorWhite"
