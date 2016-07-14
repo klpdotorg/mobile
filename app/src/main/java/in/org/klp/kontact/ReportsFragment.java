@@ -13,12 +13,12 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link display_report.OnFragmentInteractionListener} interface
+ * {@link ReportsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link display_report#newInstance} factory method to
+ * Use the {@link ReportsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class display_report extends Fragment {
+public class ReportsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "question_name";
     private static final String ARG_PARAM3 = "agg";
@@ -26,11 +26,11 @@ public class display_report extends Fragment {
     private static final String ARG_PARAM5 = "dist_agg";
 
     private String mParam1;
-    private String q_name, agg, schoolcount, schoolwithresponse, responses, desc, blck_agg, dist_agg;
+    private String q_name, schoolcount, schoolwithresponse, responses, yes, no, dn;
 
     private OnFragmentInteractionListener mListener;
 
-    public display_report() {
+    public ReportsFragment() {
         // Required empty public constructor
     }
 
@@ -40,16 +40,14 @@ public class display_report extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment display_report.
+     * @return A new instance of fragment ReportsFragment.
      */
-    public static display_report newInstance(String param1, String param2, String param3, String param4, String param5) {
-        display_report fragment = new display_report();
+    public static ReportsFragment newInstance(String param1, String param2, String param3) {
+        ReportsFragment fragment = new ReportsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         args.putString(ARG_PARAM3, param3);
-        args.putString(ARG_PARAM4, param4);
-        args.putString(ARG_PARAM5, param5);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,18 +55,27 @@ public class display_report extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        int y, n, d, t;
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             q_name = getArguments().getString(ARG_PARAM2);
             String[] output = getArguments().getString(ARG_PARAM3).toString().trim().split("\\|");
-            agg=output[0]+"%";
-            schoolcount=output[1];
-            schoolwithresponse=output[2];
-            responses=output[3];
-            desc=output[4];
-            blck_agg = getArguments().getString(ARG_PARAM4);
-            dist_agg = getArguments().getString(ARG_PARAM5);
+            y=Integer.parseInt(output[3]);
+            n=Integer.parseInt(output[4]);
+            d=Integer.parseInt(output[5]);
+            schoolcount=output[0];
+            schoolwithresponse=output[1];
+            responses=output[2];
+            if (responses.equals("0")){
+                yes="0/0\n0%";
+                no="0/0\n0%";
+                dn="0/0\n0%";
+            } else {
+                yes=String.valueOf(y) + "/" + responses + "\n" + String.valueOf(y*100/Integer.parseInt(responses)) + "%";
+                no=String.valueOf(n) + "/" + responses + "\n" + String.valueOf(n*100/Integer.parseInt(responses)) + "%";
+                dn=String.valueOf(d) + "/" + responses + "\n" + String.valueOf(d*100/Integer.parseInt(responses)) + "%";
+            }
         }
     }
 
@@ -79,20 +86,20 @@ public class display_report extends Fragment {
         View view= inflater.inflate(R.layout.fragment_display_report, container, false);
         TextView tv=(TextView) view.findViewById(R.id.question_name);
         tv.setText(q_name);
-        tv=(TextView) view.findViewById(R.id.aggregate);
-        tv.setText(agg);
+        //tv=(TextView) view.findViewById(R.id.aggregate);
+        //tv.setText(agg);
         tv=(TextView) view.findViewById(R.id.school_count);
         tv.setText(schoolcount);
         tv=(TextView) view.findViewById(R.id.school_resp_count);
         tv.setText(schoolwithresponse);
         tv=(TextView) view.findViewById(R.id.res_count);
         tv.setText(responses);
-        tv=(TextView) view.findViewById(R.id.desc);
-        tv.setText(desc);
-        tv=(TextView) view.findViewById(R.id.block_aggregate);
-        tv.setText(blck_agg);
-        tv=(TextView) view.findViewById(R.id.district_aggregate);
-        tv.setText(dist_agg);
+        tv=(TextView) view.findViewById(R.id.txtyes);
+        tv.setText(yes);
+        tv=(TextView) view.findViewById(R.id.txtno);
+        tv.setText(no);
+        tv=(TextView) view.findViewById(R.id.txtdn);
+        tv.setText(dn);
         return view;
     }
 

@@ -66,6 +66,16 @@
                 android:value="in.org.klp.kontact.LoginActivity" />
         </activity>
         <activity
+            android:name=".ForgotPasswordActivity"
+            android:label="@string/title_activity_forgot_password"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/KLPTheme"
+            android:noHistory="true">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.org.klp.kontact.LoginActivity" />
+        </activity>
+        <activity
             android:name=".BoundarySelectionActivity"
             android:label="@string/title_activity_boundary_selection"
             android:screenOrientation="portrait" />
@@ -80,7 +90,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".Reports"></activity>
+        <activity android:name=".ReportsActivity"></activity>
     </application>
 
 </manifest>
