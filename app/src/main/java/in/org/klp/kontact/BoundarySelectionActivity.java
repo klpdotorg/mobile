@@ -322,7 +322,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         if (school_cursor.moveToFirst()) {
             do {
                 School sch = new School(school_cursor);
-                StringWithTags school = new StringWithTags(sch.getName(), sch.getId(), 1, 1);
+                StringWithTags school = new StringWithTags(sch.getName(), sch.getId(), 1, true);
                 schoolList.add(school);
             } while (school_cursor.moveToNext());
         }
