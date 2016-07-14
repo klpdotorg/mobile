@@ -71,4 +71,10 @@ public class SurveyDetails extends AppCompatActivity {
         // disabling new response button if there is no QG for the given survey
         if (qgCount == 0) button.setEnabled(false);
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(SurveyDetails.this, SurveyActivity.class);
+        startActivity(intent);
+    }
 }

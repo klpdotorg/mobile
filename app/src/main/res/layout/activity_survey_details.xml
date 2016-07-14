@@ -30,21 +30,40 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
-        <Button
-            android:id="@+id/new_response"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/new_response" />
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stretchColumns="0,1">
 
-        <Button
-            android:id="@+id/generate_report"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/generate_report" />
-    </LinearLayout>
+        <TableRow>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_response"
+                android:id="@+id/new_response"
+                android:textColor="@color/colorWhite"
+                android:background="@color/colorBrandTurquoise"
+                android:drawableTop="@mipmap/ic_button_new_response"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/generate_report"
+                android:id="@+id/generate_report"
+                android:textColor="@color/colorWhite"
+                android:background="@color/colorBrandTurquoise"
+                android:drawableTop="@mipmap/ic_button_report"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp" />
+        </TableRow>
+    </TableLayout>
 </LinearLayout>
