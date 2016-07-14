@@ -30,21 +30,42 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp">
-        <Button
-            android:id="@+id/new_response"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/new_response" />
+    <GridLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:columnCount="2"
+        android:rowCount="1">
 
         <Button
-            android:id="@+id/generate_report"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/generate_report" />
-    </LinearLayout>
+            android:text="@string/new_response"
+            android:id="@+id/new_response"
+            android:background="@color/colorBrandTurquoise"
+            android:textColor="@color/colorWhite"
+            android:layout_column="0"
+            android:padding="15dp"
+            android:drawableTop="@mipmap/ic_button_new_response"
+            android:layout_columnWeight="1"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/generate_report"
+            android:id="@+id/generate_report"
+            android:textColor="@color/colorWhite"
+            android:background="@color/colorBrandTurquoise"
+            android:drawableTop="@mipmap/ic_button_report"
+            android:padding="15dp"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp" />
+
+    </GridLayout>
 </LinearLayout>
