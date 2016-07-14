@@ -6,8 +6,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="25dp">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,8 +22,31 @@
                 android:id="@+id/school_resp_count"/>
             <TextView style="@style/label_text.."
                 android:text="Number of Responses"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:id="@+id/left_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_left"
+                    android:layout_gravity="left"
+                    android:clickable="true"
+                    android:onClick="change_frag"/>
             <TextView style="@style/value_text.."
-                android:id="@+id/res_count"/>
+                android:id="@+id/res_count"
+                android:layout_weight="1"
+                android:gravity="center"/>
+                <ImageView
+                    android:id="@+id/right_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:onClick="change_frag"
+                    android:layout_gravity="right"
+                    android:src="@drawable/ic_arrow_right"/>
+            </LinearLayout>
             <TextView style="@style/value_text.."
                 android:id="@+id/question_name"
                 android:paddingTop="30dp"

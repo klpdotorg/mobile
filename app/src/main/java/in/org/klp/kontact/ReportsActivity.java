@@ -1,5 +1,6 @@
 package in.org.klp.kontact;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,8 +8,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.yahoo.squidb.data.ICursor;
@@ -64,6 +71,7 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
             // This method will be invoked when the current page is scrolled
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //change_radiobuttons(position);
             }
 
             // Called when the scroll state changes:
@@ -72,6 +80,17 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
             public void onPageScrollStateChanged(int state) {
             }
         });
+    }
+
+    public void change_frag(View view){
+        int position=vpPager.getCurrentItem();
+        if (view.getId()==R.id.left_arrow) {
+            if (position - 1 >= 0)
+                vpPager.setCurrentItem(position - 1);
+        } else if (view.getId()==R.id.right_arrow) {
+            if (position + 1 < qcount)
+                vpPager.setCurrentItem(position + 1);
+        }
     }
 
     public static class MyPagerAdapter extends SmartFragmentStatePagerAdapter {
