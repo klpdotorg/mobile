@@ -6,24 +6,24 @@ package in.org.klp.kontact.data;
 public class StringWithTags {
     public String string;
     public Object id, parent;
-    public int type;
+    public boolean type;
 
     public StringWithTags(String stringPart, Object idpart, Object parentpart) {
         string = stringPart;
         id = idpart;
         parent = parentpart;
-        type = 0;
+        type = false;
     }
-    public StringWithTags(String stringPart, Object idpart, Object parentpart, int check) {
+    public StringWithTags(String stringPart, Object idpart, Object parentpart, boolean includeid) {
         string = stringPart;
         id = idpart;
         parent = parentpart;
-        type = check;
+        type = includeid;
     }
 
     @Override
     public String toString() {
-        if (type==0)
+        if (type)
             return string;
         else
             return String.valueOf(id)+" : "+string;
