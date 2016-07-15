@@ -54,7 +54,6 @@
         android:layout_width="250dp"
         android:layout_height="145dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="20dp"
         android:contentDescription="KLP logo"
         android:src="@drawable/konnect" />
 

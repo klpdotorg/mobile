@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import in.org.klp.kontact.R;
 import in.org.klp.kontact.data.StringWithTags;
@@ -24,6 +25,7 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
     private Context _context;
     private ArrayList<Question> questions;
     private HashMap<Question, String> answers;
+    private HashMap<Integer, String> radioButtons;
 
     // View lookup cache
     private static class QuestionHolder {
@@ -36,6 +38,11 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
         this._context = context;
         this.questions = questions;
         this.answers = new HashMap<Question, String>();
+
+        this.radioButtons = new HashMap<Integer, String>();
+        this.radioButtons.put(R.id.radioYes, "Yes");
+        this.radioButtons.put(R.id.radioNo, "No");
+        this.radioButtons.put(R.id.radioNoAnswer, "Don't Know");
     }
 
     @Override
@@ -62,7 +69,7 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
         QuestionHolder questionHolder = new QuestionHolder();;
         final View result = convertView;
 
-        LayoutInflater inflater = LayoutInflater.from(getContext());
+        LayoutInflater inflater = LayoutInflater.from(_context);
         convertView = inflater.inflate(R.layout.list_item_question, parent, false);
         questionHolder.qText = (TextView) convertView.findViewById(R.id.textViewQuestion);
         questionHolder.qText.setText(question.getTextKn() != null ? question.getTextKn() : question.getText());
@@ -75,9 +82,9 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
             RadioButton rb = (RadioButton) questionHolder.rgQuestion.getChildAt(i);
             if (answers.get(question) == null) {
                 if (rb.isChecked()) {
-                    answers.put(question, rb.getText().toString());
+                    answers.put(question, radioButtons.get(rb.getId()));
                 }
-            } else if (rb.getText().toString() == answers.get(question)) {
+            } else if (radioButtons.get(rb.getId()) == answers.get(question)) {
                 rb.setChecked(true);
             }
         }
@@ -86,7 +93,7 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton rb = (RadioButton) parent.findViewById(radioGroup.getCheckedRadioButtonId());
-                answers.put(question, rb.getText().toString());
+                answers.put(question, radioButtons.get(rb.getId()));
             }
         });
 

@@ -20,10 +20,12 @@ import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Query;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import in.org.klp.kontact.adapters.QuestionAdapter;
 import in.org.klp.kontact.db.Answer;
@@ -96,6 +98,9 @@ public class QuestionFragment extends Fragment {
         ArrayAdapter<String> userTypeAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, userTypeNames);
         spinnerUserType.setAdapter(userTypeAdapter);
         mSelectedUserType = "PA";
+
+        // this to remove all the invalid answers created by a bug in last release
+        db.deleteWhere(Answer.class, Answer.TEXT.notIn("Yes", "No", "Don't Know"));
 
         SquidCursor<QuestionGroup> qgCursor = null;
         SquidCursor<QuestionGroupQuestion> qgqCursor = null;
