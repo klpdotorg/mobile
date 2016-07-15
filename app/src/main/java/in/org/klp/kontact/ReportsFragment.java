@@ -69,9 +69,9 @@ public class ReportsFragment extends Fragment {
             schoolwithresponse=output[1];
             responses=output[2];
             if (responses.equals("0")){
-                yes="0/0\n0%";
-                no="0/0\n0%";
-                dn="0/0\n0%";
+                yes="0:0%";
+                no="0:0%";
+                dn="0:0%";
             } else {
                 yes=String.valueOf(y) + ":" + String.valueOf(y*100/Integer.parseInt(responses)) + "%";
                 no=String.valueOf(n) + ":" + String.valueOf(n*100/Integer.parseInt(responses)) + "%";
