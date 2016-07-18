@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="fill_parent"
 android:layout_height="fill_parent"
-android:background="@color/colorBrandTurquoise"
 android:gravity="center"
 android:orientation="vertical"
 android:padding="10dp">
@@ -29,36 +28,33 @@ android:padding="10dp">
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/colorWhite"
             android:hint="@string/prompt_enter_email"
             android:inputType="textEmailAddress"
             android:padding="10dp"
             android:singleLine="true"
-            android:textColorHint="@color/colorBrandTurquoise" />
+            />
 
         <EditText
             android:id="@+id/password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/colorWhite"
             android:hint="@string/prompt_enter_password"
             android:inputType="textPassword"
             android:padding="10dp"
             android:singleLine="true"
-            android:textColorHint="@color/colorBrandTurquoise" />
+            />
 
         <EditText
             android:id="@+id/verify_password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:background="@color/colorWhite"
             android:hint="@string/prompt_enter_password"
             android:inputType="textPassword"
             android:padding="10dp"
             android:singleLine="true"
-            android:textColorHint="@color/colorBrandTurquoise" />
+            />
 
         <EditText
             android:id="@+id/user_first_name"
@@ -68,8 +64,6 @@ android:padding="10dp">
             android:inputType="textPersonName"
             android:padding="10dp"
             android:singleLine="true"
-            android:textColorHint="@color/colorBrandTurquoise"
-            android:background="@color/colorWhite"
             android:layout_marginBottom="10dp"/>
 
         <EditText
@@ -80,8 +74,6 @@ android:padding="10dp">
             android:inputType="textPersonName"
             android:padding="10dp"
             android:singleLine="true"
-            android:textColorHint="@color/colorBrandTurquoise"
-            android:background="@color/colorWhite"
             android:layout_marginBottom="10dp"/>
 
         <EditText
@@ -92,8 +84,6 @@ android:padding="10dp">
             android:inputType="phone"
             android:padding="10dp"
             android:singleLine="true"
-            android:textColorHint="@color/colorBrandTurquoise"
-            android:background="@color/colorWhite"
             android:layout_marginBottom="10dp"/>
 
         <!-- Login Button -->
@@ -104,8 +94,7 @@ android:padding="10dp">
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
             android:background="@color/colorBrandGreen"
-            android:text="@string/register"
-            android:textColor="@color/colorWhite" />
+            android:text="@string/register" />
 
         <!-- Link to Login Screen -->
 
@@ -116,7 +105,6 @@ android:padding="10dp">
             android:background="@null"
             android:text="@string/login"
             android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
             android:layout_marginTop="10dp"/>
     </LinearLayout>
 </ScrollView>

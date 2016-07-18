@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/colorBrandTurquoise"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp" >
@@ -28,27 +27,23 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:background="@color/colorWhite"
                 android:hint="@string/prompt_enter_email"
                 android:inputType="textEmailAddress"
                 android:padding="10dp"
-                android:singleLine="true"
-                android:textColorHint="@color/colorBrandTurquoise" />
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/password"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:background="@color/colorWhite"
                 android:hint="@string/prompt_enter_password"
                 android:inputType="textPassword"
                 android:imeActionId="@+id/login"
                 android:imeActionLabel="@string/action_sign_in_short"
                 android:imeOptions="actionDone"
                 android:padding="10dp"
-                android:singleLine="true"
-                android:textColorHint="@color/colorBrandTurquoise" />
+                android:singleLine="true" />
 
             <!-- Login Button -->
 
@@ -71,7 +66,6 @@
                 android:background="@null"
                 android:text="@string/register"
                 android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
                 android:textSize="15dp" />
             <Button
                 android:id="@+id/forgotPassword"
@@ -80,7 +74,6 @@
                 android:background="@null"
                 android:text="@string/forgotPassword"
                 android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
                 android:textSize="15dp" />
         </LinearLayout>
     </ScrollView>
