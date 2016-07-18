@@ -33,7 +33,6 @@
                 android:inputType="textEmailAddress"
                 android:padding="10dp"
                 android:singleLine="true"
-                android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorBrandTurquoise" />
 
             <EditText
@@ -49,7 +48,6 @@
                 android:imeOptions="actionDone"
                 android:padding="10dp"
                 android:singleLine="true"
-                android:textColor="@color/colorWhite"
                 android:textColorHint="@color/colorBrandTurquoise" />
 
             <!-- Login Button -->
