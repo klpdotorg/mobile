@@ -39,6 +39,11 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
         this.questions = questions;
         this.answers = new HashMap<Question, String>();
 
+        // can't rely on the radio button text as
+        // we're using kannada strings, so using button text ID
+        // which is same for both english and kannada strings
+        // Here we're just mapping button id to Yes/No/Don't Know
+        // because those are what we're saving in database
         this.radioButtons = new HashMap<Integer, String>();
         this.radioButtons.put(R.id.radioYes, "Yes");
         this.radioButtons.put(R.id.radioNo, "No");

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -32,7 +33,7 @@ public class ForgotPasswordActivity extends AppCompatActivity{
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgotpassword);
-        final AutoCompleteTextView userEmail = (AutoCompleteTextView) findViewById(R.id.forgot_user_email);
+        final EditText userEmail = (EditText) findViewById(R.id.forgot_user_email);
         final Button resetButton = (Button) findViewById(R.id.reset_password_button);
         resetButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -42,6 +43,16 @@ public class ForgotPasswordActivity extends AppCompatActivity{
                     userEmail.setError("Enter a valid e-mail");
                 else
                     resetPassword(email);
+            }
+        });
+
+        final Button backToLogin = (Button) findViewById(R.id.email_sign_in_button);
+        backToLogin.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(ForgotPasswordActivity.this, LoginActivity.class);
+                startActivity(i);
+                finish();
             }
         });
     }

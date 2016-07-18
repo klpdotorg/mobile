@@ -1,210 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-
-
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorBrandTurquoise"
+    android:gravity="center"
     android:orientation="vertical"
-    android:weightSum="1"
-    tools:context="in.org.klp.kontact.LoginActivity">
-
-    <!-- Login progress -->
-
-    <!-- Header bar -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentTop="true"
-        android:background="@color/colorWhite"
-        android:divider="?android:dividerHorizontal"
-        android:orientation="horizontal"
-        android:showDividers="middle">
-
-        <ImageView
-            android:layout_width="70dp"
-            android:layout_height="40dp"
-            android:layout_gravity="left|center_vertical"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/klp_banner_text" />
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
-            android:layout_marginRight="10dp"
-            android:text="@string/action_sign_in_short"
-            android:textAlignment="textEnd"
-            android:textColor="@color/colorBrandGreen"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-
-    </LinearLayout>
-
-    <!-- Add a divider. Probably better way of doing this is there. Check it out later -->
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="5dp"
-        android:background="@color/colorBrandRed" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="250dp"
-        android:layout_height="145dp"
-        android:layout_gravity="center_horizontal"
-        android:contentDescription="KLP logo"
-        android:src="@drawable/konnect" />
-
+    android:padding="10dp" >
 
     <ScrollView
-        android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginTop="20dp">
-
+        android:layout_height="match_parent">
         <LinearLayout
-            android:id="@+id/email_login_form"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal">
-                <!-- <TextView
-                     android:text="Username:"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_column="0"
-                     android:layout_span="0"
-                     android:layout_gravity="center"/> -->
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:minWidth="500px"
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/konnect"/>
 
-                    >
-
-                    <AutoCompleteTextView
-                        android:id="@+id/email"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="10"
-                        android:editable="true"
-                        android:elegantTextHeight="true"
-                        android:gravity="left|center_vertical"
-                        android:hint="@string/prompt_enter_email"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textStyle="normal"
-                        android:typeface="sans"
-                        android:textSize="15dp"/>
-
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
-
-            <!--Begin second TableRow -->
-            <LinearLayout
+            <EditText
+                android:id="@+id/email"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <!--<TextView
-                    android:text="Password:"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"/> -->
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorWhite"
+                android:hint="@string/prompt_enter_email"
+                android:inputType="textEmailAddress"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorBrandTurquoise" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="321dp"
-                    android:layout_height="wrap_content"
-                    android:minWidth="500dp">
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorWhite"
+                android:hint="@string/prompt_enter_password"
+                android:inputType="textPassword"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionDone"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorBrandTurquoise" />
 
-                    <EditText
-                        android:id="@+id/password"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawableBottom="@color/colorBrandOrange"
-                        android:hint="@string/prompt_enter_password"
-                        android:imeActionId="@+id/login"
-                        android:imeActionLabel="@string/action_sign_in_short"
-                        android:imeOptions="actionDone"
-                        android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textStyle="normal"
-                        android:typeface="serif"
-                        android:textSize="15dp"/>
-
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
-
+            <!-- Login Button -->
 
             <Button
                 android:id="@+id/email_sign_in_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="125dp"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:layout_span="0"
+                android:layout_marginTop="20dip"
                 android:background="@color/colorBrandGreen"
                 android:text="@string/action_sign_in_short"
-                android:textColor="@color/colorWhite"
-                android:textStyle="bold" />
+                android:textColor="@color/colorWhite" />
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="48dp"
-            android:layout_alignParentTop="true"
-            android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/forgotPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:paddingBottom="10dp"
-                    android:text="@string/forgotPassword"
-                    android:textAlignment="center"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/colorBrandBlue"
-                    android:clickable="true"
-                    android:layout_gravity="center"
-                    />
-        </LinearLayout>
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="165dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:paddingBottom="10dp"
-                android:text="@string/prompt_register"
-                android:textAlignment="center"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/colorGreyGravel" />
+            <!-- Link to Login Screen -->
 
             <Button
                 android:id="@+id/email_sign_up_button"
-                android:layout_width="125dp"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="@color/colorBrandTurquoise"
+                android:layout_marginTop="10dip"
+                android:background="@null"
                 android:text="@string/register"
+                android:textAllCaps="false"
                 android:textColor="@color/colorWhite"
-                android:textStyle="bold"/>
-
+                android:textSize="15dp" />
+            <Button
+                android:id="@+id/forgotPassword"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:text="@string/forgotPassword"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:textSize="15dp" />
         </LinearLayout>
-
-
     </ScrollView>
-
 
 </LinearLayout>

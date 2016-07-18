@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
 
     //UI references
 
-    private AutoCompleteTextView emailWidget;
+    private EditText emailWidget;
     private TextView passwordWidget;
     private TextView verifyPasswordWidget;
     private TextView lastNameWidget, firstNameWidget, phoneNoWidget;
@@ -64,7 +65,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Button mEmailSignUpButton = (Button) findViewById(R.id.register_button);
-        emailWidget = (AutoCompleteTextView) findViewById(R.id.user_email);
+        emailWidget = (EditText) findViewById(R.id.user_email);
         passwordWidget = (TextView) findViewById(R.id.password);
         verifyPasswordWidget = (TextView) findViewById(R.id.verify_password);
         firstNameWidget = (TextView) findViewById(R.id.user_first_name);
