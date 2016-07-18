@@ -134,8 +134,9 @@ public class UserRegistrationActivity extends AppCompatActivity {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                if (error.networkResponse == null) {
-                                    Toast.makeText(UserRegistrationActivity.this, "No Internet Connection", Toast.LENGTH_LONG).show();
+                                if (error.getMessage() == null) {
+                                    Toast.makeText(UserRegistrationActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                                    error.printStackTrace();
                                 } else {
                                     showSignupResultDialog(
                                             "Error",
