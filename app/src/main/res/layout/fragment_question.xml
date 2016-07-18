@@ -20,6 +20,13 @@
             android:id="@+id/textViewSchool"
             android:textColor="@color/colorWhite"
             android:textIsSelectable="true" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/textViewSchoolId"
+            android:textColor="@color/colorWhite"
+            android:textIsSelectable="true" />
     </LinearLayout>
 
     <LinearLayout

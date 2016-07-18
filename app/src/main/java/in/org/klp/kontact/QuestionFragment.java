@@ -71,7 +71,9 @@ public class QuestionFragment extends Fragment {
 
         School school = db.fetch(School.class, schoolId);
         TextView textViewSchool = (TextView) rootView.findViewById(R.id.textViewSchool);
+        TextView textViewSchoolId = (TextView) rootView.findViewById(R.id.textViewSchoolId);
         textViewSchool.setText(school.getName());
+        textViewSchoolId.setText("KLP ID: " + String.valueOf(school.getId()));
 
         if (surveyId == 0) {
             Intent intentMain = new Intent(getActivity(), MainActivity.class);
@@ -80,17 +82,17 @@ public class QuestionFragment extends Fragment {
 
         // defining user types
         userType = new LinkedHashMap<String, String>();
-        userType.put("Parents", "PR");
-        userType.put("Teachers", "TR");
-        userType.put("Volunteer", "VR");
-        userType.put("Cbo Member", "CM");
-        userType.put("Headmaster", "HM");
-        userType.put("Sdmc Member", "SM");
-        userType.put("Local Leader", "LL");
-        userType.put("Akshara Staff", "AS");
-        userType.put("Educated Youth", "EY");
-        userType.put("Education Official", "EO");
-        userType.put("Elected Representative", "ER");
+        userType.put("Parents/ಪೋಷಕ", "PR");
+        userType.put("Teachers/ಶಿಕ್ಷಕ", "TR");
+        userType.put("Volunteers/ಸ್ವಯಂಸೇವಕ", "VR");
+        userType.put("CBO Member/ ಸಿ ಬಿ ಒ ಸದಸ್ಯ", "CM");
+        userType.put("Headmaster/ಮುಖ್ಯೋಪಾಧ್ಯಾಯ", "HM");
+        userType.put("SDMC Member/ಎಸ್ ಡಿ ಎಮ್ ಸಿ ಸದಸ್ಯ", "SM");
+        userType.put("Local Leaders/ಮುಖ್ಯಸ್ಥ", "LL");
+        userType.put("Akshara Staff/ಅಕ್ಷರ ಶಿಬ್ಬಂದಿ", "AS");
+        userType.put("Educated Youth/ವಿದ್ಯಾವಂತ ಯುವಕ ", "EY");
+        userType.put("Education Official/ಶಿಕ್ಷಣ ಅಧಿಕಾರಿ", "EO");
+        userType.put("Elected Representative/ಚುನಾಯಿತ ಪ್ರತಿನಿಧಿ", "ER");
 
         final Spinner spinnerUserType = (Spinner) rootView.findViewById(R.id.spinnerUserType);
         List<String> userTypeNames = new ArrayList<>();

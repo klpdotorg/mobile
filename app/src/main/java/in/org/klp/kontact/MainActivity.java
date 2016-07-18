@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setTitle("Uploading");
         progressDialog.setMessage("Uploading responses to server");
         progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
         progressDialog.show();
 
         Button survey_button = (Button) findViewById(R.id.survey_button);
