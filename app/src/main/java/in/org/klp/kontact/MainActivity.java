@@ -32,7 +32,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import in.org.klp.kontact.db.Answer;
@@ -288,6 +292,9 @@ public class MainActivity extends AppCompatActivity {
                         } else if (type.equals("boundary")) {
                             next_url = saveBoundaryDataFromJson(response);
                             if (next_url != "null") processURL(next_url, type);
+                        } else if (type.equals("story")) {
+                            next_url = saveStoryDataFromJson(response);
+//                             if (next_url != "null") processURL(next_url, type);
                         }
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.getMessage(), e);
@@ -303,7 +310,15 @@ public class MainActivity extends AppCompatActivity {
                     if (syncRequestCount == 0) endSync();
                     Log.v(LOG_TAG, "Error parsing the " + type + " results: " + error.getMessage());
                 }
-            });
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> user = mSession.getUserDetails();
+                    Map<String, String> headers = new HashMap<String, String>();
+                    headers.put("Authorization", "Token " + user.get("token"));
+                    return headers;
+                }
+            };
 
             KLPVolleySingleton.getInstance(MainActivity.this).addToRequestQueue(stringRequest);
             syncRequestCount++;
@@ -321,6 +336,11 @@ public class MainActivity extends AppCompatActivity {
 
             // Populate questions
             processURL(BuildConfig.HOST + "/api/v1/questions/?source=mobile", "question");
+
+            // Populate stories
+            // `admin2=detect` is a special flag that lets the server decide which blocks the user
+            // has been most active in. If server can't find any blocks, it wont bother.
+            processURL(BuildConfig.HOST + "/api/v1/stories/?source=csv&answers=yes&admin2=detect&per_page=200", "story");
 
             // Populate school
 //            if (!isCancelled()) {
@@ -413,6 +433,77 @@ public class MainActivity extends AppCompatActivity {
                         .setBoundaryId(boundaryId)
                         .setName(name);
                 db.insertWithId(school);
+            }
+            return next_url;
+        }
+
+        private String saveStoryDataFromJson(String storyJsonStr)
+                throws JSONException {
+
+            final String FEATURES = "features";
+            JSONObject storyJson = new JSONObject(storyJsonStr);
+            String next_url = storyJson.getString("next");
+            JSONArray storyArray = storyJson.getJSONArray(FEATURES);
+            Log.d(LOG_TAG, String.valueOf(storyArray.length()));
+
+            for (int i = 0; i < storyArray.length(); i++) {
+                Log.d(LOG_TAG, storyArray.getJSONObject(i).toString());
+
+                JSONObject storyObject = storyArray.getJSONObject(i);
+
+                Long schoolId = storyObject.getLong("school");
+                Long userId = storyObject.getLong("user");
+                Long groupId = storyObject.getLong("group");
+                String createdAt = storyObject.getString("created_at");
+                String userType = storyObject.getJSONObject("user_type").getString("name");
+                String sysId = storyObject.getString("id");
+                Timestamp createdAtTimestamp;
+
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+                    Date parsedDate = dateFormat.parse(createdAt);
+                    createdAtTimestamp = new Timestamp(parsedDate.getTime());
+                    Log.d(LOG_TAG, createdAtTimestamp.toString());
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, e.toString());
+                    continue;
+                }
+
+                Story story = new Story()
+                        .setUserId(userId)
+                        .setSchoolId(schoolId)
+                        .setGroupId(groupId)
+                        .setRespondentType(userType)
+                        .setSynced(1)
+                        .setSysid(sysId);
+
+                if (createdAtTimestamp != null) {
+                    story.setCreatedAt(createdAtTimestamp.getTime());
+                }
+
+                db.persist(story);
+
+                JSONArray storyAnswers = storyObject.getJSONArray("answers");
+                for (int j = 0; j < storyAnswers.length(); j++) {
+                    JSONObject answerObject = storyAnswers.getJSONObject(j);
+                    JSONObject question = answerObject.getJSONObject("question");
+
+                    Long questionId = question.getLong("id");
+//
+//                    Query listQuestions = Query.select().from(Question.TABLE)
+//                            .where(Question.ID.eq(questionId));
+//                    qCursor = db.query(Question.class, listQuestions);
+//
+
+                    String answerText = answerObject.getString("text");
+
+                    Answer answer = new Answer()
+                            .setStoryId(story.getId())
+                            .setQuestionId(questionId)
+                            .setText(answerText)
+                            .setCreatedAt(createdAtTimestamp.getTime());
+                    db.persist(answer);
+                }
             }
             return next_url;
         }
