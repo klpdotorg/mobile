@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
                             if (next_url != "null") processURL(next_url, type);
                         } else if (type.equals("story")) {
                             next_url = saveStoryDataFromJson(response);
-//                            if (next_url != "null") processURL(next_url, type);
+                            if (next_url != "null") processURL(next_url, type);
                         }
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.getMessage(), e);
