@@ -3,8 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="in.org.klp.kontact.MainActivity"
+    tools:context="in.org.klp.konnect.MainActivity"
     android:stretchColumns="0,1">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/konnect"
+        android:cropToPadding="false"
+        android:layout_marginTop="20dp" />
 
     <TableRow>
         <Button

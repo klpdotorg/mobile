@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="in.org.klp.kontact">
+    package="in.org.klp.konnect">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -16,9 +16,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/KLPTheme"
-        android:name=".KLPApplication">
+        android:name="in.org.klp.konnect.KLPApplication">
         <activity
-            android:name=".LoginActivity"
+            android:name="in.org.klp.konnect.LoginActivity"
             android:label="@string/app_name"
             android:noHistory="true"
             android:screenOrientation="portrait"
@@ -30,57 +30,57 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="in.org.klp.konnect.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/KLPTheme" />
         <activity
-            android:name=".SurveyActivity"
+            android:name="in.org.klp.konnect.SurveyActivity"
             android:label="@string/title_activity_survey"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="in.org.klp.konnect.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/KLPTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="MainActivity" />
+                android:value="in.org.klp.konnect.MainActivity" />
         </activity>
         <activity
-            android:name=".QuestionActivity"
+            android:name="in.org.klp.konnect.QuestionActivity"
             android:label="@string/title_activity_question"
             android:noHistory="true"
-            android:parentActivityName=".SurveyActivity"
+            android:parentActivityName="in.org.klp.konnect.SurveyActivity"
             android:screenOrientation="portrait"
             android:theme="@style/KLPTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SurveyActivity" />
+                android:value="in.org.klp.konnect.SurveyActivity" />
         </activity>
         <activity
-            android:name=".UserRegistrationActivity"
+            android:name="in.org.klp.konnect.UserRegistrationActivity"
             android:label="@string/title_activity_user_registration"
-            android:parentActivityName=".LoginActivity"
+            android:parentActivityName="in.org.klp.konnect.LoginActivity"
             android:theme="@style/KLPTheme.NoActionBar"
             android:noHistory="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.org.klp.kontact.LoginActivity" />
+                android:value="in.org.klp.konnect.LoginActivity" />
         </activity>
         <activity
-            android:name=".ForgotPasswordActivity"
+            android:name="in.org.klp.konnect.ForgotPasswordActivity"
             android:label="@string/title_activity_forgot_password"
-            android:parentActivityName=".LoginActivity"
+            android:parentActivityName="in.org.klp.konnect.LoginActivity"
             android:theme="@style/KLPTheme"
             android:noHistory="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.org.klp.kontact.LoginActivity" />
+                android:value="in.org.klp.konnect.LoginActivity" />
         </activity>
         <activity
-            android:name=".BoundarySelectionActivity"
+            android:name="in.org.klp.konnect.BoundarySelectionActivity"
             android:label="@string/title_activity_boundary_selection"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SurveyDetails"
+            android:name="in.org.klp.konnect.SurveyDetails"
             android:screenOrientation="portrait" />
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -90,7 +90,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".ReportsActivity"></activity>
+        <activity android:name="in.org.klp.konnect.ReportsActivity"></activity>
     </application>
 
 </manifest>
