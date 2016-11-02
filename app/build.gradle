@@ -10,11 +10,11 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "in.org.klp.kontact"
+        applicationId "in.org.klp.konnect"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 21
-        versionName "0.15"
+        versionCode 22
+        versionName "0.16"
     }
     buildTypes {
         release {
@@ -25,17 +25,17 @@ android {
     }
     productFlavors {
         local {
-            applicationId "in.org.klp.kontact.local"
+            applicationId "in.org.klp.konnect.local"
             resValue "string", "app_name", "KLP Konnect Local"
             buildConfigField 'String', 'HOST', '"http://192.168.0.105:8001"'
         }
         devel {
-            applicationId "in.org.klp.kontact.development"
+            applicationId "in.org.klp.konnect.development"
             resValue "string", "app_name", "KLP Konnect Dev"
             buildConfigField 'String', 'HOST', '"https://dev.klp.org.in"'
         }
         prod {
-            applicationId "in.org.klp.kontact"
+            applicationId "in.org.klp.konnect"
             resValue "string", "app_name", "KLP Konnect"
             // change this back to https://klp.org.in after testing phase is done
             buildConfigField 'String', 'HOST', '"https://dev.klp.org.in"'
