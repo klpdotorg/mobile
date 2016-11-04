@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -307,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onErrorResponse(VolleyError error) {
                     syncRequestCount--;
                     if (syncRequestCount == 0) endSync();
-                    Log.v(LOG_TAG, "Error parsing the " + type + " results: " + error.getMessage());
+                    Log.v(LOG_TAG, "Error parsing the " + type + " results: " + error.getCause().toString() + " - " + error.getMessage());
                 }
             }) {
                 @Override
@@ -318,6 +319,9 @@ public class MainActivity extends AppCompatActivity {
                     return headers;
                 }
             };
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
             KLPVolleySingleton.getInstance(MainActivity.this).addToRequestQueue(stringRequest);
             syncRequestCount++;
@@ -340,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
             // `admin2=detect` is a special flag that lets the server decide which blocks the user
             // has been most active in. If server can't find any blocks, it wont bother.
             // For detect to work, user authentication headers must be sent with it.
-            processURL(BuildConfig.HOST + "/api/v1/stories/?source=csv&answers=yes&admin2=detect&per_page=200", "story");
+            processURL(BuildConfig.HOST + "/api/v1/stories/?source=csv&answers=yes&admin2=detect&per_page=100", "story");
 
             return null;
         }
@@ -435,9 +439,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d(LOG_TAG, String.valueOf(storyArray.length()));
 
             for (int i = 0; i < storyArray.length(); i++) {
-                Log.d(LOG_TAG, storyArray.getJSONObject(i).toString());
-
                 JSONObject storyObject = storyArray.getJSONObject(i);
+//                Log.d(LOG_TAG, storyObject.toString());
 
                 Long schoolId = storyObject.getLong("school");
                 Long userId = storyObject.getLong("user");
@@ -584,13 +587,16 @@ public class MainActivity extends AppCompatActivity {
                 // Get the JSON object representing the survey
                 JSONObject questiongroupObject = questiongroupArray.getJSONObject(i);
 
+                Integer qgStatus = questiongroupObject.getInt("status");
+                if (qgStatus < 2) continue;
+
                 // Get the JSON object representing the partner
                 JSONObject surveyObject = questiongroupObject.getJSONObject("survey");
 
                 groupId = questiongroupObject.getInt("id");
                 status = questiongroupObject.getInt("status");
-                start_date = questiongroupObject.getInt("start_date");
-                end_date = questiongroupObject.getInt("end_date");
+                start_date = questiongroupObject.optInt("start_date");
+                end_date = questiongroupObject.optInt("end_date");
                 version = questiongroupObject.getInt("version");
                 source = questiongroupObject.getString("source");
                 surveyId = surveyObject.getInt("id");

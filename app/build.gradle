@@ -60,7 +60,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
-    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.8.0'
 
     // squidb - https://github.com/yahoo/squidb
     compile 'com.yahoo.squidb:squidb:3.0.0'
