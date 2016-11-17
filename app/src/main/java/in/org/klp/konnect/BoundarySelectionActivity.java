@@ -131,8 +131,16 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         chour=c.get(Calendar.HOUR_OF_DAY);
         cminute=c.get(Calendar.MINUTE);
 
-        sdate=milliseconds("01-01-2012");
         edate=System.currentTimeMillis();
+        ((EditText) findViewById(R.id.end_date)).setText(String.format("%d-%d-%d", cdate, cmonth+1, cyear));
+        if(cmonth<5) {
+            sdate=milliseconds("01-05-"+String.valueOf(cyear-1));
+            ((EditText) findViewById(R.id.start_date)).setText("01-05-"+String.valueOf(cyear-1));
+        }
+        else {
+            sdate=milliseconds("01-05-"+String.valueOf(cyear));
+            ((EditText) findViewById(R.id.start_date)).setText("01-05-"+String.valueOf(cyear));
+        }
         EditText editText=(EditText) findViewById(R.id.start_date);
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
