@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
             // For detect to work, user authentication headers must be sent with it.
             String story_url = "/api/v1/stories/?source=csv&answers=yes&admin2=detect&per_page=100";
             Story last_story = db.fetchByQuery(Story.class,
-                    Query.select().where(Story.SYSID.neq(null)).orderBy(Story.ID.desc()).limit(1));
+                    Query.select().where(Story.SYSID.neq(null)).orderBy(Story.SYSID.desc()).limit(1));
             if (last_story != null) {
                 story_url += "&since_id=" + last_story.getSysid();
             }
