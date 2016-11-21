@@ -149,53 +149,68 @@ public class QuestionFragment extends Fragment {
                 Long currentTS = System.currentTimeMillis();
                 mSelectedUserType = userType.get(spinnerUserType.getSelectedItem().toString());
 
-                Story story = new Story()
-                        .setSchoolId(schoolId)
-                        .setUserId(Long.parseLong(user.get(session.KEY_ID)))
-                        .setGroupId(questionGroupId)
-                        .setRespondentType(mSelectedUserType)
-                        .setCreatedAt(currentTS);
-                db.persist(story);
-                Log.d(this.toString(), "Created story: " + String.valueOf(story.getId()));
-
                 HashMap<Question, String> answers = mQuestionsAdapter.getAnswers();
-                for (Map.Entry<Question, String> answer: answers.entrySet()) {
-                    Question q = answer.getKey();
-                    String a = answer.getValue();
 
-                    Answer new_answer = new Answer()
-                            .setStoryId(story.getId())
-                            .setQuestionId(q.getId())
-                            .setText(a)
+                if (answers.isEmpty()) {
+                    AlertDialog noAnswerDialog = new AlertDialog.Builder(getContext()).create();
+                    noAnswerDialog.setTitle(R.string.survey_empty_response_title);
+                    noAnswerDialog.setMessage(getString(R.string.survey_empty_response_body));
+                    noAnswerDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.response_neutral),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                }
+                            });
+                    noAnswerDialog.show();
+                } else {
+                    Story story = new Story()
+                            .setSchoolId(schoolId)
+                            .setUserId(Long.parseLong(user.get(session.KEY_ID)))
+                            .setGroupId(questionGroupId)
+                            .setRespondentType(mSelectedUserType)
                             .setCreatedAt(currentTS);
-                    db.persist(new_answer);
-                    Log.d(this.toString(), "Created answer: " + String.valueOf(new_answer.getId()));
-                }
+                    db.persist(story);
+                    Log.d(this.toString(), "Created story: " + String.valueOf(story.getId()));
 
-                // Ask if the user wants to record more responses
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(getString(R.string.prompt_new_rsponse)).setTitle("Response Saved")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // FIRE ZE MISSILES!
-                                Intent intent = new Intent(getActivity(), QuestionActivity.class);
-                                intent.putExtra("surveyId", surveyId);
-                                intent.putExtra("surveyName", surveyName);
-                                intent.putExtra("schoolId", schoolId);
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                                Intent intent = new Intent(getActivity(), SurveyDetails.class);
-                                intent.putExtra("surveyId", surveyId);
-                                intent.putExtra("surveyName", surveyName);
-                                startActivity(intent);
-                            }
-                        });
-                // Create the AlertDialog object and return it
-                builder.show();
+                    for (Map.Entry<Question, String> answer : answers.entrySet()) {
+                        Question q = answer.getKey();
+                        String a = answer.getValue();
+
+                        Answer new_answer = new Answer()
+                                .setStoryId(story.getId())
+                                .setQuestionId(q.getId())
+                                .setText(a)
+                                .setCreatedAt(currentTS);
+                        db.persist(new_answer);
+                        Log.d(this.toString(), "Created answer: " + String.valueOf(new_answer.getId()));
+                    }
+
+                    // Ask if the user wants to record more responses
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage(getString(R.string.prompt_new_rsponse)).setTitle("Response Saved")
+                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // FIRE ZE MISSILES!
+                                    Intent intent = new Intent(getActivity(), QuestionActivity.class);
+                                    intent.putExtra("surveyId", surveyId);
+                                    intent.putExtra("surveyName", surveyName);
+                                    intent.putExtra("schoolId", schoolId);
+                                    startActivity(intent);
+                                }
+                            })
+                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                    Intent intent = new Intent(getActivity(), SurveyDetails.class);
+                                    intent.putExtra("surveyId", surveyId);
+                                    intent.putExtra("surveyName", surveyName);
+                                    startActivity(intent);
+                                }
+                            });
+                    // Create the AlertDialog object and return it
+                    builder.show();
+                }
             }
         });
 

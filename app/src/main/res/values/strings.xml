@@ -1,6 +1,10 @@
 <resources
         xmlns:tools="http://schemas.android.com/tools"
         tools:ignore="MissingTranslation">
+    <string name="response_neutral">OK</string>
+    <string name="response_positive">Yes</string>
+    <string name="response_negative">No</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_logout">Logout</string>
     <string name="action_refresh">Refresh</string>
@@ -77,4 +81,8 @@
     <string name="answer_unknown">Don\'t Know</string>
 
     <string name="prompt_new_rsponse">Do you want to record another response?</string>
+
+    <!--empty response-->
+    <string name="survey_empty_response_title">No Question Answered!</string>
+    <string name="survey_empty_response_body">You must answer one or more questions to submit a story.</string>
 </resources>
