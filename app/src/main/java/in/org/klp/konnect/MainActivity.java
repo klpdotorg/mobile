@@ -111,6 +111,11 @@ public class MainActivity extends AppCompatActivity {
         e.printStackTrace();
     }
 
+    public void log(String tag, String msg) {
+        Log.d(tag, msg);
+        Toast.makeText(MainActivity.this, tag + ": " + msg, Toast.LENGTH_LONG).show();
+    }
+
     public boolean isSyncNeeded() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int currentVersion = 0;
@@ -158,9 +163,19 @@ public class MainActivity extends AppCompatActivity {
                         endSync();
                     }
                 })
-                .subscribe(new Action1<JSONObject>() {
+                .subscribe(new Subscriber<JSONObject>() {
                     @Override
-                    public void call(JSONObject response) {
+                    public void onCompleted() {
+                        log("Upload Observer", "Upload completed");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        logError("Upload Observer", e);
+                    }
+
+                    @Override
+                    public void onNext(JSONObject response) {
                         try {
                             Log.d(this.toString(), response.toString());
                             // TODO: show error
@@ -178,6 +193,11 @@ public class MainActivity extends AppCompatActivity {
                                                 .where(Story.ID.eq(success.get(i)));
                                         db.update(storyUpdate);
                                     }
+                                }
+
+                                JSONArray failed = response.optJSONArray("failed");
+                                if (failed.length() > 0) {
+                                    log("Upload onNext", "Upload failed for Story ids: " + failed.toString());
                                 }
                             }
                         } catch (JSONException e) {
