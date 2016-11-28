@@ -523,6 +523,8 @@ public class MainActivity extends AppCompatActivity {
                 Long groupId = storyObject.getLong("group");
                 String createdAt = storyObject.getString("created_at");
                 String userType = storyObject.getJSONObject("user_type").getString("name");
+                // Storing the story ID from server as SYSID on the device
+                // This helps in keeping the stories unique on the device
                 String sysId = storyObject.getString("id");
                 Timestamp createdAtTimestamp;
 
@@ -567,8 +569,15 @@ public class MainActivity extends AppCompatActivity {
                                 .setCreatedAt(createdAtTimestamp.getTime());
                         db.persist(answer);
                     }
+                } else if (storyCursor.getCount() > 1) {
+                    // delete old stories with same SYSID
+                    
                 } else {
-                    // TODO: 1/11/16 To replace previous story entry?
+                    // There is just one story with same SYSID.
+                    // So it's the story that was synced before.
+                    // Now that we have a copy from the server,
+                    // update this copy on the device, as it might
+                    // have been updated on the server.
                 }
             }
         }

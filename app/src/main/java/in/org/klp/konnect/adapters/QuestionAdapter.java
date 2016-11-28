@@ -1,6 +1,7 @@
 package in.org.klp.konnect.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +77,7 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
         questionHolder.qText = (TextView) convertView.findViewById(R.id.textViewQuestion);
         questionHolder.qText.setText(question.getTextKn() != null ? question.getTextKn() : question.getText());
         questionHolder.qText.setTag(question.getId());
+        questionHolder.qText.setTypeface(questionHolder.qText.getTypeface(), Typeface.BOLD);
 
         questionHolder.rgQuestion = (RadioGroup) convertView.findViewById(R.id.rgQuestion);
         // set question id a key

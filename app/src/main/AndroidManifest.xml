@@ -90,7 +90,12 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name="in.org.klp.konnect.ReportsActivity"></activity>
+        <activity android:name="in.org.klp.konnect.ReportsActivity" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="755563071b87b1117422885da10c7465f9eaef1d"
+            />
     </application>
 
 </manifest>

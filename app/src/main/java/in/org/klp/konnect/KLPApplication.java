@@ -11,6 +11,9 @@ import java.util.Locale;
 
 import in.org.klp.konnect.db.KontactDatabase;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+
 /**
  * Created by bibhas on 7/5/16.
  */
@@ -23,6 +26,7 @@ public class KLPApplication extends Application {
 
         initSingletons();
         updateLanguage(this);
+        Fabric.with(this, new Crashlytics());
     }
 
     private void initSingletons() {

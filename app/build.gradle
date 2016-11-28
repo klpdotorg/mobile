@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.triplet.play'
+apply plugin: 'io.fabric'
 
 android {
     signingConfigs {
@@ -13,8 +14,8 @@ android {
         applicationId "in.org.klp.konnect"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 27
-        versionName "0.21"
+        versionCode 28
+        versionName "0.22"
     }
     buildTypes {
         release {
@@ -45,6 +46,8 @@ android {
 
 repositories {
     jcenter()
+
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 apply plugin: 'com.neenbedankt.android-apt'
@@ -80,6 +83,10 @@ dependencies {
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     // Volley - https://android.googlesource.com/platform/frameworks/volley
     compile 'com.android.volley:volley:1.0.0'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
+        transitive = true;
+    }
 }
 
 def Properties props = new Properties()
