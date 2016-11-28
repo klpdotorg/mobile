@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Query;
 import com.yahoo.squidb.sql.Update;
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
         mSession = new SessionManager(getApplicationContext());
         mSession.checkLogin();
+        // Log user details to be used for crashlytics
+        logUserToCrashlytics();
 
         final Button sync_button = (Button) findViewById(R.id.sync_button);
         sync_button.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +107,14 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
         }
     }
+
+    private void logUserToCrashlytics() {
+        HashMap<String, String> user = mSession.getUserDetails();
+
+        Crashlytics.setUserIdentifier(user.get(SessionManager.KEY_ID));
+        Crashlytics.setUserName(user.get(SessionManager.KEY_NAME));
+    }
+
 
     public void logError(String tag, Throwable e) {
         Log.e(tag, e.getMessage());
