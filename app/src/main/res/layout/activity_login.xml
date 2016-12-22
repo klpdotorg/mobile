@@ -22,33 +22,40 @@
                 android:layout_height="200dp"
                 android:src="@drawable/konnect"/>
 
-            <EditText
-                android:id="@+id/email"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="@string/prompt_enter_email"
-                android:inputType="textEmailAddress"
-                android:padding="10dp"
-                android:singleLine="true" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/username"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="@string/prompt_enter_email"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+            </android.support.design.widget.TextInputLayout>
 
-            <EditText
-                android:id="@+id/password"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="@string/prompt_enter_password"
-                android:inputType="textPassword"
-                android:imeActionId="@+id/login"
-                android:imeActionLabel="@string/action_sign_in_short"
-                android:imeOptions="actionDone"
-                android:padding="10dp"
-                android:singleLine="true" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="@string/prompt_enter_password"
+                    android:inputType="textPassword"
+                    android:imeActionId="@+id/login"
+                    android:imeActionLabel="@string/action_sign_in_short"
+                    android:imeOptions="actionDone"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+            </android.support.design.widget.TextInputLayout>
 
             <!-- Login Button -->
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/username_sign_in_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dip"
@@ -59,7 +66,7 @@
             <!-- Link to Login Screen -->
 
             <Button
-                android:id="@+id/email_sign_up_button"
+                android:id="@+id/username_sign_up_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dip"
