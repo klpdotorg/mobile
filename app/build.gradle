@@ -14,8 +14,8 @@ android {
         applicationId "in.org.klp.konnect"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 29
-        versionName "0.23"
+        versionCode 30
+        versionName "1.0"
     }
     buildTypes {
         release {
