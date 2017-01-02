@@ -29,8 +29,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Stack;
 
 import in.org.klp.konnect.db.Answer;
 import in.org.klp.konnect.db.Boundary;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog progressDialog = null;
     private KontactDatabase db;
     private OkHttpClient okclient = new OkHttpClient();
+    private Stack<String> thingsToDo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void log(String tag, String msg) {
-        Log.d(tag, msg);
+//        Log.d(tag, msg);
         Toast.makeText(MainActivity.this, tag + ": " + msg, Toast.LENGTH_LONG).show();
     }
 
@@ -133,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             currentVersion = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_CONFIGURATIONS).versionCode;
         } catch (PackageManager.NameNotFoundException e) {
-            Log.d(this.toString(), "if you're here, you're in trouble");
+//            Log.d(this.toString(), "if you're here, you're in trouble");
             return true;
         }
 
@@ -164,20 +167,23 @@ public class MainActivity extends AppCompatActivity {
 
         API_URLS.put("story", story_url);
 
+        thingsToDo = new Stack<String>();
+        thingsToDo.push("upload");
+        thingsToDo.push("survey");
+        thingsToDo.push("question");
+        thingsToDo.push("questiongroup");
+        thingsToDo.push("story");
+
         preSync("Uploading", "Uploading responses to server");
         getUploadObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnTerminate(new Action0() {
-                    @Override
-                    public void call() {
-                        endSync();
-                    }
-                })
                 .subscribe(new Subscriber<JSONObject>() {
                     @Override
                     public void onCompleted() {
                         log("Upload Observer", "Upload completed");
+                        testProgress("upload");
+                        preSync("Downloading", "Downloading Surveys, Questions and Stories");
                     }
 
                     @Override
@@ -188,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onNext(JSONObject response) {
                         try {
-                            Log.d(this.toString(), response.toString());
+//                            Log.d(this.toString(), response.toString());
                             // TODO: show error
                             String error = response.optString("error");
 
@@ -197,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 JSONArray success = response.optJSONArray("success");
                                 if (success != null && success.length() > 0) {
-                                    Log.d("Upload onNext", success.toString());
+//                                    Log.d("Upload onNext", success.toString());
                                     for (int i = 0; i < success.length(); i++) {
                                         Update storyUpdate = Update.table(Story.TABLE)
                                                 .set(Story.SYNCED, 1)
@@ -234,20 +240,33 @@ public class MainActivity extends AppCompatActivity {
         )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(new Action0() {
+                .subscribe(new Subscriber<HashMap<String, JSONObject>>() {
                     @Override
-                    public void call() {
-                        preSync("Downloading", "Downloading Surveys and Questions");
+                    public void onCompleted() {
+                        log("multiple observer", "Called");
                     }
-                })
-                .subscribe(new Action1<HashMap<String, JSONObject>>() {
+
                     @Override
-                    public void call(HashMap<String, JSONObject> resultMap) {
+                    public void onError(Throwable e) {
+                        logError("MultiDownload Observer", e);
+                    }
+
+                    @Override
+                    public void onNext(HashMap<String, JSONObject> resultMap) {
                         for (String key: resultMap.keySet()) {
                             try {
-                                if (key == "survey") dt.saveSurveyDataFromJson(resultMap.get(key));
-                                else if (key == "questiongroup") dt.saveQuestiongroupDataFromJson(resultMap.get(key));
-                                else if (key == "question") dt.saveQuestionDataFromJson(resultMap.get(key));
+                                if (key == "survey") {
+                                    dt.saveSurveyDataFromJson(resultMap.get(key));
+                                    testProgress("survey");
+                                }
+                                else if (key == "questiongroup") {
+                                    dt.saveQuestiongroupDataFromJson(resultMap.get(key));
+                                    testProgress("questiongroup");
+                                }
+                                else if (key == "question") {
+                                    dt.saveQuestionDataFromJson(resultMap.get(key));
+                                    testProgress("question");
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -264,27 +283,24 @@ public class MainActivity extends AppCompatActivity {
                         return Observable.just(okresponse);
                     }
                 })
-                .doOnSubscribe(new Action0() {
+                .subscribe(new Subscriber<JSONObject>() {
                     @Override
-                    public void call() {
-                        preSync("Downloading", "Downloading Stories");
+                    public void onCompleted() {
+                        testProgress("story");
                     }
-                })
-                .doOnTerminate(new Action0() {
+
                     @Override
-                    public void call() {
-                        endSync();
+                    public void onError(Throwable e) {
+                        logError("StoryDowload Observer", e);
                     }
-                })
-                .subscribe(new Action1<JSONObject>() {
+
                     @Override
-                    public void call(JSONObject okresponse) {
+                    public void onNext(JSONObject okresponse) {
                         try {
                             dt.saveStoryDataFromJson(okresponse);
                         } catch (JSONException e) {
                             logError("storyDL Subscriber", e);
                         }
-                        endSync();
                     }
                 });
     }
@@ -308,6 +324,16 @@ public class MainActivity extends AppCompatActivity {
         Button survey_button = (Button) findViewById(R.id.survey_button);
         survey_button.setEnabled(false);
         survey_button.setAlpha(.5f);
+    }
+
+    public void testProgress(String thing) {
+        if (thingsToDo.contains(thing)) {
+            thingsToDo.remove(thing);
+        }
+
+        if (thingsToDo.toArray().length == 0 && progressDialog.isShowing()) {
+            endSync();
+        }
     }
 
     public void endSync() {
@@ -410,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public Observable<JSONObject> getDownloadObservable(final String url) {
-        Log.d("observableDL", url);
+//        Log.d("observableDL", url);
         return Observable.create(new Observable.OnSubscribe<JSONObject>() {
             @Override
             public void call(Subscriber<? super JSONObject> subscriber) {
@@ -423,6 +449,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         okhttp3.Response okresponse = okclient.newCall(request).execute();
                         String okresponse_body = okresponse.body().string();
+//                        Log.d("Output", okresponse_body);
                         JSONObject okresponse_json = new JSONObject(okresponse_body);
                         subscriber.onNext(okresponse_json);
                         subscriber.onCompleted();
@@ -520,11 +547,11 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveStoryDataFromJson(JSONObject storyJson)
                 throws JSONException {
-            Log.d(LOG_TAG, "Saving Story Data: " + storyJson.toString());
+//            Log.d(LOG_TAG, "Saving Story Data: " + storyJson.toString());
             final String FEATURES = "features";
 
             JSONArray storyArray = storyJson.getJSONArray(FEATURES);
-            Log.d(LOG_TAG, String.valueOf(storyArray.length()));
+//            Log.d(LOG_TAG, String.valueOf(storyArray.length()));
 
             for (int i = 0; i < storyArray.length(); i++) {
                 JSONObject storyObject = storyArray.getJSONObject(i);
@@ -596,7 +623,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveQuestionDataFromJson(JSONObject questionJson)
                 throws JSONException {
-            Log.d(LOG_TAG, "Saving Question Data: " + questionJson.toString());
+//            Log.d(LOG_TAG, "Saving Question Data: " + questionJson.toString());
             final String FEATURES = "features";
             JSONArray questionArray = questionJson.getJSONArray(FEATURES);
             db.deleteAll(Question.class);
@@ -664,7 +691,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveQuestiongroupDataFromJson(JSONObject questiongroupJson)
                 throws JSONException {
-            Log.d(LOG_TAG, "Saving QG Data: " + questiongroupJson.toString());
+//            Log.d(LOG_TAG, "Saving QG Data: " + questiongroupJson.toString());
             final String FEATURES = "features";
             JSONArray questiongroupArray = questiongroupJson.getJSONArray(FEATURES);
 
@@ -682,7 +709,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject questiongroupObject = questiongroupArray.getJSONObject(i);
 
                 Integer qgStatus = questiongroupObject.getInt("status");
-                if (qgStatus < 2) continue;
+                if (!qgStatus.equals(1)) continue;
 
                 // Get the JSON object representing the partner
                 JSONObject surveyObject = questiongroupObject.getJSONObject("survey");
@@ -709,7 +736,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void saveSurveyDataFromJson(JSONObject surveyJson)
                 throws JSONException {
-            Log.d(LOG_TAG, "Saving Survey Data: " + surveyJson.toString());
+//            Log.d(LOG_TAG, "Saving Survey Data: " + surveyJson.toString());
             final String FEATURES = "features";
             JSONArray surveyArray = surveyJson.getJSONArray(FEATURES);
 

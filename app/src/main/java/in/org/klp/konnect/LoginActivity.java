@@ -57,7 +57,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>{
+public class LoginActivity extends AppCompatActivity {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -96,7 +96,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Set up the login form.
         mUsernameView = (EditText) findViewById(R.id.username);
-        populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new OnEditorActionListener() {
@@ -141,49 +140,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-    }
-
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return;
-        }
-
-        getLoaderManager().initLoader(0, null, this);
-    }
-
-    private boolean mayRequestContacts() {
-        if (VERSION.SDK_INT < VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mUsernameView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new OnClickListener() {
-                        @Override
-                        @TargetApi(VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
     }
 
     /**
@@ -293,86 +249,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(Profile.CONTENT_URI,
-                        Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                Data.MIMETYPE +
-                        " = ?", new String[]{Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-
-        addEmailsToAutoComplete(emails);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-//        mUsernameView.setAdapter(adapter);
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        client.connect();
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Login Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app URL is correct.
-//                Uri.parse("android-app://in.org.klp.mobile.development/http/host_path")
-//        );
-//        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-//        Action viewAction = Action.newAction(
-//                Action.TYPE_VIEW, // TODO: choose an action type.
-//                "Login Page", // TODO: Define a title for the content shown.
-//                // TODO: If you have web page content that matches this app activity's content,
-//                // make sure this auto-generated web page URL is correct.
-//                // Otherwise, set the URL to null.
-//                Uri.parse("http://host/path"),
-//                // TODO: Make sure this auto-generated app URL is correct.
-//                Uri.parse("android-app://in.org.klp.konnect/http/host/path")
-//        );
-//        AppIndex.AppIndexApi.end(client, viewAction);
-//        client.disconnect();
     }
 
     protected void finishLogin(String userInfo) {
@@ -395,18 +278,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-
-
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                Email.ADDRESS,
-                Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
     }
 }
 
