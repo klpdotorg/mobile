@@ -174,10 +174,13 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
 
         @Override
         protected void onPostExecute(ArrayList<Question> result) {
-            List<StringWithTags> questions=new ArrayList<StringWithTags>();
+            List<StringWithTags> questions = new ArrayList<StringWithTags>();
             if (result != null) {
                 for (Question question : result){
-                    StringWithTags ques=new StringWithTags(question.getTextKn() != null ? question.getTextKn() : question.getText(), question.getId(), fetchAnswers(new Long(question.getId())));
+                    if (question == null) {
+                        continue;
+                    }
+                    StringWithTags ques = new StringWithTags(question.getTextKn() != null ? question.getTextKn() : question.getText(), question.getId(), fetchAnswers(new Long(question.getId())));
                     questions.add(ques);
                 }
                 adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), qcount, questions);
