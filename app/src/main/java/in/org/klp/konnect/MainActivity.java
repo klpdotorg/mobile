@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,11 +28,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 import in.org.klp.konnect.db.Answer;
@@ -111,6 +107,14 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent a = new Intent(Intent.ACTION_MAIN);
+        a.addCategory(Intent.CATEGORY_HOME);
+        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(a);
     }
 
     private void logUserToCrashlytics() {
@@ -346,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return respJson;
     }
-    
+
     public JSONObject doDownload(String thing) {
         JSONObject okresponse_json = new JSONObject();
         String url = BuildConfig.HOST + API_URLS.get(thing);
