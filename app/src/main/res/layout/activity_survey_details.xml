@@ -33,8 +33,7 @@
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:stretchColumns="0,1"
-        android:elevation="2dp">
+        android:stretchColumns="0,1" >
 
         <TableRow>
             <Button
@@ -48,9 +47,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp" />
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,9 +60,24 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp" />
+        </TableRow>
+        <TableRow>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/list_stories"
+                android:id="@+id/list_stories"
+                android:textColor="@color/colorWhite"
+                android:background="@color/colorBrandTurquoise"
+                android:drawableTop="@mipmap/ic_button_stories"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
                 android:layout_marginBottom="5dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp" />
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp" />
         </TableRow>
     </TableLayout>
 </LinearLayout>

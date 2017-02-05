@@ -117,29 +117,28 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
             start_date.setVisibility(View.VISIBLE);
             end_date.setVisibility(View.VISIBLE);
             listView.setVisibility(View.GONE);
-        } else {
+        } else if (type.equals("response")) {
             bt_report.setVisibility(View.GONE);
             start_date.setVisibility(View.GONE);
             end_date.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
         }
 
-        Calendar c=Calendar.getInstance();
-        cyear=c.get(Calendar.YEAR);
-        cdate=c.get(Calendar.DAY_OF_MONTH);
-        cmonth=c.get(Calendar.MONTH);
-        chour=c.get(Calendar.HOUR_OF_DAY);
-        cminute=c.get(Calendar.MINUTE);
+        Calendar c = Calendar.getInstance();
+        cyear = c.get(Calendar.YEAR);
+        cdate = c.get(Calendar.DAY_OF_MONTH);
+        cmonth = c.get(Calendar.MONTH);
+        chour = c.get(Calendar.HOUR_OF_DAY);
+        cminute = c.get(Calendar.MINUTE);
 
-        edate=System.currentTimeMillis();
-        ((EditText) findViewById(R.id.end_date)).setText(String.format("%d-%d-%d", cdate, cmonth+1, cyear));
-        if(cmonth<5) {
-            sdate=milliseconds("01-05-"+String.valueOf(cyear-1));
-            ((EditText) findViewById(R.id.start_date)).setText("01-05-"+String.valueOf(cyear-1));
-        }
-        else {
-            sdate=milliseconds("01-05-"+String.valueOf(cyear));
-            ((EditText) findViewById(R.id.start_date)).setText("01-05-"+String.valueOf(cyear));
+        edate = System.currentTimeMillis();
+        ((EditText) findViewById(R.id.end_date)).setText(String.format("%d-%d-%d", cdate, cmonth + 1, cyear));
+        if (cmonth<5) {
+            sdate = milliseconds("01-05-" + String.valueOf(cyear - 1));
+            ((EditText) findViewById(R.id.start_date)).setText("01-05-" + String.valueOf(cyear - 1));
+        } else {
+            sdate=milliseconds("01-05-" + String.valueOf(cyear));
+            ((EditText) findViewById(R.id.start_date)).setText("01-05-" + String.valueOf(cyear));
         }
         EditText editText=(EditText) findViewById(R.id.start_date);
         editText.setOnClickListener(new View.OnClickListener() {
@@ -148,7 +147,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
                 setdate(null, cyear, cmonth, cdate, R.id.start_date);
             }
         });
-        editText=(EditText) findViewById(R.id.end_date);
+        editText = (EditText) findViewById(R.id.end_date);
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,13 +160,13 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
             startActivity(intent);
         }
 
-        Spinner sp_district=(Spinner) findViewById(R.id.select_district);
+        Spinner sp_district = (Spinner) findViewById(R.id.select_district);
         fill_dropdown(1, sp_district.getId(), 1);
-        sp_district.setSelection(sharedPreferences.getInt("district",0));
-        Spinner sp_block=(Spinner) findViewById(R.id.select_block);
-        sp_block.setSelection(sharedPreferences.getInt("block",0));
-        Spinner sp_cluster=(Spinner) findViewById(R.id.select_cluster);
-        sp_cluster.setSelection(sharedPreferences.getInt("cluster",0));
+        sp_district.setSelection(sharedPreferences.getInt("district", 0));
+        Spinner sp_block = (Spinner) findViewById(R.id.select_block);
+        sp_block.setSelection(sharedPreferences.getInt("block", 0));
+        Spinner sp_cluster = (Spinner) findViewById(R.id.select_cluster);
+        sp_cluster.setSelection(sharedPreferences.getInt("cluster", 0));
 
         Survey survey = db.fetch(Survey.class, surveyId);
 
@@ -195,13 +194,13 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
     }
 
     private void changedate(){
-        EditText editText=(EditText) findViewById(R.id.start_date);
+        EditText editText = (EditText) findViewById(R.id.start_date);
         if (!editText.getText().toString().equals(""))
-            sdate=milliseconds(editText.getText().toString());
-        editText=(EditText) findViewById(R.id.end_date);
+            sdate = milliseconds(editText.getText().toString());
+            editText = (EditText) findViewById(R.id.end_date);
         if (!editText.getText().toString().equals("")) {
-            String[] alter_date=editText.getText().toString().split("\\-");
-            String addstr=String.valueOf(Integer.parseInt(alter_date[0])+1)+"-"+alter_date[1]+"-"+alter_date[2];
+            String[] alter_date = editText.getText().toString().split("\\-");
+            String addstr = String.valueOf(Integer.parseInt(alter_date[0]) + 1) + "-" + alter_date[1] + "-" + alter_date[2];
             edate = milliseconds(addstr);
         }
 
@@ -211,18 +210,14 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
     {
         //String date_ = date;
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        try
-        {
+        try {
             Date mDate = sdf.parse(date.trim());
             long timeInMilliseconds = mDate.getTime();
             return timeInMilliseconds;
-        }
-        catch (ParseException e)
-        {
+        } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         return 0;
     }
 
@@ -251,23 +246,23 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         StringWithTags boundaryForSelector = (StringWithTags) parent.getItemAtPosition(pos);
-        int viewid=parent.getId();
+        int viewid = parent.getId();
         switch (viewid){
             case R.id.select_district:
                 fill_dropdown(1, R.id.select_block, Integer.parseInt(boundaryForSelector.id.toString()));
                 editor.putInt("district", pos);
-                district=((StringWithTags) parent.getItemAtPosition(pos)).string;
+                district = ((StringWithTags) parent.getItemAtPosition(pos)).string;
                 break;
             case R.id.select_block:
                 fill_dropdown(1, R.id.select_cluster, Integer.parseInt(boundaryForSelector.id.toString()));
-                editor.putInt("block",pos);
-                block=((StringWithTags) parent.getItemAtPosition(pos)).string;
+                editor.putInt("block", pos);
+                block = ((StringWithTags) parent.getItemAtPosition(pos)).string;
                 break;
             case R.id.select_cluster:
                 fill_schools(R.id.school_list, Integer.parseInt(boundaryForSelector.id.toString()));
-                cluster=((StringWithTags) parent.getItemAtPosition(pos)).string;
+                cluster = ((StringWithTags) parent.getItemAtPosition(pos)).string;
                 editor.putInt("cluster", pos);
-                bid=new Long(((StringWithTags) parent.getItemAtPosition(pos)).id.toString());
+                bid = new Long(((StringWithTags) parent.getItemAtPosition(pos)).id.toString());
                 break;
         }
         editor.commit();
@@ -278,7 +273,7 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
     }
 
     private void fill_dropdown(int type, int id, int parent){
-        List<StringWithTags> stringWithTags=get_boundary_data(parent);
+        List<StringWithTags> stringWithTags = get_boundary_data(parent);
         Spinner spinner=(Spinner) findViewById(id);
         spinner.setOnItemSelectedListener(this);
         ArrayAdapter<StringWithTags> boundaryArrayAdapter=new ArrayAdapter<StringWithTags>(this, android.R.layout.simple_spinner_item, stringWithTags);
@@ -288,8 +283,8 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
 
     private void fill_schools(int id, int parent){
         ListView listView=(ListView) findViewById(id); //nothing
-        List<StringWithTags> schoolList=get_school_data(parent);
-        final ArrayAdapter<StringWithTags> schoolArrayAdapter=new ArrayAdapter<StringWithTags>(this, android.R.layout.simple_list_item_1, schoolList);
+        List<StringWithTags> schoolList = get_school_data(parent);
+        final ArrayAdapter<StringWithTags> schoolArrayAdapter = new ArrayAdapter<StringWithTags>(this, android.R.layout.simple_list_item_1, schoolList);
         listView.setAdapter(schoolArrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

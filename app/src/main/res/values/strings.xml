@@ -1,6 +1,4 @@
-<resources
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:ignore="MissingTranslation">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="response_neutral">OK</string>
     <string name="response_positive">Yes</string>
     <string name="response_negative">No</string>
@@ -67,7 +65,12 @@
 
     <!-- survey activity strings -->
     <string name="new_response">New Response</string>
-    <string name="generate_report">Generate Report</string>
+    <string name="generate_report">Create Report</string>
+    <string name="list_stories">All Stories</string>
+
+    <!--Story list activity-->
+    <string name="meta_medium">Total Answers: %1$s</string>
+    <string name="meta_small">Created by %1$s on %2$s</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

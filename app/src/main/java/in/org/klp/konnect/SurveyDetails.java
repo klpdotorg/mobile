@@ -65,6 +65,18 @@ public class SurveyDetails extends AppCompatActivity {
             }
         });
 
+        button = (Button) findViewById(R.id.list_stories);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SurveyDetails.this, StoriesActivity.class);
+                intent.putExtra("surveyId", surveyId);
+                intent.putExtra("surveyName", surveyName);
+                intent.putExtra("type", "stories");
+                startActivity(intent);
+            }
+        });
+
 
         // check criterion - https://github.com/yahoo/squidb/wiki/SquiDB's-query-builder#criterion
         int qgCount = db.count(QuestionGroup.class, QuestionGroup.SURVEY_ID.eq(surveyId));

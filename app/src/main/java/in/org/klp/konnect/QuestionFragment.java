@@ -114,7 +114,7 @@ public class QuestionFragment extends Fragment {
         try {
             while (qgCursor.moveToNext()) {
                 questionGroupId = qgCursor.get(QuestionGroup.ID);
-                Log.d(this.toString(), questionGroupId.toString());
+                Log.d(this.toString(), "QG ID: " + questionGroupId.toString());
                 // select * from questiongroupquestion
                 // where questiongroup_id=questionGroupId
                 // order by sequence
@@ -172,6 +172,7 @@ public class QuestionFragment extends Fragment {
                             .setCreatedAt(currentTS);
                     db.persist(story);
                     Log.d(this.toString(), "Created story: " + String.valueOf(story.getId()));
+                    Log.d(this.toString(), answers.entrySet().toString());
 
                     for (Map.Entry<Question, String> answer : answers.entrySet()) {
                         Question q = answer.getKey();
@@ -183,7 +184,7 @@ public class QuestionFragment extends Fragment {
                                 .setText(a)
                                 .setCreatedAt(currentTS);
                         db.persist(new_answer);
-                        Log.d(this.toString(), "Created answer: " + String.valueOf(new_answer.getId()));
+                        Log.d(this.toString(), "Created answer: " + String.valueOf(new_answer.getId()) + " : " + new_answer.getText());
                     }
 
                     // Ask if the user wants to record more responses

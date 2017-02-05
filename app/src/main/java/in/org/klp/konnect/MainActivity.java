@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void log(String tag, String msg) {
-//        Log.d(tag, msg);
+        Log.d(tag, msg);
         Toast.makeText(MainActivity.this, tag + ": " + msg, Toast.LENGTH_LONG).show();
     }
 
@@ -165,8 +165,6 @@ public class MainActivity extends AppCompatActivity {
         API_URLS.put("survey", "/api/v1/surveys/?source=mobile");
         API_URLS.put("questiongroup", "/api/v1/questiongroups/");
         API_URLS.put("question", "/api/v1/questions/");
-
-        db.deleteAll(Story.class);
 
         String story_url = "/api/v1/stories/?source=csv&source=mobile&answers=yes&admin2=detect&per_page=0";
         Story last_story = db.fetchByQuery(Story.class,
@@ -405,6 +403,26 @@ public class MainActivity extends AppCompatActivity {
                     if (failed.length() > 0) {
                         log("Upload onNext", "Upload failed for Story ids: " + failed.toString());
                     }
+
+                    String command = response.optString("command", "");
+                    Log.d("Command Log", command);
+                    switch (command) {
+                        case "wipe-stories":
+                            db.deleteAll(Answer.class);
+                            db.deleteAll(Story.class);
+                            break;
+                        case "wipe-all":
+                            db.deleteAll(Answer.class);
+                            db.deleteAll(Story.class);
+                            db.deleteAll(QuestionGroupQuestion.class);
+                            db.deleteAll(QuestionGroup.class);
+                            db.deleteAll(Question.class);
+                            db.deleteAll(Survey.class);
+                            db.deleteAll(School.class);
+                            db.deleteAll(Boundary.class);
+                        default:
+                            Log.d("Command Log", "Nothing to do.");
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -541,6 +559,7 @@ public class MainActivity extends AppCompatActivity {
                                 story.setCreatedAt(dateOfVisitTS.getTime());
                             }
                             db.persist(story);
+                            Log.d("DL", "Story created: " + story.getId());
 
                             JSONArray storyAnswers = storyObject.getJSONArray("answers");
                             for (int j = 0; j < storyAnswers.length(); j++) {
@@ -556,6 +575,7 @@ public class MainActivity extends AppCompatActivity {
                                         .setText(answerText)
                                         .setCreatedAt(dateOfVisitTS.getTime());
                                 db.persist(answer);
+                                Log.d("DL", "Answer Created: " + answer.getId());
                             }
                         } else if (storyCursor.getCount() > 1) {
                             // delete old stories with same SYSID
