@@ -7,11 +7,11 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.Locale;
 
 import in.org.klp.konnect.db.KontactDatabase;
-
-import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 
 /**
