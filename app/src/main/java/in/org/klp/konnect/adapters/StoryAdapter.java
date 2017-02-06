@@ -74,7 +74,7 @@ public class StoryAdapter extends ArrayAdapter<Story> {
 
         surveyHolder.metaRight = (TextView) convertView.findViewById(R.id.tvMetaRight);
         surveyHolder.metaRight.setText((story.getSynced().equals(1)) ? "synced" : "not synced");
-        surveyHolder.metaRight.setTextColor((story.getSynced().equals(1)) ? _context.getResources().getColor(R.color.colorBrandGreen) : _context.getResources().getColor(R.color.colorBrandRed));
+        surveyHolder.metaRight.setTextColor((story.getSynced().equals(1)) ? _context.getResources().getColor(R.color.colorBrandGreen) : _context.getResources().getColor(R.color.colorBrandRed  ));
 
         return convertView;
     }
