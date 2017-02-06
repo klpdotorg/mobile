@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="15dp">
+    android:padding="15dp" >
 
     <TextView
         android:id="@+id/textViewName"

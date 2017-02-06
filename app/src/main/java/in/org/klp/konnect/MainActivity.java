@@ -128,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
     public void logError(String tag, Throwable e) {
         if (e.getMessage() != null) {
             Log.e(tag, e.getMessage());
-            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
         e.printStackTrace();
     }
@@ -335,6 +334,11 @@ public class MainActivity extends AppCompatActivity {
         try {
             okhttp3.Response okresponse = okclient.newCall(request).execute();
 
+            if (!okresponse.isSuccessful()) {
+                log("Upload Error", "There is something wrong with the Internet connection.");
+                return new JSONObject();
+            }
+
             if (okresponse.code() == 401) {
                 log("Authentication Error", "Something went wrong. Please login again.");
                 logoutUser();
@@ -342,9 +346,11 @@ public class MainActivity extends AppCompatActivity {
 
             respJson = new JSONObject(okresponse.body().string());
         } catch (IOException e) {
-            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            if (e.getMessage() != null) Log.d(this.toString(), e.getMessage());
         } catch (JSONException e) {
-            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            if (e.getMessage() != null) Log.d(this.toString(), e.getMessage());
         }
         return respJson;
     }
@@ -361,6 +367,11 @@ public class MainActivity extends AppCompatActivity {
                     .build();
             try {
                 okhttp3.Response okresponse = okclient.newCall(request).execute();
+
+                if (!okresponse.isSuccessful()) {
+                    log("Download Error", "There is something wrong with the Internet connection.");
+                    return new JSONObject();
+                }
 
                 if (okresponse.code() == 401) {
                     log("Authentication Error", "Something went wrong. Please login again.");
@@ -400,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     JSONArray failed = response.optJSONArray("failed");
-                    if (failed.length() > 0) {
+                    if (failed != null && failed.length() > 0) {
                         log("Upload onNext", "Upload failed for Story ids: " + failed.toString());
                     }
 

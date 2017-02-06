@@ -3,14 +3,14 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="15dp">
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/tvSchoolName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        style="@style/Base.TextAppearance.AppCompat.Large" />
+        android:textSize="17dp" />
 
     <TextView
         android:id="@+id/tvMetaMedium"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvSchoolName"
         android:layout_marginTop="5dp"
-        style="@style/Base.TextAppearance.AppCompat.Medium" />
+        style="@style/Base.TextAppearance.AppCompat.Small" />
 
     <TextView
         android:id="@+id/tvMetaSmall"
