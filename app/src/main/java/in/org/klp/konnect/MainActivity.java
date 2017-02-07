@@ -30,6 +30,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import in.org.klp.konnect.db.Answer;
@@ -134,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void log(String tag, String msg) {
         Log.d(tag, msg);
-        Toast.makeText(MainActivity.this, tag + ": " + msg, Toast.LENGTH_LONG).show();
     }
 
     public boolean isSyncNeeded() {
@@ -182,6 +182,14 @@ public class MainActivity extends AppCompatActivity {
                 publishProgress("upload");
                 JSONObject uploadJson = doUpload();
                 ut.processUploadResponse(uploadJson);
+
+                try {
+                    synchronized (this) {
+                        wait(1000);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 for (String thing: thingsToDo) {
                     publishProgress(thing);
@@ -369,12 +377,12 @@ public class MainActivity extends AppCompatActivity {
                 okhttp3.Response okresponse = okclient.newCall(request).execute();
 
                 if (!okresponse.isSuccessful()) {
-                    log("Download Error", "There is something wrong with the Internet connection.");
+                    Log.d("Download Error", "There is something wrong with the Internet connection.");
                     return new JSONObject();
                 }
 
                 if (okresponse.code() == 401) {
-                    log("Authentication Error", "Something went wrong. Please login again.");
+                    Log.d("Authentication Error", "Something went wrong. Please login again.");
                     logoutUser();
                 }
 
@@ -399,15 +407,17 @@ public class MainActivity extends AppCompatActivity {
                 if (error != null && !error.isEmpty() && error != "null") {
                     Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
                 } else {
-                    JSONArray success = response.optJSONArray("success");
-                    if (success != null && success.length() > 0) {
-//                                    Log.d("Upload onNext", success.toString());
-                        for (int i = 0; i < success.length(); i++) {
+                    JSONObject success = response.getJSONObject("success");
+                    Iterator<String> keys = success.keys();
+                    while (keys.hasNext()) {
+                        String key = keys.next();
+                        String sysid = success.getString(key);
                             Update storyUpdate = Update.table(Story.TABLE)
                                     .set(Story.SYNCED, 1)
-                                    .where(Story.ID.eq(success.get(i)));
+                                    .set(Story.SYSID, sysid)
+                                    .where(Story.ID.eq(Long.valueOf(key)));
                             db.update(storyUpdate);
-                        }
+
                     }
 
                     JSONArray failed = response.optJSONArray("failed");
@@ -431,6 +441,7 @@ public class MainActivity extends AppCompatActivity {
                             db.deleteAll(Survey.class);
                             db.deleteAll(School.class);
                             db.deleteAll(Boundary.class);
+                            break;
                         default:
                             Log.d("Command Log", "Nothing to do.");
                     }
@@ -550,7 +561,7 @@ public class MainActivity extends AppCompatActivity {
                             Query.select().where(
                                     Story.SCHOOL_ID.eq(schoolId).and(
                                             Story.USER_ID.eq(userId).and(
-                                                    Story.CREATED_AT.eq(dateOfVisitTS.getTime())
+                                                    Story.SYSID.eq(sysId)
                                             )
                                     )
                             )
@@ -589,14 +600,10 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("DL", "Answer Created: " + answer.getId());
                             }
                         } else if (storyCursor.getCount() > 1) {
-                            // delete old stories with same SYSID
-
+                            // there are multiple old stories with same SYSID
+                            // this should not happen
                         } else {
-                            // There is just one story with same SYSID.
-                            // So it's the story that was synced before.
-                            // Now that we have a copy from the server,
-                            // update this copy on the device, as it might
-                            // have been updated on the server.
+                            // ignore existing story with same SYSID
                         }
                     } finally {
                         storyCursor.close();

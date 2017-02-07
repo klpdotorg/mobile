@@ -29,6 +29,7 @@ android {
             applicationId "in.org.klp.konnect.local"
             resValue "string", "app_name", "KLP Konnect Local"
             buildConfigField 'String', 'HOST', '"http://192.168.1.105:8001"'
+//            buildConfigField 'String', 'HOST', '"https://klp.org.in"'
         }
         devel {
             applicationId "in.org.klp.konnect.development"
