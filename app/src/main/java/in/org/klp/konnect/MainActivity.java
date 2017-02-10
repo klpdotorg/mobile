@@ -66,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
         db = ((KLPApplication) getApplicationContext()).getDb();
 
         okclient = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(300, TimeUnit.SECONDS)
+                .writeTimeout(300, TimeUnit.SECONDS)
+                .readTimeout(300, TimeUnit.SECONDS)
                 .build();
 
         mSession = new SessionManager(getApplicationContext());
