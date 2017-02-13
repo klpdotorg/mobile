@@ -66,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
         db = ((KLPApplication) getApplicationContext()).getDb();
 
         okclient = new OkHttpClient.Builder()
-                .connectTimeout(300, TimeUnit.SECONDS)
-                .writeTimeout(300, TimeUnit.SECONDS)
-                .readTimeout(300, TimeUnit.SECONDS)
+                .connectTimeout(0, TimeUnit.SECONDS)
+                .writeTimeout(0, TimeUnit.SECONDS)
+                .readTimeout(0, TimeUnit.SECONDS)
                 .build();
 
         mSession = new SessionManager(getApplicationContext());
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         API_URLS.put("questiongroup", "/api/v1/questiongroups/");
         API_URLS.put("question", "/api/v1/questions/");
 
-        String story_url = "/api/v1/stories/?source=csv&source=mobile&answers=yes&admin2=detect&per_page=0";
+        String story_url = "/api/v1/stories/?source=csv&source=mobile&answers=yes&admin2=detect&per_page=0&is_sync=yes";
         Story last_story = db.fetchByQuery(Story.class,
                 Query.select().where(Story.SYSID.neq(null)).orderBy(Story.SYSID.desc()).limit(1));
         if (last_story != null) {
@@ -175,6 +175,8 @@ public class MainActivity extends AppCompatActivity {
         API_URLS.put("story", story_url);
 
         final String[] thingsToDo = {"survey", "question", "questiongroup", "story"};
+
+        preSync("Uploading", "Uploading stories..");
 
         Needle.onBackgroundThread().execute(new UiRelatedProgressTask<String, String>() {
             @Override
@@ -222,10 +224,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected void onProgressUpdate(String s) {
-                if (s == "upload") {
-                    preSync("Uploading", "Uploading stories..");
-                } else {
-                    preSync("Downloading", "Downloading " + s + "..");
+                if (!s.equals("upload")) {
+                    updateProgressDialog("Downloading", "Downloading " + s + "..");
                 }
             }
         });
@@ -241,9 +241,7 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.setIndeterminate(true);
             progressDialog.setCanceledOnTouchOutside(false);
         }
-        progressDialog.setTitle(title);
-        progressDialog.setMessage(message);
-
+        updateProgressDialog(title, message);
         if (!progressDialog.isShowing()) {
             progressDialog.show();
         }
@@ -253,6 +251,12 @@ public class MainActivity extends AppCompatActivity {
         survey_button.setAlpha(.5f);
     }
 
+    public void updateProgressDialog(String title, String message) {
+        if (progressDialog != null) {
+            progressDialog.setTitle(title);
+            progressDialog.setMessage(message);
+        }
+    }
 
     public void endSync() {
         // enable all buttons
@@ -541,7 +545,7 @@ public class MainActivity extends AppCompatActivity {
                     Long userId = storyObject.getLong("user");
                     Long groupId = storyObject.getLong("group");
                     String dateOfVisit = storyObject.getString("date_of_visit");
-                    String userType = storyObject.getJSONObject("user_type").getString("name");
+                    String userType = storyObject.getString("user_type");
                     // Storing the story ID from server as SYSID on the device
                     // This helps in keeping the stories unique on the device
                     String sysId = storyObject.getString("id");
@@ -583,13 +587,13 @@ public class MainActivity extends AppCompatActivity {
                             db.persist(story);
                             Log.d("DL", "Story created: " + story.getId());
 
-                            JSONArray storyAnswers = storyObject.getJSONArray("answers");
-                            for (int j = 0; j < storyAnswers.length(); j++) {
-                                JSONObject answerObject = storyAnswers.getJSONObject(j);
-                                JSONObject question = answerObject.getJSONObject("question");
+                            JSONObject storyAnswers = storyObject.getJSONObject("answers");
+                            Iterator<String> answerKeys = storyAnswers.keys();
 
-                                Long questionId = question.getLong("id");
-                                String answerText = answerObject.getString("text");
+                            while (answerKeys.hasNext()) {
+                                String key = answerKeys.next();
+                                Long questionId = Long.valueOf(key);
+                                String answerText = storyAnswers.getString(key);
 
                                 Answer answer = new Answer()
                                         .setStoryId(story.getId())
