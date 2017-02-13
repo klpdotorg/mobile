@@ -334,6 +334,11 @@ public class MainActivity extends AppCompatActivity {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         HashMap<String, String> user = mSession.getUserDetails();
         RequestBody body = RequestBody.create(JSON, requestJson.toString());
+        okclient = new OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.MINUTES)
+                .writeTimeout(15, TimeUnit.MINUTES)
+                .readTimeout(15, TimeUnit.MINUTES)
+                .build();
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(SYNC_URL)
                 .post(body)
