@@ -338,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         HashMap<String, String> user = mSession.getUserDetails();
         RequestBody body = RequestBody.create(JSON, requestJson.toString());
-        
+
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(SYNC_URL)
                 .post(body)
@@ -586,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
                                 story.setCreatedAt(dateOfVisitTS.getTime());
                             }
                             db.persist(story);
-                            Log.d("DL", "Story created: " + story.getId());
+//                            Log.d("DL", "Story created: " + story.getId());
 
                             JSONObject storyAnswers = storyObject.getJSONObject("answers");
                             Iterator<String> answerKeys = storyAnswers.keys();
@@ -602,7 +602,7 @@ public class MainActivity extends AppCompatActivity {
                                         .setText(answerText)
                                         .setCreatedAt(dateOfVisitTS.getTime());
                                 db.persist(answer);
-                                Log.d("DL", "Answer Created: " + answer.getId());
+//                                Log.d("DL", "Answer Created: " + answer.getId());
                             }
                         } else if (storyCursor.getCount() > 1) {
                             // there are multiple old stories with same SYSID
