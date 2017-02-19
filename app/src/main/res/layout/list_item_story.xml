@@ -14,10 +14,18 @@
         android:textColor="@color/colorBlack"/>
 
     <TextView
-        android:id="@+id/tvMetaMedium"
+        android:id="@+id/tvMetaBdry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvSchoolName"
+        android:layout_marginTop="5dp"
+        style="@style/Base.TextAppearance.AppCompat.Medium" />
+
+    <TextView
+        android:id="@+id/tvMetaMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvMetaBdry"
         android:layout_marginTop="5dp"
         style="@style/Base.TextAppearance.AppCompat.Small" />
 

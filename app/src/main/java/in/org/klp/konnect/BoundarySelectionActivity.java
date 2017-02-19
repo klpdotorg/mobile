@@ -64,8 +64,8 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         surveyName = getIntent().getStringExtra("surveyName");
         type = getIntent().getStringExtra("type");
         Button bt_report = (Button) findViewById(R.id.report_button);
-        EditText start_date=(EditText) findViewById(R.id.start_date);
-        EditText end_date=(EditText) findViewById(R.id.end_date);
+        EditText start_date = (EditText) findViewById(R.id.start_date);
+        EditText end_date = (EditText) findViewById(R.id.end_date);
 
         final LinearLayout llBoundarySelect = (LinearLayout) findViewById(R.id.ll_select_boundary);
         final ListView listView=(ListView) findViewById(R.id.school_list);
@@ -122,6 +122,12 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
             start_date.setVisibility(View.GONE);
             end_date.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
+        } else if (type.equals("liststories")) {
+            bt_report.setText("Get All Stories");
+            bt_report.setVisibility(View.VISIBLE);
+            start_date.setVisibility(View.VISIBLE);
+            end_date.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
         }
 
         Calendar c = Calendar.getInstance();
@@ -176,21 +182,37 @@ public class BoundarySelectionActivity extends AppCompatActivity implements Adap
         TextView textViewPartner = (TextView) findViewById(R.id.textViewSurveyPartner);
         textViewPartner.setText(survey.getPartner());
 
-        bt_report.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                Intent intent = new Intent(BoundarySelectionActivity.this, ReportsActivity.class);
-                intent.putExtra("surveyId", surveyId);
-                intent.putExtra("surveyName", surveyName);
-                intent.putExtra("bid", bid);
-                intent.putExtra("boundary", district.toUpperCase() + ", " + block.toUpperCase() + ", " + cluster.toUpperCase());
-                changedate();
-                intent.putExtra("sdate", sdate);
-                intent.putExtra("edate", edate);
-                startActivity(intent);
-            }
-        });
+        if (type.equals("liststories")) {
+            bt_report.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(BoundarySelectionActivity.this, StoriesActivity.class);
+                    intent.putExtra("surveyId", surveyId);
+                    intent.putExtra("surveyName", surveyName);
+                    intent.putExtra("bid", bid);
+                    intent.putExtra("boundary", district.toUpperCase() + ", " + block.toUpperCase() + ", " + cluster.toUpperCase());
+                    changedate();
+                    intent.putExtra("sdate", sdate);
+                    intent.putExtra("edate", edate);
+                    startActivity(intent);
+                }
+            });
+        } else {
+            bt_report.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(BoundarySelectionActivity.this, ReportsActivity.class);
+                    intent.putExtra("surveyId", surveyId);
+                    intent.putExtra("surveyName", surveyName);
+                    intent.putExtra("bid", bid);
+                    intent.putExtra("boundary", district.toUpperCase() + ", " + block.toUpperCase() + ", " + cluster.toUpperCase());
+                    changedate();
+                    intent.putExtra("sdate", sdate);
+                    intent.putExtra("edate", edate);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     private void changedate(){

@@ -24,7 +24,7 @@ public class StringWithTags {
     @Override
     public String toString() {
         if (type)
-            return String.valueOf(id)+" : "+string;
+            return String.valueOf(id) + " : " + string;
         else
             return string;
     }

@@ -72,6 +72,11 @@
     <string name="meta_medium">Total Answers: %1$s</string>
     <string name="meta_small">Created by %1$s on %2$s</string>
 
+    <string name="meta_total">Total Stories: %1$d</string>
+    <string name="meta_daterange">From %1$s to %2$s</string>
+    <string name="meta_total_by_user">Total Stories By You: %1$d</string>
+    <string name="meta_total_by_user_nsy">Your Stories Not Synced: %1$d</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="backtologin">BACK TO <u>LOGIN</u></string>

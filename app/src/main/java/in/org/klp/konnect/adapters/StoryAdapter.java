@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import in.org.klp.konnect.R;
 import in.org.klp.konnect.db.Answer;
+import in.org.klp.konnect.db.Boundary;
 import in.org.klp.konnect.db.KontactDatabase;
 import in.org.klp.konnect.db.School;
 import in.org.klp.konnect.db.Story;
@@ -33,6 +34,7 @@ public class StoryAdapter extends ArrayAdapter<Story> {
     // View lookup cache
     private static class SurveyHolder {
         TextView school;
+        TextView metaBdry;
         TextView metaMedium;
         TextView metaSmall;
         TextView metaRight;
@@ -50,6 +52,9 @@ public class StoryAdapter extends ArrayAdapter<Story> {
     public View getView(int position, View convertView, ViewGroup parent) {
         Story story = getItem(position);
         School school = db.fetch(School.class, story.getSchoolId());
+        Boundary cluster = db.fetch(Boundary.class, school.getBoundaryId());
+        Boundary block = db.fetch(Boundary.class, cluster.getParentId());
+        Boundary district = db.fetch(Boundary.class, block.getParentId());
         Integer answerCount = db.count(Answer.class, Answer.STORY_ID.eq(story.getId()));
         SurveyHolder surveyHolder = new SurveyHolder();
 
@@ -59,6 +64,9 @@ public class StoryAdapter extends ArrayAdapter<Story> {
         surveyHolder.school = (TextView) convertView.findViewById(R.id.tvSchoolName);
         surveyHolder.school.setText(school.getName());
         surveyHolder.school.setTag(story.getId());
+
+        surveyHolder.metaBdry = (TextView) convertView.findViewById(R.id.tvMetaBdry);
+        surveyHolder.metaBdry.setText(cluster.getName() + ", " + block.getName() + ", " + district.getName());
 
         surveyHolder.metaMedium = (TextView) convertView.findViewById(R.id.tvMetaMedium);
         String txt_metamedium = String.format(parent.getResources().getString(R.string.meta_medium), answerCount.toString());
