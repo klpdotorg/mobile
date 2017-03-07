@@ -1,25 +1,17 @@
-package in.org.klp.konnect;
+package in.org.klp.konnect.utils;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Query;
-import com.yahoo.squidb.sql.Update;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +25,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
+import in.org.klp.konnect.BuildConfig;
+import in.org.klp.konnect.KLPApplication;
+import in.org.klp.konnect.MainActivity;
+import in.org.klp.konnect.R;
+import in.org.klp.konnect.ReportsActivity;
 import in.org.klp.konnect.db.Answer;
 import in.org.klp.konnect.db.Boundary;
 import in.org.klp.konnect.db.KontactDatabase;
@@ -42,420 +39,119 @@ import in.org.klp.konnect.db.QuestionGroupQuestion;
 import in.org.klp.konnect.db.School;
 import in.org.klp.konnect.db.Story;
 import in.org.klp.konnect.db.Survey;
-import in.org.klp.konnect.utils.SessionManager;
 import needle.Needle;
-import needle.UiRelatedProgressTask;
-import okhttp3.MediaType;
+import needle.UiRelatedTask;
 import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
 
-public class MainActivity extends AppCompatActivity {
-    private SessionManager mSession;
-    private DownloadTasks dt;
-    private UploadTask ut;
-    private ProgressDialog progressDialog = null;
+/**
+ * Created by bibhas on 23/2/17.
+ */
+
+public class SyncManager {
+    public boolean doUpload = false, doUpdateSurvey = false, doDownloadStories = false;
     private KontactDatabase db;
+    private Context context;
+    private SessionManager mSession;
     private OkHttpClient okclient;
-    private HashMap<String, String> API_URLS = new HashMap<String, String>();
+    private MenuItem syncButton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public String story_url = "/api/v1/stories/?source=csv&source=mobile&answers=yes&per_page=0&is_sync=yes";
+    public String host_url = BuildConfig.HOST;
 
-        db = ((KLPApplication) getApplicationContext()).getDb();
+    public SyncManager(Context activity, KontactDatabase db, Boolean doUpload, Boolean doUpdateSurvey, Boolean doDownloadStories) {
+        this.context = activity;
+        this.db = db;
+        this.doUpload = doUpload;
+        this.doUpdateSurvey = doUpdateSurvey;
+        this.doDownloadStories = doDownloadStories;
+
+        mSession = new SessionManager(context.getApplicationContext());
 
         okclient = new OkHttpClient.Builder()
                 .connectTimeout(0, TimeUnit.SECONDS)
                 .writeTimeout(0, TimeUnit.SECONDS)
                 .readTimeout(0, TimeUnit.SECONDS)
                 .build();
-
-        mSession = new SessionManager(getApplicationContext());
-        mSession.checkLogin();
-        // Log user details to be used for crashlytics
-        logUserToCrashlytics();
-
-        final Button sync_button = (Button) findViewById(R.id.sync_button);
-        sync_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sync();
-            }
-        });
-
-        Button survey_button = (Button) findViewById(R.id.survey_button);
-        survey_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent myIntent = new Intent(MainActivity.this, SurveyActivity.class);
-                startActivity(myIntent);
-            }
-        });
-        // if the app just updated or this is the first run, disable survey button
-        // survey button is enabled again in postExecute() of Download Sync
-        if (isSyncNeeded()) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("You should \"Sync\" data to get updates from KLP.")
-                    .setTitle("Sync Needed");
-            builder.setPositiveButton("Ok, Sync Now", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // User clicked OK button
-                    sync_button.callOnClick();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent a = new Intent(Intent.ACTION_MAIN);
-        a.addCategory(Intent.CATEGORY_HOME);
-        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(a);
+    public void uploadStories() {
+
     }
 
-    private void logUserToCrashlytics() {
-        HashMap<String, String> user = mSession.getUserDetails();
-
-        Crashlytics.setUserIdentifier(user.get(SessionManager.KEY_ID));
-        Crashlytics.setUserName(user.get(SessionManager.KEY_NAME));
+    public void downloadStories() {
+        downloadStories(null);
     }
 
+    public void downloadStories(Long clusterid) {
+        Toast.makeText(this.context, "Downloading stories. Please wait.", Toast.LENGTH_SHORT).show();
 
-    public void logError(String tag, Throwable e) {
-        if (e.getMessage() != null) {
-            Log.e(tag, e.getMessage());
-        }
-        e.printStackTrace();
-    }
+        Boundary cluster = db.fetch(Boundary.class, clusterid);
+        syncButton = ((ReportsActivity) context)._menu.findItem(R.id.action_sync_block);
+        syncButton.setTitle("Syncing..");
 
-    public void log(String tag, String msg) {
-        Log.d(tag, msg);
-    }
-
-    public boolean isSyncNeeded() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int currentVersion = 0;
-        try {
-            currentVersion = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_CONFIGURATIONS).versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-//            Log.d(this.toString(), "if you're here, you're in trouble");
-            return true;
-        }
-
-        final int lastVersion = prefs.getInt("lastVersion", -1);
-        if (currentVersion > lastVersion) {
-            // first time running the app or app just updated
-            prefs.edit().putInt("lastVersion", currentVersion).commit();
-            return true;
+        if (clusterid != null) {
+            this.story_url += "&admin2=" + String.valueOf(cluster.getParentId());
         } else {
-            return false;
+            this.story_url += "&admin2=detect";
         }
-    }
 
-    public void sync() {
-        dt = new DownloadTasks();
-        ut = new UploadTask();
-        
-        API_URLS.put("survey", "/api/v1/surveys/?source=mobile");
-        API_URLS.put("questiongroup", "/api/v1/questiongroups/");
-        API_URLS.put("question", "/api/v1/questions/");
-
-        // remove story sync from here
-        // add on the report generation page
-//        String story_url = "/api/v1/stories/?source=csv&source=mobile&answers=yes&admin2=detect&per_page=0&is_sync=yes";
-//        Story last_story = db.fetchByQuery(Story.class,
-//                Query.select().where(Story.SYSID.neq(null)).orderBy(Story.SYSID.desc()).limit(1));
-//        if (last_story != null) {
-//            story_url += "&since_id=" + last_story.getSysid();
-//        }
-//
-//        API_URLS.put("story", story_url);
-
-        final String[] thingsToDo = {"survey", "question", "questiongroup"};
-
-        preSync("Uploading", "Uploading stories..");
-
-        Needle.onBackgroundThread().execute(new UiRelatedProgressTask<String, String>() {
+        Needle.onBackgroundThread().execute(new UiRelatedTask<Integer>() {
             @Override
-            protected String doWork() {
-                publishProgress("upload");
-                JSONObject uploadJson = doUpload();
-                ut.processUploadResponse(uploadJson);
-
+            protected Integer doWork() {
+                Log.d("DL", story_url);
+                JSONObject resp = download(story_url);
+                Integer count = 0;
+                DownloadTasks dt = new DownloadTasks();
                 try {
-                    synchronized (this) {
-                        wait(1000);
-                    }
-                } catch (InterruptedException e) {
+                    count = dt.saveStoryDataFromJson(resp);
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                for (String thing: thingsToDo) {
-                    publishProgress(thing);
-                    JSONObject downloadJson = doDownload(thing);
-
-                    try {
-                        if (thing =="survey") {
-                            dt.saveSurveyDataFromJson(downloadJson);
-                        }
-                        else if (thing =="questiongroup") {
-                            dt.saveQuestiongroupDataFromJson(downloadJson);
-                        }
-                        else if (thing =="question") {
-                            dt.saveQuestionDataFromJson(downloadJson);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return null;
+                return count;
             }
 
             @Override
-            protected void thenDoUiRelatedWork(String s) {
-                endSync();
-            }
-
-            @Override
-            protected void onProgressUpdate(String s) {
-                if (!s.equals("upload")) {
-                    updateProgressDialog("Downloading", "Downloading " + s + "..");
-                }
+            protected void thenDoUiRelatedWork(Integer count) {
+                Toast.makeText(SyncManager.this.context, String.valueOf(count) + " stories have been downloaded.", Toast.LENGTH_SHORT).show();
+                syncButton.setTitle("Sync");
+                Intent intent = ((ReportsActivity) context).getIntent();
+                ((ReportsActivity) context).finish();
+                context.startActivity(intent);
             }
         });
-
     }
 
-    public void preSync(String title, String message) {
-        // disable all buttons
-        // show progress dialog
-        // dismiss progress dialog if it's already showing
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setIndeterminate(true);
-            progressDialog.setCanceledOnTouchOutside(false);
-        }
-        updateProgressDialog(title, message);
-        if (!progressDialog.isShowing()) {
-            progressDialog.show();
-        }
+    public JSONObject download(String url) {
+        JSONObject resp = new JSONObject();
 
-        Button survey_button = (Button) findViewById(R.id.survey_button);
-        survey_button.setEnabled(false);
-        survey_button.setAlpha(.5f);
-    }
-
-    public void updateProgressDialog(String title, String message) {
-        if (progressDialog != null) {
-            progressDialog.setTitle(title);
-            progressDialog.setMessage(message);
-        }
-    }
-
-    public void endSync() {
-        // enable all buttons
-        // dismiss sync progress dialog
-        if (progressDialog != null) {
-            Button survey_button = (Button) findViewById(R.id.survey_button);
-            survey_button.setEnabled(true);
-            survey_button.setAlpha(1f);
-
-            if (progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_logout) {
-            logoutUser();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void logoutUser() {
-        mSession.logoutUser();
-        this.finish();
-    }
-
-    public JSONObject doUpload() {
-        Query listStoryQuery = Query.select().from(Story.TABLE)
-                .where(Story.SYNCED.eq(0));
-        SquidCursor<Story> storiesCursor = db.query(Story.class, listStoryQuery);
-        SquidCursor<Answer> answerCursor = null;
-
-        JSONObject requestJson = new JSONObject();
-        JSONObject respJson = new JSONObject();
-        JSONArray storyArray = new JSONArray();
-
-        try {
-            while (storiesCursor.moveToNext()) {
-                Story story = new Story(storiesCursor);
-                JSONObject storyJson = db.modelObjectToJson(story);
-
-                answerCursor = db.query(Answer.class,
-                        Query.select().from(Answer.TABLE)
-                                .where(Answer.STORY_ID.eq(story.getId()))
-                );
-
-                JSONArray answerArray = new JSONArray();
-                while (answerCursor.moveToNext()) {
-                    Answer answer = new Answer(answerCursor);
-                    JSONObject answerJson = db.modelObjectToJson(answer);
-                    answerArray.put(answerJson);
-                }
-                storyJson.put("answers", answerArray);
-                storyArray.put(storyJson);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } finally {
-            if (storiesCursor != null) storiesCursor.close();
-            if (answerCursor != null) answerCursor.close();
-        }
-        try {
-            requestJson.put("stories", storyArray);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        final String SYNC_URL = BuildConfig.HOST + "/api/v1/sync";
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        url = host_url + url;
         HashMap<String, String> user = mSession.getUserDetails();
-        RequestBody body = RequestBody.create(JSON, requestJson.toString());
-
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(SYNC_URL)
-                .post(body)
+                .url(url)
                 .addHeader("Authorization", "Token " + user.get("token"))
                 .build();
         try {
             okhttp3.Response okresponse = okclient.newCall(request).execute();
 
             if (!okresponse.isSuccessful()) {
-                log("Upload Error", "There is something wrong with the Internet connection.");
+                Log.d("Download Error", "There is something wrong with the Internet connection.");
                 return new JSONObject();
             }
 
             if (okresponse.code() == 401) {
-                log("Authentication Error", "Something went wrong. Please login again.");
-                logoutUser();
+                Log.d("Authentication Error", "Something went wrong. Please login again.");
             }
 
-            respJson = new JSONObject(okresponse.body().string());
+            String okresponse_body = okresponse.body().string();
+            resp = new JSONObject(okresponse_body);
         } catch (IOException e) {
-            e.printStackTrace();
-            if (e.getMessage() != null) Log.d(this.toString(), e.getMessage());
+            Log.e("DlObErr IO", e.getMessage());
         } catch (JSONException e) {
-            e.printStackTrace();
-            if (e.getMessage() != null) Log.d(this.toString(), e.getMessage());
+            Log.e("DlObErr JSON", e.getMessage());
         }
-        return respJson;
+
+        return resp;
     }
-
-    public JSONObject doDownload(String thing) {
-        JSONObject okresponse_json = new JSONObject();
-        String url = BuildConfig.HOST + API_URLS.get(thing);
-        
-        if (!url.isEmpty()) {
-            HashMap<String, String> user = mSession.getUserDetails();
-            okhttp3.Request request = new okhttp3.Request.Builder()
-                    .url(url)
-                    .addHeader("Authorization", "Token " + user.get("token"))
-                    .build();
-            try {
-                okhttp3.Response okresponse = okclient.newCall(request).execute();
-
-                if (!okresponse.isSuccessful()) {
-                    Log.d("Download Error", "There is something wrong with the Internet connection.");
-                    return new JSONObject();
-                }
-
-                if (okresponse.code() == 401) {
-                    Log.d("Authentication Error", "Something went wrong. Please login again.");
-                    logoutUser();
-                }
-
-                String okresponse_body = okresponse.body().string();
-                okresponse_json = new JSONObject(okresponse_body);
-            } catch (IOException e) {
-                logError("DlObErr IO", e);
-            } catch (JSONException e) {
-                logError("DlObErr JSON", e);
-            }
-        }
-        return okresponse_json;
-    }
-
-    public class UploadTask {
-        private void processUploadResponse(JSONObject response) {
-            try {
-                Log.d(this.toString(), response.toString());
-                // TODO: show error
-                String error = response.optString("error");
-
-                if (error != null && !error.isEmpty() && error != "null") {
-                    Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
-                } else {
-                    JSONObject success = response.getJSONObject("success");
-                    Iterator<String> keys = success.keys();
-                    while (keys.hasNext()) {
-                        String key = keys.next();
-                        String sysid = success.getString(key);
-                            Update storyUpdate = Update.table(Story.TABLE)
-                                    .set(Story.SYNCED, 1)
-                                    .set(Story.SYSID, sysid)
-                                    .where(Story.ID.eq(Long.valueOf(key)));
-                            db.update(storyUpdate);
-
-                    }
-
-                    JSONArray failed = response.optJSONArray("failed");
-                    if (failed != null && failed.length() > 0) {
-                        log("Upload onNext", "Upload failed for Story ids: " + failed.toString());
-                    }
-
-                    String command = response.optString("command", "");
-                    Log.d("Command Log", command);
-                    switch (command) {
-                        case "wipe-stories":
-                            db.deleteAll(Answer.class);
-                            db.deleteAll(Story.class);
-                            break;
-                        case "wipe-all":
-                            db.deleteAll(Answer.class);
-                            db.deleteAll(Story.class);
-                            db.deleteAll(QuestionGroupQuestion.class);
-                            db.deleteAll(QuestionGroup.class);
-                            db.deleteAll(Question.class);
-                            db.deleteAll(Survey.class);
-                            db.deleteAll(School.class);
-                            db.deleteAll(Boundary.class);
-                            break;
-                        default:
-                            Log.d("Command Log", "Nothing to do.");
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 
     public class DownloadTasks {
         private final String LOG_TAG = "DownloadTask";
@@ -528,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             return next_url;
         }
 
-        private void saveStoryDataFromJson(JSONObject storyJson)
+        private Integer saveStoryDataFromJson(JSONObject storyJson)
                 throws JSONException {
 //            Log.d(LOG_TAG, "Saving Story Data: " + storyJson.toString());
             final String FEATURES = "features";
@@ -617,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
             } finally {
                 db.endTransaction();
             }
+            return storyArray.length();
         }
 
 

@@ -15,8 +15,9 @@
 
     <TableRow>
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Survey"
             android:id="@+id/survey_button"
             android:textColor="@color/colorWhite"
@@ -30,9 +31,10 @@
             android:paddingBottom="20dp"
             android:textSize="8pt"/>
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Sync"
+            android:layout_weight="1"
+            android:text="Update Surveys"
             android:id="@+id/sync_button"
             android:textColor="@color/colorWhite"
             android:background="@color/colorBrandTurquoise"
