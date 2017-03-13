@@ -95,6 +95,12 @@ public class SyncManager {
             this.story_url += "&admin2=detect";
         }
 
+        Story last_story = db.fetchByQuery(Story.class,
+                Query.select().where(Story.SYSID.neq(null)).orderBy(Story.SYSID.desc()).limit(1));
+        if (last_story != null) {
+            story_url += "&since_id=" + last_story.getSysid();
+        }
+
         Needle.onBackgroundThread().execute(new UiRelatedTask<Integer>() {
             @Override
             protected Integer doWork() {
