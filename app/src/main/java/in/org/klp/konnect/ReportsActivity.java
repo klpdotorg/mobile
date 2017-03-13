@@ -9,7 +9,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.yahoo.squidb.data.ICursor;
@@ -25,15 +29,17 @@ import in.org.klp.konnect.db.Question;
 import in.org.klp.konnect.db.QuestionGroup;
 import in.org.klp.konnect.db.QuestionGroupQuestion;
 import in.org.klp.konnect.utils.SmartFragmentStatePagerAdapter;
+import in.org.klp.konnect.utils.SyncManager;
 
 public class ReportsActivity extends AppCompatActivity implements ReportsFragment.OnFragmentInteractionListener {
 
     private Long surveyId, questionGroupId, bid, sdate, edate;
-    Context context=this;
+    Context context = this;
     ViewPager vpPager;
     private KontactDatabase db;
-    int qcount=0;
+    int qcount = 0;
     private SmartFragmentStatePagerAdapter adapterViewPager;
+    public Menu _menu = null;
 
     public void onFragmentInteraction(Uri uri) {
     }
@@ -44,13 +50,18 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
         setContentView(R.layout.activity_reports);
         db = ((KLPApplication) getApplicationContext()).getDb();
 
-        String[] boundry_text= getIntent().getStringExtra("boundary").split(",");
+        Intent intent = getIntent();
+        String[] boundry_text= intent.getStringExtra("boundary").split(",");
+        surveyId = intent.getLongExtra("surveyId", 0);
+        bid = intent.getLongExtra("bid", 0);
+        sdate = intent.getLongExtra("sdate",0);
+        edate = intent.getLongExtra("edate",0);
 
-        TextView tv=(TextView) findViewById(R.id.dist_name);
+        TextView tv = (TextView) findViewById(R.id.dist_name);
         tv.setText(boundry_text[0]);
-        tv=(TextView) findViewById(R.id.blck_name);
+        tv = (TextView) findViewById(R.id.blck_name);
         tv.setText(boundry_text[1]);
-        tv=(TextView) findViewById(R.id.clst_name);
+        tv = (TextView) findViewById(R.id.clst_name);
         tv.setText(boundry_text[2]);
 
         fetchQuestions();
@@ -75,6 +86,20 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
             }
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.sync_at_resource, menu);
+        _menu = menu;
+        return true;
+    }
+
+    public void downloadStoriesForBlock(MenuItem item) {
+        SyncManager sync = new SyncManager(ReportsActivity.this, db, false, false, true);
+        sync.downloadStories(bid);
+    }
+
 
     public void change_frag(View view){
         int position=vpPager.getCurrentItem();
@@ -106,8 +131,8 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
         // Returns the fragment to display for that page
         @Override
         public Fragment getItem(int position) {
-            for (int i=0;i<NUM_ITEMS;i++)
-                if (position==i)
+            for (int i=0; i<NUM_ITEMS; i++)
+                if (position == i)
                     return ReportsFragment.newInstance(String.valueOf(i), list.get(i).toString(), list.get(i).parent.toString() );
             return null;
         }
@@ -125,15 +150,12 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
         questionsTask.execute();
     }
 
-    public class FetchQuestionsTask extends AsyncTask<Void, Void, ArrayList<Question>> {
+    public class FetchQuestionsTask extends AsyncTask<Void, Void, List<StringWithTags>> {
 
         private final String LOG_TAG = FetchQuestionsTask.class.getSimpleName();
 
         @Override
-        protected ArrayList<Question> doInBackground(Void... params) {
-            Intent intent = getIntent();
-            surveyId = intent.getLongExtra("surveyId", 0);
-
+        protected List<StringWithTags> doInBackground(Void... params) {
             SquidCursor<QuestionGroup> qgCursor = null;
             SquidCursor<QuestionGroupQuestion> qgqCursor = null;
 
@@ -148,17 +170,26 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
                             .where(QuestionGroupQuestion.QUESTIONGROUP_ID.eq(questionGroupId));
                     qgqCursor = db.query(QuestionGroupQuestion.class, listQGQquery);
                     ArrayList<Question> resultQuestions = new ArrayList<Question>();
+                    List<StringWithTags> questions = new ArrayList<StringWithTags>();
 
-                    int count=0;
+                    int count = 0;
                     while (qgqCursor.moveToNext()) {
                         Long qID = qgqCursor.get(QuestionGroupQuestion.QUESTION_ID);
                         Question question = db.fetch(Question.class, qID);
                         resultQuestions.add(question);
                         count++;
                     }
+                    qcount = count;
 
-                    qcount=count;
-                    return resultQuestions;
+                    for (Question question : resultQuestions){
+                        if (question == null) {
+                            continue;
+                        }
+                        StringWithTags ques = new StringWithTags(question.getTextKn() != null ? question.getTextKn() : question.getText(), question.getId(), fetchAnswers(new Long(question.getId())));
+                        questions.add(ques);
+                    }
+
+                    return questions;
                 }
             } finally {
                 if (qgCursor != null) {
@@ -173,36 +204,23 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Question> result) {
-            List<StringWithTags> questions = new ArrayList<StringWithTags>();
-            if (result != null) {
-                for (Question question : result){
-                    if (question == null) {
-                        continue;
-                    }
-                    StringWithTags ques = new StringWithTags(question.getTextKn() != null ? question.getTextKn() : question.getText(), question.getId(), fetchAnswers(new Long(question.getId())));
-                    questions.add(ques);
-                }
+        protected void onPostExecute(List<StringWithTags> questions) {
+            if (questions != null) {
                 adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), qcount, questions);
                 vpPager.setAdapter(adapterViewPager);
             }
-            super.onPostExecute(result);
+            super.onPostExecute(questions);
         }
     }
 
     private String fetchAnswers(Long qid) {
-        Intent intent = getIntent();
-        bid = intent.getLongExtra("bid", 0);
-        sdate=intent.getLongExtra("sdate",0);
-        edate=intent.getLongExtra("edate",0);
-        int schoolcount=0, responses=0, ans=0, yes=0, no=0, dn=0, schoolwithresponse=0;
-
+        int schoolcount = 0, responses = 0, ans = 0, yes = 0, no = 0, dn = 0, schoolwithresponse = 0;
         ICursor cursor_sc, cursor_agg, cursor_block_agg;
 
         cursor_sc = db.rawQuery("select count(_id) as count from school where boundary_id=" +String.valueOf(bid),null);
         try {
             while (cursor_sc.moveToNext()) {
-                schoolcount=Integer.parseInt(cursor_sc.getString(0));
+                schoolcount = Integer.parseInt(cursor_sc.getString(0));
             }
         } finally {
             if (cursor_sc != null)
@@ -217,20 +235,21 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
                 " and ans.created_at>=" + sdate + " and ans.created_at<=" + edate + " group by inst._id", null);
         try {
             while (cursor_agg.moveToNext()) {
-                responses+=Integer.parseInt(cursor_agg.getString(4));
-                yes+=Integer.parseInt(cursor_agg.getString(1));
-                no+=Integer.parseInt(cursor_agg.getString(2));
-                dn+=Integer.parseInt(cursor_agg.getString(3));
-                schoolwithresponse+=1;
+                responses += Integer.parseInt(cursor_agg.getString(4));
+                yes += Integer.parseInt(cursor_agg.getString(1));
+                no += Integer.parseInt(cursor_agg.getString(2));
+                dn += Integer.parseInt(cursor_agg.getString(3));
+                schoolwithresponse += 1;
             }
         } catch (Exception e) {
-        }finally {
+            e.printStackTrace();
+        } finally {
             if (cursor_agg != null)
                 cursor_agg.close();
         }
 
         //if (schoolcount==0 || responses==0)
-        return schoolcount+"|"+schoolwithresponse+"|"+responses+"|"+yes+"|"+no+"|"+dn;
+        return schoolcount + "|" + schoolwithresponse + "|" + responses + "|" + yes + "|" + no + "|" + dn;
         //else
         //    return String.valueOf(100*ans/responses)+"|"+schoolcount+"|"+schoolwithresponse+"|"+responses+"|("+ans+"/"+responses+" Responses)";
     }
