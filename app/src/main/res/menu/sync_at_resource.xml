@@ -6,5 +6,5 @@
         android:title="Sync"
         android:orderInCategory="100"
         app:showAsAction="always"
-        android:onClick="downloadStoriesForBlock" />
+        android:onClick="syncBlock" />
 </menu>

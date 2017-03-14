@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.yahoo.squidb.data.ICursor;
@@ -95,8 +94,9 @@ public class ReportsActivity extends AppCompatActivity implements ReportsFragmen
         return true;
     }
 
-    public void downloadStoriesForBlock(MenuItem item) {
+    public void syncBlock(MenuItem item) {
         SyncManager sync = new SyncManager(ReportsActivity.this, db, false, false, true);
+        sync.uploadStories();
         sync.downloadStories(bid);
     }
 

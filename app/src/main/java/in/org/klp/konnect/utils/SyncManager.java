@@ -1,17 +1,14 @@
 package in.org.klp.konnect.utils;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.yahoo.squidb.data.SquidCursor;
 import com.yahoo.squidb.sql.Query;
+import com.yahoo.squidb.sql.Update;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,14 +17,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import in.org.klp.konnect.BuildConfig;
-import in.org.klp.konnect.KLPApplication;
-import in.org.klp.konnect.MainActivity;
 import in.org.klp.konnect.R;
 import in.org.klp.konnect.ReportsActivity;
 import in.org.klp.konnect.db.Answer;
@@ -41,7 +38,9 @@ import in.org.klp.konnect.db.Story;
 import in.org.klp.konnect.db.Survey;
 import needle.Needle;
 import needle.UiRelatedTask;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 
 /**
  * Created by bibhas on 23/2/17.
@@ -75,7 +74,21 @@ public class SyncManager {
     }
 
     public void uploadStories() {
+        Toast.makeText(this.context, "Uploading stories. Please wait.", Toast.LENGTH_SHORT).show();
+        Needle.onBackgroundThread().execute(new UiRelatedTask<Integer>() {
+            @Override
+            protected Integer doWork() {
+                UploadTask ut = new UploadTask();
+                JSONObject uploadJson = doUpload();
+                Integer successCount = ut.processUploadResponse(uploadJson);
+                return successCount;
+            }
 
+            @Override
+            protected void thenDoUiRelatedWork(Integer count) {
+                Toast.makeText(SyncManager.this.context, "Uploaded " + count + " stories..", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void downloadStories() {
@@ -95,8 +108,30 @@ public class SyncManager {
             this.story_url += "&admin2=detect";
         }
 
+        List<Long> clusterIds = new ArrayList<Long>();
+        SquidCursor<Boundary> clustersInBlockCursor = db.query(Boundary.class, Query.select().from(Boundary.TABLE).where(Boundary.PARENT_ID.eq(cluster.getParentId())));
+        try {
+            while (clustersInBlockCursor.moveToNext()) {
+                Boundary c = new Boundary(clustersInBlockCursor);
+                clusterIds.add(c.getId());
+            }
+        } finally {
+            clustersInBlockCursor.close();
+        }
+
+        List<Long> schIds = new ArrayList<>();
+        SquidCursor<School> schInBlockCursor = db.query(School.class, Query.select().from(School.TABLE).where(School.BOUNDARY_ID.in(clusterIds)));
+        try {
+            while (schInBlockCursor.moveToNext()) {
+                School sch = new School(schInBlockCursor);
+                schIds.add(sch.getId());
+            }
+        } finally {
+            schInBlockCursor.close();
+        }
+
         Story last_story = db.fetchByQuery(Story.class,
-                Query.select().where(Story.SYSID.neq(null)).orderBy(Story.SYSID.desc()).limit(1));
+                Query.select().where(Story.SYSID.neq(null).and(Story.SCHOOL_ID.in(schIds))).orderBy(Story.SYSID.desc()).limit(1));
         if (last_story != null) {
             story_url += "&since_id=" + last_story.getSysid();
         }
@@ -118,7 +153,7 @@ public class SyncManager {
 
             @Override
             protected void thenDoUiRelatedWork(Integer count) {
-                Toast.makeText(SyncManager.this.context, String.valueOf(count) + " stories have been downloaded.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SyncManager.this.context, "Downloaded " + String.valueOf(count) + " stories..", Toast.LENGTH_SHORT).show();
                 syncButton.setTitle("Sync");
                 Intent intent = ((ReportsActivity) context).getIntent();
                 ((ReportsActivity) context).finish();
@@ -157,6 +192,137 @@ public class SyncManager {
         }
 
         return resp;
+    }
+
+    public JSONObject doUpload() {
+        Query listStoryQuery = Query.select().from(Story.TABLE)
+                .where(Story.SYNCED.eq(0));
+        SquidCursor<Story> storiesCursor = db.query(Story.class, listStoryQuery);
+        SquidCursor<Answer> answerCursor = null;
+
+        JSONObject requestJson = new JSONObject();
+        JSONObject respJson = new JSONObject();
+        JSONArray storyArray = new JSONArray();
+
+        try {
+            while (storiesCursor.moveToNext()) {
+                Story story = new Story(storiesCursor);
+                JSONObject storyJson = db.modelObjectToJson(story);
+
+                answerCursor = db.query(Answer.class,
+                        Query.select().from(Answer.TABLE)
+                                .where(Answer.STORY_ID.eq(story.getId()))
+                );
+
+                JSONArray answerArray = new JSONArray();
+                while (answerCursor.moveToNext()) {
+                    Answer answer = new Answer(answerCursor);
+                    JSONObject answerJson = db.modelObjectToJson(answer);
+                    answerArray.put(answerJson);
+                }
+                storyJson.put("answers", answerArray);
+                storyArray.put(storyJson);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if (storiesCursor != null) storiesCursor.close();
+            if (answerCursor != null) answerCursor.close();
+        }
+        try {
+            requestJson.put("stories", storyArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        final String SYNC_URL = BuildConfig.HOST + "/api/v1/sync";
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        HashMap<String, String> user = mSession.getUserDetails();
+        RequestBody body = RequestBody.create(JSON, requestJson.toString());
+
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url(SYNC_URL)
+                .post(body)
+                .addHeader("Authorization", "Token " + user.get("token"))
+                .build();
+        try {
+            okhttp3.Response okresponse = okclient.newCall(request).execute();
+
+            if (!okresponse.isSuccessful()) {
+                Log.e("Upload Error", "There is something wrong with the Internet connection.");
+                return new JSONObject();
+            }
+
+            if (okresponse.code() == 401) {
+                Log.e("Authentication Error", "Something went wrong. Please login again.");
+            }
+
+            respJson = new JSONObject(okresponse.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+            if (e.getMessage() != null) Log.d(this.toString(), e.getMessage());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            if (e.getMessage() != null) Log.d(this.toString(), e.getMessage());
+        }
+        return respJson;
+    }
+
+    public class UploadTask {
+        private Integer processUploadResponse(JSONObject response) {
+            Integer successCount = 0;
+            try {
+                Log.d(this.toString(), response.toString());
+                // TODO: show error
+                String error = response.optString("error");
+
+                if (error != null && !error.isEmpty() && error != "null") {
+                    Toast.makeText(SyncManager.this.context, error, Toast.LENGTH_LONG).show();
+                } else {
+                    JSONObject success = response.getJSONObject("success");
+                    Iterator<String> keys = success.keys();
+                    while (keys.hasNext()) {
+                        String key = keys.next();
+                        String sysid = success.getString(key);
+                        Update storyUpdate = Update.table(Story.TABLE)
+                                .set(Story.SYNCED, 1)
+                                .set(Story.SYSID, sysid)
+                                .where(Story.ID.eq(Long.valueOf(key)));
+                        db.update(storyUpdate);
+                        successCount++;
+                    }
+
+                    JSONArray failed = response.optJSONArray("failed");
+                    if (failed != null && failed.length() > 0) {
+                        Log.d("Upload onNext", "Upload failed for Story ids: " + failed.toString());
+                    }
+
+                    String command = response.optString("command", "");
+                    Log.d("Command Log", command);
+                    switch (command) {
+                        case "wipe-stories":
+                            db.deleteAll(Answer.class);
+                            db.deleteAll(Story.class);
+                            break;
+                        case "wipe-all":
+                            db.deleteAll(Answer.class);
+                            db.deleteAll(Story.class);
+                            db.deleteAll(QuestionGroupQuestion.class);
+                            db.deleteAll(QuestionGroup.class);
+                            db.deleteAll(Question.class);
+                            db.deleteAll(Survey.class);
+                            db.deleteAll(School.class);
+                            db.deleteAll(Boundary.class);
+                            break;
+                        default:
+                            Log.d("Command Log", "Nothing to do.");
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return successCount;
+        }
     }
 
     public class DownloadTasks {
